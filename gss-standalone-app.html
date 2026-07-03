@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Gujjar Service Station</title>
+<style>
+html, body { margin:0; padding:0; }
+
+
+:root{
+  --gss-bg:#0b0e12;
+  --gss-panel:#131820;
+  --gss-panel2:#171d27;
+  --gss-card:#1a212c;
+  --gss-border:#232b38;
+  --gss-metal:linear-gradient(145deg,#1c222c,#12161d);
+  --gss-cyan:#00e5ff;
+  --gss-cyan-dim:#00b8cc;
+  --gss-blue:#2979ff;
+  --gss-text:#e8eef4;
+  --gss-text-dim:#8a97a8;
+  --gss-danger:#ff4d6d;
+  --gss-success:#20e3a2;
+  --gss-warn:#ffb703;
+  --gss-radius:16px;
+  --gss-radius-sm:10px;
+  --gss-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--gss-bg); color:var(--gss-text); font-family:'Segoe UI',Roboto,Arial,sans-serif; overflow-x:hidden;}
+body{-webkit-font-smoothing:antialiased;}
+a{text-decoration:none; color:inherit;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+#gss-app{
+  max-width:480px; min-width:320px; margin:0 auto; position:relative;
+  min-height:100vh; background:var(--gss-bg);
+  padding-bottom:78px;
+  background-image:radial-gradient(circle at 50% 0%, rgba(0,229,255,.05), transparent 60%);
+}
+
+/* ===== Header ===== */
+.gss-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; background:var(--gss-metal);
+  border-bottom:1px solid var(--gss-border);
+  position:sticky; top:0; z-index:50;
+}
+.gss-brand{display:flex; align-items:center; gap:10px;}
+.gss-badge{
+  width:42px; height:42px; border-radius:12px;
+  background:conic-gradient(from 180deg, var(--gss-cyan), var(--gss-blue), var(--gss-cyan));
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px; color:#04151a;
+  box-shadow:0 0 18px rgba(0,229,255,.45);
+}
+.gss-brand h1{font-size:15px; margin:0; letter-spacing:.3px; font-weight:700;}
+.gss-brand span{display:block; font-size:10px; color:var(--gss-text-dim); font-weight:400;}
+.gss-header-icon{
+  width:36px; height:36px; border-radius:10px; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:var(--gss-cyan);
+}
+
+/* ===== Promo ribbon ===== */
+.gss-promo{
+  margin:12px; padding:10px 12px; border-radius:14px;
+  background:linear-gradient(120deg, rgba(0,229,255,.12), rgba(41,121,255,.10));
+  border:1px solid rgba(0,229,255,.35);
+  box-shadow:0 0 22px rgba(0,229,255,.15);
+  animation:gssPulse 2.2s ease-in-out infinite;
+  text-align:center;
+}
+@keyframes gssPulse{
+  0%,100%{box-shadow:0 0 14px rgba(0,229,255,.15);}
+  50%{box-shadow:0 0 28px rgba(0,229,255,.4);}
+}
+.gss-promo-text{font-weight:700; font-size:12.5px; color:var(--gss-cyan); letter-spacing:.2px;}
+.gss-promo-timer{
+  margin-top:6px; font-size:11px; color:var(--gss-text); font-weight:600;
+  background:rgba(0,0,0,.35); display:inline-block; padding:4px 10px; border-radius:20px;
+  border:1px solid var(--gss-border);
+}
+.gss-promo-timer b{color:var(--gss-warn);}
+
+/* ===== Pages / tabs ===== */
+.gss-page{display:none; padding:4px 14px 20px;}
+.gss-page.active{display:block; animation:gssFade .25s ease;}
+@keyframes gssFade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.gss-section-title{
+  font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--gss-text-dim);
+  margin:18px 0 10px; font-weight:700;
+}
+
+/* ===== Counters ===== */
+.gss-counter-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+.gss-counter-header{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:18px; flex-wrap:wrap;}
+.gss-counter-header .gss-section-title{white-space:nowrap;}
+.gss-counter-tabs{
+  display:flex; gap:3px; background:var(--gss-panel2); border:1px solid var(--gss-border);
+  border-radius:20px; padding:3px;
+}
+.gss-counter-tabs button{
+  padding:6px 10px; border-radius:16px; border:none; background:transparent; color:var(--gss-text-dim);
+  font-size:10px; font-weight:700; white-space:nowrap; transition:background .2s, color .2s;
+}
+.gss-counter-tabs button.active{
+  background:linear-gradient(120deg, var(--gss-cyan), var(--gss-blue)); color:#03131a;
+  box-shadow:0 2px 10px rgba(0,229,255,.3);
+}
+.gss-counter-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:14px 10px; text-align:center; box-shadow:var(--gss-shadow);
+}
+.gss-counter-card .num{font-size:24px; font-weight:800; color:var(--gss-cyan);}
+.gss-counter-card .lbl{font-size:11px; color:var(--gss-text-dim); margin-top:2px;}
+
+/* ===== Services matrix ===== */
+.gss-select-wrap{margin-top:10px;}
+.gss-select{
+  width:100%; padding:12px; border-radius:var(--gss-radius-sm); background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:13px; appearance:none;
+}
+.gss-service-row{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px; margin-top:8px;
+}
+.gss-service-name{font-size:13px; font-weight:600;}
+.gss-service-price{font-size:13px; font-weight:700; color:var(--gss-cyan);}
+.gss-free-badge{
+  background:rgba(32,227,162,.15); color:var(--gss-success); border:1px solid rgba(32,227,162,.4);
+  font-size:10px; padding:3px 8px; border-radius:20px; margin-left:6px; font-weight:700;
+  animation:gssGlow 1.6s ease-in-out infinite;
+}
+@keyframes gssGlow{0%,100%{opacity:.7;} 50%{opacity:1;}}
+
+/* ===== Team ===== */
+.gss-team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.gss-team-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  text-align:center; padding:10px 6px;
+}
+.gss-team-card img{width:52px; height:52px; border-radius:50%; object-fit:cover; border:2px solid var(--gss-cyan);}
+.gss-team-card .n{font-size:11px; font-weight:700; margin-top:6px;}
+.gss-team-card .r{font-size:9px; color:var(--gss-text-dim);}
+
+/* ===== Reviews ===== */
+.gss-review-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px; margin-top:8px;
+}
+.gss-review-top{display:flex; justify-content:space-between; align-items:center;}
+.gss-stars{color:var(--gss-warn); font-size:12px;}
+.gss-review-msg{font-size:12px; color:var(--gss-text-dim); margin-top:6px;}
+.gss-star-input{font-size:22px; letter-spacing:4px; cursor:pointer; color:#3a4453;}
+.gss-star-input span.active{color:var(--gss-warn);}
+
+/* ===== Forms ===== */
+.gss-form{
+  background:var(--gss-panel); border:1px solid var(--gss-border); border-radius:var(--gss-radius);
+  padding:16px; margin-top:10px;
+}
+.gss-field{margin-bottom:12px;}
+.gss-field label{font-size:11px; color:var(--gss-text-dim); display:block; margin-bottom:5px; font-weight:600;}
+.gss-input, .gss-textarea{
+  width:100%; padding:11px; border-radius:var(--gss-radius-sm); background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:13px;
+}
+.gss-textarea{min-height:70px; resize:vertical;}
+.gss-btn{
+  width:100%; padding:13px; border-radius:var(--gss-radius-sm); border:none;
+  background:linear-gradient(120deg, var(--gss-cyan), var(--gss-blue));
+  color:#03131a; font-weight:800; font-size:13px; letter-spacing:.3px;
+  box-shadow:0 6px 18px rgba(0,229,255,.25);
+}
+.gss-btn:active{transform:scale(.98);}
+.gss-btn-outline{
+  width:100%; padding:12px; border-radius:var(--gss-radius-sm);
+  background:transparent; border:1px solid var(--gss-cyan); color:var(--gss-cyan); font-weight:700; font-size:12.5px;
+}
+.gss-btn-danger{background:linear-gradient(120deg, #ff6b81, var(--gss-danger)); color:#2a0410;}
+.gss-btn-sm{padding:9px; font-size:11.5px;}
+
+/* ===== Tracker ===== */
+.gss-stepper{display:flex; align-items:center; justify-content:space-between; margin-top:16px;}
+.gss-step{flex:1; text-align:center; position:relative;}
+.gss-step .dot{
+  width:26px; height:26px; border-radius:50%; background:var(--gss-panel2); border:2px solid var(--gss-border);
+  margin:0 auto 6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;
+}
+.gss-step.done .dot{background:var(--gss-success); border-color:var(--gss-success); color:#04170f;}
+.gss-step.current .dot{background:var(--gss-cyan); border-color:var(--gss-cyan); color:#03131a; box-shadow:0 0 12px var(--gss-cyan);}
+.gss-step .lbl2{font-size:10px; color:var(--gss-text-dim);}
+.gss-step:not(:last-child):after{
+  content:''; position:absolute; top:13px; left:60%; width:80%; height:2px; background:var(--gss-border); z-index:-1;
+}
+
+/* ===== Bottom nav ===== */
+.gss-bottomnav{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px; background:var(--gss-metal);
+  border-top:1px solid var(--gss-border);
+  display:flex; z-index:60; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.gss-navbtn{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:6px 0; color:var(--gss-text-dim); font-size:9.5px; font-weight:700; border-radius:10px;
+}
+.gss-navbtn .ic{font-size:18px;}
+.gss-navbtn.active{color:var(--gss-cyan); background:rgba(0,229,255,.08);}
+
+/* ===== FAB ===== */
+.gss-fab{
+  position:fixed; bottom:88px; right:calc(50% - 240px + 16px); z-index:65;
+  width:52px; height:52px; border-radius:50%; background:#25d366;
+  display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff;
+  box-shadow:0 8px 20px rgba(37,211,102,.4);
+}
+@media (max-width:480px){ .gss-fab{ right:16px; } }
+
+/* ===== Admin ===== */
+.gss-pin-gate{
+  position:fixed; inset:0; background:rgba(5,7,10,.92); z-index:200;
+  display:none; align-items:center; justify-content:center; flex-direction:column; padding:20px;
+}
+.gss-pin-gate.show{display:flex;}
+.gss-pin-box{
+  background:var(--gss-panel); border:1px solid var(--gss-cyan); border-radius:var(--gss-radius);
+  padding:22px; width:100%; max-width:300px; text-align:center; box-shadow:0 0 30px rgba(0,229,255,.2);
+}
+.gss-pin-dots{display:flex; gap:10px; justify-content:center; margin:16px 0;}
+.gss-pin-dots span{width:12px; height:12px; border-radius:50%; background:var(--gss-panel2); border:1px solid var(--gss-border);}
+.gss-pin-dots span.filled{background:var(--gss-cyan); box-shadow:0 0 8px var(--gss-cyan);}
+.gss-pin-keys{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;}
+.gss-pin-key{
+  padding:14px 0; background:var(--gss-panel2); border:1px solid var(--gss-border); border-radius:10px;
+  color:var(--gss-text); font-size:16px; font-weight:700;
+}
+
+.gss-admin-tabs{display:flex; gap:6px; overflow-x:auto; padding:4px 0 10px; -ms-overflow-style:none; scrollbar-width:none;}
+.gss-admin-tabs::-webkit-scrollbar{display:none;}
+.gss-atab{
+  white-space:nowrap; padding:8px 14px; border-radius:20px; font-size:11px; font-weight:700;
+  background:var(--gss-panel2); border:1px solid var(--gss-border); color:var(--gss-text-dim);
+}
+.gss-atab.active{background:var(--gss-cyan); color:#03131a; border-color:var(--gss-cyan);}
+.gss-apanel{display:none;}
+.gss-apanel.active{display:block; animation:gssFade .2s ease;}
+
+.gss-counter-btns{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
+.gss-counter-btns button{
+  padding:14px 4px; border-radius:var(--gss-radius-sm); background:var(--gss-card); border:1px solid var(--gss-border);
+  color:var(--gss-cyan); font-weight:700; font-size:12px;
+}
+
+.gss-queue-item{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:10px; margin-top:8px;
+}
+.gss-queue-top{display:flex; justify-content:space-between; font-size:12px; font-weight:700;}
+.gss-queue-meta{font-size:10.5px; color:var(--gss-text-dim); margin-top:3px;}
+.gss-status-select{
+  margin-top:8px; width:100%; padding:8px; border-radius:8px; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:12px;
+}
+
+.gss-attend-row{
+  display:flex; align-items:center; justify-content:space-between; background:var(--gss-card);
+  border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm); padding:10px; margin-top:8px;
+}
+.gss-attend-opts{display:flex; gap:6px;}
+.gss-attend-opts button{
+  padding:6px 9px; font-size:10px; border-radius:8px; background:var(--gss-panel2); border:1px solid var(--gss-border); color:var(--gss-text-dim); font-weight:700;
+}
+.gss-attend-opts button.sel-present{background:var(--gss-success); color:#04170f; border-color:var(--gss-success);}
+.gss-attend-opts button.sel-absent{background:var(--gss-danger); color:#2a0410; border-color:var(--gss-danger);}
+.gss-attend-opts button.sel-leave{background:var(--gss-warn); color:#2a1c00; border-color:var(--gss-warn);}
+.gss-attend-opts button.sel-half{background:var(--gss-blue); color:#04101f; border-color:var(--gss-blue);}
+
+/* ===== Monthly attendance sheet ===== */
+.gss-month-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:10.5px;}
+.gss-month-table th, .gss-month-table td{padding:7px 4px; text-align:center; border-bottom:1px solid var(--gss-border);}
+.gss-month-table th{color:var(--gss-text-dim); font-weight:700; text-transform:uppercase; font-size:8.5px; letter-spacing:.3px;}
+.gss-month-table td:first-child, .gss-month-table th:first-child{text-align:left;}
+.gss-month-table tbody tr:last-child td{border-bottom:none;}
+
+/* ===== Public attendance badge on team card ===== */
+.gss-attend-tag{display:inline-block; margin-top:5px; font-size:8px; font-weight:800; padding:2px 7px; border-radius:8px; letter-spacing:.2px;}
+.gss-attend-tag.tag-present{background:rgba(32,227,162,.18); color:var(--gss-success);}
+.gss-attend-tag.tag-half{background:rgba(41,121,255,.18); color:var(--gss-blue);}
+.gss-attend-tag.tag-leave{background:rgba(255,183,3,.18); color:var(--gss-warn);}
+.gss-attend-tag.tag-absent{background:rgba(255,77,109,.18); color:var(--gss-danger);}
+
+/* ===== Booking success modal (reuses pin-gate overlay styles) ===== */
+.gss-success-emoji{font-size:36px;}
+.gss-token-display{font-size:24px; font-weight:800; color:var(--gss-cyan); margin:10px 0; letter-spacing:.5px;}
+
+.gss-stat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px;}
+.gss-stat-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm); padding:12px;
+}
+.gss-stat-card .v{font-size:17px; font-weight:800;}
+.gss-stat-card .l{font-size:10px; color:var(--gss-text-dim); margin-top:2px;}
+.gss-filter-row{display:flex; gap:6px; margin-top:10px;}
+.gss-filter-row button{
+  flex:1; padding:8px; border-radius:8px; font-size:11px; font-weight:700; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text-dim);
+}
+.gss-filter-row button.active{background:var(--gss-cyan); color:#03131a; border-color:var(--gss-cyan);}
+
+.gss-staff-avatar-picker{
+  width:70px; height:70px; border-radius:50%; background:var(--gss-panel2); border:1px dashed var(--gss-border);
+  display:flex; align-items:center; justify-content:center; margin:0 auto 10px; overflow:hidden; font-size:11px; color:var(--gss-text-dim);
+}
+.gss-staff-avatar-picker img{width:100%; height:100%; object-fit:cover;}
+.gss-staff-list-row{
+  display:flex; align-items:center; gap:10px; background:var(--gss-card); border:1px solid var(--gss-border);
+  border-radius:var(--gss-radius-sm); padding:8px; margin-top:8px;
+}
+.gss-staff-list-row img{width:36px; height:36px; border-radius:50%; object-fit:cover;}
+.gss-staff-list-row .info{flex:1;}
+.gss-staff-list-row .info .n{font-size:12px; font-weight:700;}
+.gss-staff-list-row .info .r{font-size:10px; color:var(--gss-text-dim);}
+.gss-staff-actions{display:flex; gap:6px;}
+.gss-staff-actions button{
+  padding:7px 10px; border-radius:8px; font-size:10px; font-weight:700; border:1px solid var(--gss-border);
+  background:var(--gss-panel2); color:var(--gss-text-dim);
+}
+.gss-staff-actions button.edit{color:var(--gss-cyan); border-color:rgba(0,229,255,.35);}
+.gss-staff-actions button.del{color:var(--gss-danger); border-color:rgba(255,77,109,.35);}
+
+/* ===== Toast ===== */
+.gss-toast-wrap{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:300; width:calc(100% - 40px); max-width:440px;}
+.gss-toast{
+  background:var(--gss-panel); border:1px solid var(--gss-cyan); border-radius:12px; padding:12px 14px;
+  font-size:12.5px; font-weight:600; margin-bottom:8px; box-shadow:0 8px 22px rgba(0,0,0,.5);
+  animation:gssToastIn .25s ease;
+}
+.gss-toast.err{border-color:var(--gss-danger); color:#ffdfe4;}
+.gss-toast.ok{border-color:var(--gss-success); color:#d9fff1;}
+@keyframes gssToastIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+
+/* ===== Confetti ===== */
+.gss-confetti-piece{
+  position:fixed; top:-10px; width:8px; height:14px; z-index:250; opacity:.95;
+  animation:gssFall linear forwards;
+}
+@keyframes gssFall{ to{ transform:translateY(110vh) rotate(600deg); opacity:0; } }
+
+.gss-empty{text-align:center; color:var(--gss-text-dim); font-size:12px; padding:20px 0;}
+.gss-hidden{display:none !important;}
+
+
+</style>
+</head>
+<body>
+<div class='app-container' id='gss-app'>
+
+  <!-- HEADER -->
+  <div class='gss-header'>
+    <div class='gss-brand'>
+      <div class='gss-badge'>GSS</div>
+      <div>
+        <h1>Gujjar Service Station</h1>
+        <span>Premium Auto Care</span>
+      </div>
+    </div>
+    <div class='gss-header-icon' onclick='GSS.nav("admin")'>&#9881;</div>
+  </div>
+
+  <!-- PROMO RIBBON -->
+  <div class='gss-promo'>
+    <div class='gss-promo-text'>&#128293; EXCLUSIVE DEAL: FREE OIL CHANGE WITH FREE LABOUR! &#128295;</div>
+    <div class='gss-promo-timer'>Offer Ends In: <b id='gss-countdown'>00h 00m 00s</b></div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class='gss-toast-wrap' id='gss-toast-wrap'></div>
+
+  <!-- ================= HOME PAGE ================= -->
+  <div class='gss-page active' id='page-home'>
+
+    <div class='gss-counter-header'>
+      <div class='gss-section-title' id='counter-section-title' style='margin:0;'>Today at GSS</div>
+      <div class='gss-counter-tabs' id='counter-tabs'>
+        <button class='active' data-r='today' onclick='GSS.setCounterRange("today")'>Today</button>
+        <button data-r='week' onclick='GSS.setCounterRange("week")'>Week</button>
+        <button data-r='month' onclick='GSS.setCounterRange("month")'>Month</button>
+        <button data-r='all' onclick='GSS.setCounterRange("all")'>All-Time</button>
+      </div>
+    </div>
+    <div class='gss-counter-grid'>
+      <div class='gss-counter-card'><div class='num' id='cnt-2w'>0</div><div class='lbl'>2-Wheelers</div></div>
+      <div class='gss-counter-card'><div class='num' id='cnt-3w'>0</div><div class='lbl'>3-Wheelers</div></div>
+      <div class='gss-counter-card'><div class='num' id='cnt-car'>0</div><div class='lbl'>Light Cars</div></div>
+      <div class='gss-counter-card'><div class='num' id='cnt-suv'>0</div><div class='lbl'>Heavy / SUVs</div></div>
+    </div>
+
+    <div class='gss-section-title'>Services Menu</div>
+    <div class='gss-select-wrap'>
+      <select class='gss-select' id='svc-category' onchange='GSS.renderServices()'>
+        <option value='2w'>2-Wheeler</option>
+        <option value='3w'>3-Wheeler</option>
+        <option value='hatch'>Hatchback</option>
+        <option value='sedan'>Sedan</option>
+        <option value='suv'>SUV</option>
+      </select>
+    </div>
+    <div id='services-list'></div>
+
+    <div class='gss-section-title'>Our Team</div>
+    <div class='gss-team-grid' id='team-grid'>
+      <div class='gss-empty'>Team profiles will appear here once added by Admin.</div>
+    </div>
+
+    <div class='gss-section-title'>Client Reviews</div>
+    <div class='gss-form'>
+      <div class='gss-field'><label>Your Name</label><input class='gss-input' id='rev-name' placeholder='Enter your name' type='text'/></div>
+      <div class='gss-field'>
+        <label>Rating</label>
+        <div class='gss-star-input' id='rev-stars' data-val='5'>
+          <span data-v='1'>&#9733;</span><span data-v='2'>&#9733;</span><span data-v='3'>&#9733;</span><span data-v='4'>&#9733;</span><span data-v='5'>&#9733;</span>
+        </div>
+      </div>
+      <div class='gss-field'><label>Message</label><textarea class='gss-textarea' id='rev-msg' placeholder='Share your experience...'></textarea></div>
+      <button class='gss-btn' onclick='GSS.submitReview()'>Post Review</button>
+    </div>
+    <div id='reviews-list'></div>
+  </div>
+
+  <!-- ================= BOOK NOW PAGE ================= -->
+  <div class='gss-page' id='page-book'>
+    <div class='gss-section-title'>Book Your Service</div>
+    <div class='gss-form'>
+      <div class='gss-field'><label>Full Name</label><input class='gss-input' id='bk-name' placeholder='e.g. Ali Khan' type='text'/></div>
+      <div class='gss-field'><label>Phone Number</label><input class='gss-input' id='bk-phone' placeholder='03xx-xxxxxxx' type='tel'/></div>
+      <div class='gss-field'><label>Vehicle Number</label><input class='gss-input' id='bk-vehicle' placeholder='e.g. LEA-1234' type='text'/></div>
+      <div class='gss-field'>
+        <label>Vehicle Category</label>
+        <select class='gss-select' id='bk-category' onchange='GSS.fillBookingServices()'>
+          <option value='2w'>2-Wheeler</option>
+          <option value='3w'>3-Wheeler</option>
+          <option value='hatch'>Hatchback</option>
+          <option value='sedan'>Sedan</option>
+          <option value='suv'>SUV</option>
+        </select>
+      </div>
+      <div class='gss-field'>
+        <label>Select Service</label>
+        <select class='gss-select' id='bk-service'></select>
+      </div>
+      <button class='gss-btn' onclick='GSS.submitBooking()'>Confirm Booking &amp; Send via WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- ================= TRACK STATUS PAGE ================= -->
+  <div class='gss-page' id='page-track'>
+    <div class='gss-section-title'>Track Your Order</div>
+    <div class='gss-form'>
+      <div class='gss-field'><label>Vehicle Number or Token</label><input class='gss-input' id='trk-input' placeholder='e.g. LEA-1234' type='text'/></div>
+      <button class='gss-btn' onclick='GSS.trackOrder()'>Check Status</button>
+    </div>
+    <div id='track-result'></div>
+  </div>
+
+  <!-- ================= ADMIN PAGE ================= -->
+  <div class='gss-page' id='page-admin'>
+    <div class='gss-section-title'>GSS Admin ERP Dashboard</div>
+
+    <div class='gss-admin-tabs'>
+      <div class='gss-atab active' data-t='logger' onclick='GSS.adminTab("logger")'>Logger</div>
+      <div class='gss-atab' data-t='queue' onclick='GSS.adminTab("queue")'>Queue</div>
+      <div class='gss-atab' data-t='expense' onclick='GSS.adminTab("expense")'>Expenses</div>
+      <div class='gss-atab' data-t='attend' onclick='GSS.adminTab("attend")'>Attendance</div>
+      <div class='gss-atab' data-t='staff' onclick='GSS.adminTab("staff")'>Staff</div>
+      <div class='gss-atab' data-t='finance' onclick='GSS.adminTab("finance")'>Finance</div>
+      <div class='gss-atab' data-t='backup' onclick='GSS.adminTab("backup")'>Backup</div>
+    </div>
+
+    <!-- LOGGER -->
+    <div class='gss-apanel active' id='apanel-logger'>
+      <div class='gss-counter-btns'>
+        <button onclick='GSS.logVehicle("2w")'>+ 2 Wheeler</button>
+        <button onclick='GSS.logVehicle("3w")'>+ 3 Wheeler</button>
+        <button onclick='GSS.logVehicle("car")'>+ Light Car</button>
+        <button onclick='GSS.logVehicle("suv")'>+ SUV / Heavy</button>
+      </div>
+    </div>
+
+    <!-- QUEUE -->
+    <div class='gss-apanel' id='apanel-queue'>
+      <div id='queue-list'></div>
+    </div>
+
+    <!-- EXPENSE -->
+    <div class='gss-apanel' id='apanel-expense'>
+      <div class='gss-form'>
+        <div class='gss-field'><label>Amount (PKR)</label><input class='gss-input' id='exp-amount' placeholder='0' type='number'/></div>
+        <div class='gss-field'>
+          <label>Category</label>
+          <select class='gss-select' id='exp-category'>
+            <option>Electricity Bill</option><option>Water Supply</option><option>Lunch</option>
+            <option>Tea</option><option>Travel/Fuel</option><option>Miscellaneous</option>
+          </select>
+        </div>
+        <div class='gss-field'><label>Spender's Name</label><input class='gss-input' id='exp-spender' placeholder='Who paid?' type='text'/></div>
+        <button class='gss-btn' onclick='GSS.addExpense()'>Commit Expense (Auto 50/50 Split)</button>
+      </div>
+      <div class='gss-section-title'>Recent Expenses</div>
+      <div id='expense-list'></div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class='gss-apanel' id='apanel-attend'>
+      <div class='gss-section-title' style='margin-top:0;'>Mark Today's Attendance</div>
+      <div id='attend-list'></div>
+      <button class='gss-btn' style='margin-top:12px;' onclick='GSS.commitAttendance()'>Commit Today's Ledger</button>
+
+      <div class='gss-section-title'>Monthly Attendance Sheet</div>
+      <div class='gss-field'>
+        <input class='gss-input' id='month-picker' type='month' onchange='GSS.refreshMonthlySheet()'/>
+      </div>
+      <div id='monthly-sheet'></div>
+    </div>
+
+    <!-- STAFF -->
+    <div class='gss-apanel' id='apanel-staff'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;' id='staff-form-title'>Add New Profile</div>
+        <div class='gss-staff-avatar-picker' id='staff-avatar-preview' onclick='document.getElementById("staff-img-input").click()'>Tap to Upload</div>
+        <input accept='image/*' id='staff-img-input' style='display:none' type='file' onchange='GSS.handleStaffImage(event)'/>
+        <div class='gss-field'><label>Full Name</label><input class='gss-input' id='staff-name' placeholder='e.g. Bilal Ahmed' type='text'/></div>
+        <div class='gss-field'>
+          <label>Role</label>
+          <select class='gss-select' id='staff-role'>
+            <option value='owner'>Executive Owner</option>
+            <option value='commission'>50% Commission Labour</option>
+            <option value='salary'>Fixed Monthly Salary Labour</option>
+          </select>
+        </div>
+        <div class='gss-field'><label>Base Salary Tier (PKR)</label><input class='gss-input' id='staff-salary' placeholder='0' type='number'/></div>
+        <button class='gss-btn' id='staff-save-btn' onclick='GSS.saveStaff()'>Save Profile</button>
+        <div style='height:8px;'></div>
+        <button class='gss-btn-outline gss-btn-sm gss-hidden' id='staff-cancel-btn' onclick='GSS.cancelStaffEdit()'>Cancel Edit</button>
+      </div>
+      <div class='gss-section-title'>All Profiles</div>
+      <div id='staff-list'></div>
+    </div>
+
+
+    <!-- FINANCE -->
+    <div class='gss-apanel' id='apanel-finance'>
+      <div class='gss-filter-row'>
+        <button class='active' data-f='daily' onclick='GSS.setFinanceFilter("daily")'>Daily</button>
+        <button data-f='weekly' onclick='GSS.setFinanceFilter("weekly")'>Weekly</button>
+        <button data-f='monthly' onclick='GSS.setFinanceFilter("monthly")'>Monthly</button>
+      </div>
+      <div class='gss-stat-grid'>
+        <div class='gss-stat-card'><div class='v' id='fin-revenue'>PKR 0</div><div class='l'>Gross Inbound Revenue</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-expenses'>PKR 0</div><div class='l'>Total Split Expenses</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-owner'>PKR 0</div><div class='l'>Owner Net Yield</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-labour'>PKR 0</div><div class='l'>Total Labour Share</div></div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class='gss-apanel' id='apanel-backup'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;'>Export / Backup</div>
+        <button class='gss-btn-outline' onclick='GSS.exportBackup()'>Download Full Backup (.json)</button>
+        <div class='gss-section-title'>Restore / Import</div>
+        <input accept='.json,application/json' id='restore-input' style='display:none' type='file' onchange='GSS.importBackup(event)'/>
+        <button class='gss-btn-outline' onclick='document.getElementById("restore-input").click()'>Select Backup File to Restore</button>
+        <div class='gss-section-title'>Cloud Sync</div>
+        <button class='gss-btn-outline' onclick='GSS.syncToCloud()'>Sync Now (Google Sheets)</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WHATSAPP FAB -->
+  <a class='gss-fab' href='#' id='gss-fab' target='_blank'>&#128241;</a>
+
+  <!-- BOTTOM NAV -->
+  <div class='gss-bottomnav'>
+    <div class='gss-navbtn active' data-p='home' onclick='GSS.nav("home")'><div class='ic'>&#127968;</div>Home</div>
+    <div class='gss-navbtn' data-p='book' onclick='GSS.nav("book")'><div class='ic'>&#128197;</div>Book Now</div>
+    <div class='gss-navbtn' data-p='track' onclick='GSS.nav("track")'><div class='ic'>&#128269;</div>Track</div>
+    <div class='gss-navbtn' data-p='admin' onclick='GSS.nav("admin")'><div class='ic'>&#128274;</div>Admin</div>
+  </div>
+
+  <!-- PIN GATE -->
+  <div class='gss-pin-gate' id='pin-gate'>
+    <div class='gss-pin-box'>
+      <div style='font-weight:800; font-size:14px;'>GSS Admin Access</div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin-top:4px;'>Enter 4-digit Master PIN</div>
+      <div class='gss-pin-dots' id='pin-dots'>
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class='gss-pin-keys' id='pin-keys'></div>
+      <div style='display:flex; gap:8px; margin-top:10px;'>
+        <button class='gss-btn-outline gss-btn-sm' onclick='GSS.pinClear()'>Clear</button>
+        <button class='gss-btn-outline gss-btn-sm' onclick='GSS.pinCancel()'>Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING SUCCESS / TOKEN MODAL -->
+  <div class='gss-pin-gate' id='booking-success'>
+    <div class='gss-pin-box'>
+      <div class='gss-success-emoji'>&#9989;</div>
+      <div style='font-weight:800; font-size:15px; margin-top:4px;'>Booking Confirmed!</div>
+      <div class='gss-token-display'>Token #<span id='success-token'>0</span></div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin-bottom:14px;'>Save this token. Use it under Track Status to check your vehicle's progress anytime.</div>
+      <a class='gss-btn' id='success-whatsapp-btn' href='#' target='_blank' onclick='GSS.closeBookingSuccess()'>Send Details via WhatsApp</a>
+      <div style='height:8px;'></div>
+      <button class='gss-btn-outline gss-btn-sm' onclick='GSS.closeBookingSuccess()'>Close</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase (used only for the public-facing live data layer: counters, team, reviews,
+     bookings/tracker, and today's attendance badges. Everything still works fully offline
+     via IndexedDB if Firebase is not configured or the device has no internet.) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+<script>
+
+(function(){
+  var GSS = {};
+  window.GSS = GSS;
+
+  /* ================= CONFIG ================= */
+  var MASTER_PIN = "7254";
+  var DB_NAME = "GSS_DB";
+  var DB_VERSION = 1;
+  var STORES = ["vehicles","bookings","reviews","staff","expenses","attendance","settings"];
+
+  var PRICES = {
+    "2w":   { "Motorcycle Wash":200, "Service":300, "Oil Change":800, "Compound Polish":400 },
+    "3w":   { "Rikshaw Wash":250, "Service":500, "Oil Change":400, "Compound Polish":600 },
+    "hatch":{ "Car Wash":400, "Service":600, "Oil Change":700, "Compound Polish":1000 },
+    "sedan":{ "Car Wash":700, "Tuning":1200,"Oil Change":900, "Compound Polish":2000 },
+    "suv":  { "Car Wash":900, "Tuning":1600,"Oil Change":1300,"Compound Polish":2800 }
+  };
+  var OIL_CHANGE_LABOUR_FREE = 100; // labour portion waived during promo, shown as PKR 0 labour
+  var CATEGORY_LABEL = {"2w":"2-Wheeler","3w":"3-Wheeler","hatch":"Hatchback","sedan":"Sedan","suv":"SUV / Heavy"};
+  var WHATSAPP_NUMBER = "923065772734"; // replace with real GSS WhatsApp number
+
+  var db = null;
+  var pinBuffer = "";
+  var financeFilter = "daily";
+  var currentStaffImageB64 = null;
+
+  /* ================= FIREBASE (public real-time layer) =================
+     How to enable cross-device live sync for counters, team, reviews, bookings/tracker
+     and today's attendance badges:
+       1. Go to https://console.firebase.google.com -> Add project.
+       2. Build > Realtime Database -> Create Database -> start in test mode
+          (then tighten the rules before going to production).
+       3. Project settings (gear icon) > General > "Your apps" > Web app (</>)
+          -> copy the config object values into FIREBASE_CONFIG below.
+       4. Save this file. If FIREBASE_CONFIG is left blank, the app runs fully
+          local/offline via IndexedDB only (nothing breaks, it just won't sync
+          across different phones/devices).
+  ========================================================================= */
+  var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA9wEbzMTQ5lWfzS6JFwMN-iiA6dqY--l8",
+  authDomain: "gujjar-service-station.firebaseapp.com",
+  databaseURL: "https://gujjar-service-station-default-rtdb.firebaseio.com",
+  projectId: "gujjar-service-station",
+  storageBucket: "gujjar-service-station.firebasestorage.app",
+  messagingSenderId: "232025392131",
+  appId: "1:232025392131:web:7c4e4375b5015ed5b13a36"
+  };
+  var fbEnabled = false;
+  var fbDb = null;
+  function initFirebase(){
+    try{
+      if(!FIREBASE_CONFIG.databaseURL || typeof firebase === "undefined"){
+        fbEnabled = false;
+        return;
+      }
+      firebase.initializeApp(FIREBASE_CONFIG);
+      fbDb = firebase.database();
+      fbEnabled = true;
+      console.log("GSS: Firebase connected - public data will sync live across devices.");
+    }catch(e){
+      console.error("GSS Firebase init failed, running local-only.", e);
+      fbEnabled = false;
+    }
+  }
+  function fbSet(path, val){ if(!fbEnabled) return; try{ fbDb.ref(path).set(val); }catch(e){ console.error("fbSet",e); } }
+  function fbUpdate(path, val){ if(!fbEnabled) return; try{ fbDb.ref(path).update(val); }catch(e){ console.error("fbUpdate",e); } }
+  function fbListen(path, cb){
+    if(!fbEnabled) return;
+    try{ fbDb.ref(path).on("value", function(snap){ cb(snap.val() || {}); }); }catch(e){ console.error("fbListen",e); }
+  }
+  function fbNextToken(cb){
+    if(!fbEnabled){ cb(null); return; }
+    try{
+      fbDb.ref("meta/tokenCounter").transaction(function(cur){ return (cur || 1000) + 1; }, function(err, committed, snap){
+        if(err || !committed){ cb(null); return; }
+        cb(snap.val());
+      });
+    }catch(e){ console.error("fbNextToken",e); cb(null); }
+  }
+
+  /* ================= INDEXEDDB ================= */
+  var dbReady = false;
+  var dbQueue = [];
+  function openDB(cb){
+    try{
+      if (db && dbReady) { cb(db); return; }
+      if (!window.indexedDB){
+        console.error("GSS: IndexedDB not supported in this WebView.");
+        toast("Offline storage unavailable in this browser.","err");
+        return;
+      }
+      dbQueue.push(cb);
+      if (db || openDB._opening) return; // already opening, will flush queue on success
+      openDB._opening = true;
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function(e){
+        try{
+          var _db = e.target.result;
+          if(!_db.objectStoreNames.contains("vehicles")) _db.createObjectStore("vehicles",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("bookings")) _db.createObjectStore("bookings",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("reviews")) _db.createObjectStore("reviews",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("staff")) _db.createObjectStore("staff",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("expenses")) _db.createObjectStore("expenses",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("attendance")) _db.createObjectStore("attendance",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("settings")) _db.createObjectStore("settings",{keyPath:"key"});
+        }catch(errUp){ console.error("GSS DB upgrade error", errUp); }
+      };
+      req.onsuccess = function(e){
+        db = e.target.result; dbReady = true; openDB._opening = false;
+        var q = dbQueue.slice(); dbQueue = [];
+        q.forEach(function(fn){ try{ fn(db); }catch(errCb){ console.error("GSS DB callback error", errCb); } });
+      };
+      req.onerror = function(e){
+        openDB._opening = false;
+        console.error("GSS DB error", e);
+        toast("Storage init failed. App will still load without saved data.", "err");
+      };
+      req.onblocked = function(){
+        console.warn("GSS DB blocked - another tab may be open with an older version.");
+      };
+    }catch(errOuter){
+      console.error("GSS openDB fatal error", errOuter);
+      toast("Storage engine failed to start.","err");
+    }
+  }
+
+  function tx(storeName, mode){
+    return db.transaction(storeName, mode).objectStore(storeName);
+  }
+  function addRecord(store, obj, cb){
+    openDB(function(){
+      var r = tx(store,"readwrite").add(obj);
+      r.onsuccess = function(e){ if(cb) cb(e.target.result); };
+      r.onerror = function(e){ console.error(e); toast("Save failed","err"); };
+    });
+  }
+  function addRecordWithId(store, obj, cb){
+    // Like addRecord, but obj already carries its own "id" (e.g. a Firebase token)
+    openDB(function(){
+      var r = tx(store,"readwrite").put(obj);
+      r.onsuccess = function(e){ if(cb) cb(e.target.result); };
+      r.onerror = function(e){ console.error(e); toast("Save failed","err"); };
+    });
+  }
+  function getAll(store, cb){
+    openDB(function(){
+      var out = [];
+      var req = tx(store,"readonly").openCursor();
+      req.onsuccess = function(e){
+        var cur = e.target.result;
+        if(cur){ out.push(cur.value); cur.continue(); } else { cb(out); }
+      };
+      req.onerror = function(){ cb([]); };
+    });
+  }
+  function putRecord(store, obj, cb){
+    openDB(function(){
+      var r = tx(store,"readwrite").put(obj);
+      r.onsuccess = function(){ if(cb) cb(); };
+    });
+  }
+  function deleteRecord(store, id, cb){
+    openDB(function(){
+      var r = tx(store,"readwrite").delete(id);
+      r.onsuccess = function(){ if(cb) cb(); };
+      r.onerror = function(e){ console.error(e); toast("Delete failed","err"); };
+    });
+  }
+  function getOne(store, id, cb){
+    openDB(function(){
+      var r = tx(store,"readonly").get(id);
+      r.onsuccess = function(e){ cb(e.target.result || null); };
+      r.onerror = function(){ cb(null); };
+    });
+  }
+  function clearStore(store, cb){
+    openDB(function(){
+      var r = tx(store,"readwrite").clear();
+      r.onsuccess = function(){ if(cb) cb(); };
+    });
+  }
+
+  /* ================= TOAST ================= */
+  function toast(msg, type){
+    var wrap = document.getElementById("gss-toast-wrap");
+    var el = document.createElement("div");
+    el.className = "gss-toast" + (type==="err" ? " err" : type==="ok" ? " ok" : "");
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(function(){ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(function(){ el.remove(); }, 300); }, 2600);
+  }
+
+  /* ================= NAVIGATION ================= */
+  GSS.nav = function(page){
+    if(page === "admin"){
+      var unlocked = sessionStorage ? false : false;
+      if(!GSS._adminUnlocked){
+        showPinGate();
+        return;
+      }
+    }
+    document.querySelectorAll(".gss-page").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("page-"+page).classList.add("active");
+    document.querySelectorAll(".gss-navbtn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelector('.gss-navbtn[data-p="'+page+'"]').classList.add("active");
+    if(page === "admin"){ refreshAdminData(); }
+    if(page === "book"){ GSS.fillBookingServices(); }
+  };
+
+  /* ================= PIN GATE ================= */
+  GSS._adminUnlocked = false;
+  function buildPinKeys(){
+    var keys = ["1","2","3","4","5","6","7","8","9","","0","DEL"];
+    var wrap = document.getElementById("pin-keys");
+    wrap.innerHTML = "";
+    keys.forEach(function(k){
+      var b = document.createElement("button");
+      b.className = "gss-pin-key";
+      b.textContent = k === "DEL" ? "&#9003;" : k;
+      if(k==="DEL"){ b.innerHTML = "&#9003;"; }
+      if(k===""){ b.style.visibility="hidden"; }
+      b.onclick = function(){
+        if(k==="DEL"){ pinBuffer = pinBuffer.slice(0,-1); }
+        else if(k!==""){ if(pinBuffer.length<4) pinBuffer += k; }
+        renderPinDots();
+        if(pinBuffer.length === 4){ checkPin(); }
+      };
+      wrap.appendChild(b);
+    });
+  }
+  function renderPinDots(){
+    var dots = document.querySelectorAll("#pin-dots span");
+    dots.forEach(function(d,i){ d.classList.toggle("filled", i < pinBuffer.length); });
+  }
+  function showPinGate(){
+    pinBuffer = "";
+    renderPinDots();
+    document.getElementById("pin-gate").classList.add("show");
+  }
+  GSS.pinCancel = function(){
+    pinBuffer = "";
+    document.getElementById("pin-gate").classList.remove("show");
+  };
+  GSS.pinClear = function(){ pinBuffer=""; renderPinDots(); };
+  function checkPin(){
+    openDB(function(){
+      var r = tx("settings","readonly").get("masterPin");
+      r.onsuccess = function(e){
+        var savedPin = (e.target.result && e.target.result.value) ? e.target.result.value : MASTER_PIN;
+        if(pinBuffer === savedPin){
+          GSS._adminUnlocked = true;
+          document.getElementById("pin-gate").classList.remove("show");
+          toast("Access Granted","ok");
+          GSS.nav("admin");
+        } else {
+          toast("Invalid PIN. Try again.","err");
+          pinBuffer=""; renderPinDots();
+        }
+      };
+      r.onerror = function(){
+        if(pinBuffer === MASTER_PIN){
+          GSS._adminUnlocked = true;
+          document.getElementById("pin-gate").classList.remove("show");
+          GSS.nav("admin");
+        } else { toast("Invalid PIN.","err"); pinBuffer=""; renderPinDots(); }
+      };
+    });
+  }
+
+  /* ================= COUNTDOWN TIMER ================= */
+  function startCountdown(){
+    var cycleMs = 3*60*60*1000; // 3 hour rolling cycle for continuous FOMO offer
+    function tick(){
+      var now = Date.now();
+      var remaining = cycleMs - (now % cycleMs);
+      var h = Math.floor(remaining/3600000);
+      var m = Math.floor((remaining%3600000)/60000);
+      var s = Math.floor((remaining%60000)/1000);
+      var pad = function(n){ return n<10 ? "0"+n : ""+n; };
+      var el = document.getElementById("gss-countdown");
+      if(el) el.textContent = pad(h)+"h "+pad(m)+"m "+pad(s)+"s";
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  /* ================= COUNTERS ================= */
+  var counterRange = "today";       // today | week | month | all
+  var lastCountersAll = {};         // cached raw {dateKey:{cat:count}} from Firebase, for instant tab switching
+
+  function todayKey(d){
+    var dt = d ? new Date(d) : new Date();
+    return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate();
+  }
+  function renderCounters(counts){
+    counts = counts || {};
+    document.getElementById("cnt-2w").textContent = counts["2w"]||0;
+    document.getElementById("cnt-3w").textContent = counts["3w"]||0;
+    document.getElementById("cnt-car").textContent = counts["car"]||0;
+    document.getElementById("cnt-suv").textContent = counts["suv"]||0;
+  }
+  function dateKeyToTime(dateKey){
+    var p = dateKey.split("-").map(function(n){ return parseInt(n,10); });
+    return new Date(p[0], (p[1]||1)-1, p[2]||1).getTime();
+  }
+  function dateInRange(ts, range, now){
+    if(range === "today") return todayKey(ts) === todayKey(now);
+    if(range === "week") return (now - ts) <= 7*24*3600*1000 && ts <= now;
+    if(range === "month") return (now - ts) <= 30*24*3600*1000 && ts <= now;
+    return true; // all-time
+  }
+  function aggregateCountersFromFirebase(all, range){
+    var totals = {"2w":0,"3w":0,"car":0,"suv":0};
+    var now = Date.now();
+    Object.keys(all||{}).forEach(function(dateKey){
+      if(!dateInRange(dateKeyToTime(dateKey), range, now)) return;
+      var day = all[dateKey] || {};
+      Object.keys(day).forEach(function(cat){
+        if(totals.hasOwnProperty(cat)) totals[cat] += (day[cat]||0);
+      });
+    });
+    return totals;
+  }
+  function refreshCountersLocalRange(){
+    getAll("vehicles", function(list){
+      var now = Date.now();
+      var totals = {"2w":0,"3w":0,"car":0,"suv":0};
+      list.forEach(function(v){
+        if(dateInRange(v.timestamp, counterRange, now) && totals.hasOwnProperty(v.category)) totals[v.category]++;
+      });
+      renderCounters(totals);
+    });
+  }
+  function setupCountersLive(){
+    if(!fbEnabled) return;
+    // Listening on the whole "counters" node (one small tree, grouped by day) lets every
+    // tab (Today/Week/Month/All-Time) update live and instantly, and it's the exact same
+    // data the Admin > Logger buttons write to - so admin taps reflect here immediately.
+    fbListen("counters", function(all){
+      lastCountersAll = all || {};
+      renderCounters(aggregateCountersFromFirebase(lastCountersAll, counterRange));
+    });
+  }
+  GSS.setCounterRange = function(r){
+    counterRange = r;
+    document.querySelectorAll("#counter-tabs button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-r") === r);
+    });
+    if(fbEnabled){
+      renderCounters(aggregateCountersFromFirebase(lastCountersAll, r));
+    } else {
+      refreshCountersLocalRange();
+    }
+  };
+  GSS.logVehicle = function(cat){
+    addRecord("vehicles", {category:cat, timestamp:Date.now()}, function(){
+      toast("Vehicle logged: "+cat.toUpperCase(),"ok");
+      if(fbEnabled){
+        try{
+          fbDb.ref("counters/"+todayKey()+"/"+cat).transaction(function(cur){ return (cur||0)+1; });
+        }catch(e){ console.error(e); refreshCountersLocalRange(); }
+      } else {
+        refreshCountersLocalRange();
+      }
+    });
+  };
+
+  /* ================= SERVICES ================= */
+  GSS.renderServices = function(){
+    var cat = document.getElementById("svc-category").value;
+    var list = PRICES[cat];
+    var html = "";
+    Object.keys(list).forEach(function(name){
+      var price = list[name];
+      var isOil = (name === "Oil Change");
+      html += "<div class='gss-service-row'>" +
+        "<div class='gss-service-name'>"+name+(isOil ? " <span class='gss-free-badge'>LABOUR: PKR 0 (FREE)</span>" : "")+"</div>" +
+        "<div class='gss-service-price'>PKR "+price+"</div>" +
+      "</div>";
+    });
+    document.getElementById("services-list").innerHTML = html;
+  };
+
+  GSS.fillBookingServices = function(){
+    var cat = document.getElementById("bk-category").value;
+    var list = PRICES[cat];
+    var sel = document.getElementById("bk-service");
+    sel.innerHTML = "";
+    Object.keys(list).forEach(function(name){
+      var opt = document.createElement("option");
+      opt.value = name; opt.textContent = name + " - PKR " + list[name];
+      sel.appendChild(opt);
+    });
+  };
+
+  /* ================= TEAM ================= */
+  var lastStaffList = [];
+  var lastAttendanceTodayMap = {};
+  var badgeClassMap = {"Present":"tag-present", "Half-Day":"tag-half", "Leave":"tag-leave", "Absent":"tag-absent"};
+
+  function renderTeamGrid(list, statusMap){
+    lastStaffList = list || [];
+    lastAttendanceTodayMap = statusMap || {};
+    if(!lastStaffList.length){
+      document.getElementById("team-grid").innerHTML = "<div class='gss-empty'>Team profiles will appear here once added by Admin.</div>";
+      return;
+    }
+    var html = "";
+    var roleLabel = {owner:"Owner", commission:"Technician", salary:"Technician"};
+    lastStaffList.forEach(function(s){
+      var st = lastAttendanceTodayMap[s.id];
+      var badge = st ? "<span class='gss-attend-tag "+(badgeClassMap[st]||"")+"'>"+escapeHtml(st)+"</span>" : "";
+      html += "<div class='gss-team-card'>" +
+        "<img src='"+(s.image || "https://placehold.co/80x80/1a212c/00e5ff?text="+encodeURIComponent((s.name||"?").charAt(0)))+"'/>" +
+        "<div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||"Staff")+"</div>" + badge +
+      "</div>";
+    });
+    document.getElementById("team-grid").innerHTML = html;
+  }
+
+  function refreshTeam(){
+    getAll("staff", function(list){
+      var tKey = todayKey();
+      getAll("attendance", function(attList){
+        var todayMap = {};
+        attList.forEach(function(a){ if(a.date===tKey) todayMap[a.staffId]=a.status; });
+        renderTeamGrid(list, todayMap);
+      });
+    });
+  }
+  function setupTeamLive(){
+    if(!fbEnabled) return;
+    fbListen("staff", function(map){
+      var list = Object.keys(map||{}).map(function(k){
+        var s = map[k]; if(!s.id) s.id = isNaN(k) ? k : parseInt(k,10); return s;
+      });
+      renderTeamGrid(list, lastAttendanceTodayMap);
+    });
+  }
+  function setupAttendanceBadgeLive(){
+    if(!fbEnabled) return;
+    fbListen("attendance_public/"+todayKey(), function(map){
+      renderTeamGrid(lastStaffList, map);
+    });
+  }
+
+  /* ================= REVIEWS ================= */
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.closest && e.target.closest("#rev-stars span")){
+      var span = e.target.closest("span");
+      var val = parseInt(span.getAttribute("data-v"),10);
+      document.getElementById("rev-stars").setAttribute("data-val", val);
+      renderStars(val);
+    }
+  });
+  function renderStars(val){
+    document.querySelectorAll("#rev-stars span").forEach(function(s){
+      s.classList.toggle("active", parseInt(s.getAttribute("data-v"),10) <= val);
+    });
+  }
+  renderStars(5);
+
+  GSS.submitReview = function(){
+    var name = document.getElementById("rev-name").value.trim();
+    var msg = document.getElementById("rev-msg").value.trim();
+    var rating = parseInt(document.getElementById("rev-stars").getAttribute("data-val"),10);
+    if(!name || !msg){ toast("Please fill your name and message.","err"); return; }
+    var record = {name:name, rating:rating, message:msg, timestamp:Date.now()};
+    addRecord("reviews", record, function(id){
+      record.id = id;
+      if(fbEnabled) fbSet("reviews/"+id, record);
+      toast("Thanks for your review!","ok");
+      document.getElementById("rev-name").value=""; document.getElementById("rev-msg").value="";
+      refreshReviews();
+    });
+  };
+  function renderReviews(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    if(!list.length){
+      document.getElementById("reviews-list").innerHTML = "<div class='gss-empty'>No reviews yet. Be the first!</div>";
+      return;
+    }
+    var html = "";
+    list.forEach(function(r){
+      var stars = "";
+      for(var i=0;i<5;i++){ stars += i < r.rating ? "&#9733;" : "&#9734;"; }
+      html += "<div class='gss-review-card'>" +
+        "<div class='gss-review-top'><b style=\"font-size:12px\">"+escapeHtml(r.name)+"</b><span class='gss-stars'>"+stars+"</span></div>" +
+        "<div class='gss-review-msg'>"+escapeHtml(r.message)+"</div>" +
+      "</div>";
+    });
+    document.getElementById("reviews-list").innerHTML = html;
+  }
+  function refreshReviews(){
+    getAll("reviews", renderReviews);
+  }
+  function setupReviewsLive(){
+    if(!fbEnabled) return;
+    fbListen("reviews", function(map){
+      var list = Object.keys(map||{}).map(function(k){
+        var r = map[k]; if(!r.id) r.id = isNaN(k) ? k : parseInt(k,10); return r;
+      });
+      renderReviews(list);
+    });
+  }
+
+  /* ================= BOOKING ================= */
+  GSS.submitBooking = function(){
+    var name = document.getElementById("bk-name").value.trim();
+    var phone = document.getElementById("bk-phone").value.trim();
+    var vehicle = document.getElementById("bk-vehicle").value.trim();
+    var cat = document.getElementById("bk-category").value;
+    var service = document.getElementById("bk-service").value;
+    if(!name || !phone || !vehicle || !service){ toast("Please fill all fields.","err"); return; }
+    var price = (PRICES[cat] && PRICES[cat][service]) ? PRICES[cat][service] : 0;
+    var record = {
+      name:name, phone:phone, vehicle:vehicle, category:cat, service:service,
+      price:price, status:"Pending", timestamp:Date.now()
+    };
+    fbNextToken(function(fbToken){
+      if(fbToken){
+        record.id = fbToken;
+        fbSet("bookings/"+fbToken, record);
+        addRecordWithId("bookings", record, function(){ finalizeBooking(fbToken, record); });
+      } else {
+        addRecord("bookings", record, function(localId){ finalizeBooking(localId, record); });
+      }
+    });
+  };
+
+  function finalizeBooking(token, record){
+    fireConfetti();
+    showBookingSuccess(token, record);
+    document.getElementById("bk-name").value="";
+    document.getElementById("bk-phone").value="";
+    document.getElementById("bk-vehicle").value="";
+  }
+
+  function showBookingSuccess(token, record){
+    var msg = "GSS Booking Request:%0A" +
+      "Name: "+encodeURIComponent(record.name)+"%0A" +
+      "Phone: "+encodeURIComponent(record.phone)+"%0A" +
+      "Vehicle No: "+encodeURIComponent(record.vehicle)+"%0A" +
+      "Category: "+encodeURIComponent(CATEGORY_LABEL[record.category]||record.category)+"%0A" +
+      "Service: "+encodeURIComponent(record.service)+"%0A" +
+      "Token: #"+token;
+    var url = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+msg;
+    document.getElementById("success-token").textContent = token;
+    document.getElementById("success-whatsapp-btn").setAttribute("href", url);
+    document.getElementById("booking-success").classList.add("show");
+    toast("Booking confirmed! Token #"+token,"ok");
+  }
+  GSS.closeBookingSuccess = function(){
+    document.getElementById("booking-success").classList.remove("show");
+  };
+
+  function fireConfetti(){
+    var colors = ["#00e5ff","#2979ff","#20e3a2","#ffb703","#ff4d6d"];
+    for(var i=0;i<28;i++){
+      var piece = document.createElement("div");
+      piece.className = "gss-confetti-piece";
+      piece.style.left = (Math.random()*100)+"vw";
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDuration = (1.2 + Math.random()*1.4)+"s";
+      document.body.appendChild(piece);
+      (function(p){ setTimeout(function(){ p.remove(); }, 3000); })(piece);
+    }
+  }
+
+  /* ================= WHATSAPP FAB ================= */
+  function refreshFab(){
+    var fab = document.getElementById("gss-fab");
+    var msg = "Hi GSS! I'd like to know more about your services.";
+    fab.href = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg);
+  }
+
+  /* ================= TRACK ORDER ================= */
+  GSS.trackOrder = function(){
+    var q = document.getElementById("trk-input").value.trim().toLowerCase();
+    if(!q){ toast("Enter a vehicle number or token.","err"); return; }
+    if(q.charAt(0) === "#") q = q.substring(1);
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var found = null;
+          Object.keys(all).forEach(function(k){
+            var b = all[k];
+            if(String(k) === q || String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q)) found = b;
+          });
+          if(found){ renderTrackResult(found); } else { trackLocal(q); }
+        }).catch(function(){ trackLocal(q); });
+      }catch(e){ trackLocal(q); }
+    } else {
+      trackLocal(q);
+    }
+  };
+  function trackLocal(q){
+    getAll("bookings", function(list){
+      var found = null;
+      list.forEach(function(b){
+        if(String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q)) found = b;
+      });
+      renderTrackResult(found);
+    });
+  }
+  function renderTrackResult(found){
+    var box = document.getElementById("track-result");
+    if(!found){
+      box.innerHTML = "<div class='gss-empty'>No active order found for that vehicle/token.</div>";
+      return;
+    }
+    var steps = ["Pending","In-Process","Completed"];
+    var idx = steps.indexOf(found.status);
+    var html = "<div class='gss-form'><b style=\"font-size:12px\">Token #"+(found.id!==undefined?found.id:"")+" &bull; "+escapeHtml(found.vehicle)+"</b>" +
+      "<div class='gss-stepper'>";
+    steps.forEach(function(s, i){
+      var cls = i < idx ? "done" : (i === idx ? "current" : "");
+      html += "<div class='gss-step "+cls+"'><div class='dot'>"+(i<idx?"&#10003;":(i+1))+"</div><div class='lbl2'>"+s+"</div></div>";
+    });
+    html += "</div></div>";
+    box.innerHTML = html;
+  }
+
+  /* ================= ADMIN: TAB SWITCH ================= */
+  GSS.adminTab = function(t){
+    document.querySelectorAll(".gss-atab").forEach(function(a){ a.classList.toggle("active", a.getAttribute("data-t")===t); });
+    document.querySelectorAll(".gss-apanel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("apanel-"+t).classList.add("active");
+    if(t==="queue") refreshQueue();
+    if(t==="expense") refreshExpenses();
+    if(t==="attend") refreshAttendance();
+    if(t==="staff") refreshStaffList();
+    if(t==="finance") refreshFinance();
+  };
+
+  function refreshAdminData(){
+    refreshQueue(); refreshExpenses(); refreshAttendance(); refreshStaffList(); refreshFinance();
+  }
+
+  /* ================= ADMIN: QUEUE ================= */
+  function renderQueue(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    if(!list.length){ document.getElementById("queue-list").innerHTML = "<div class='gss-empty'>No bookings yet.</div>"; return; }
+    var html = "";
+    list.forEach(function(b){
+      html += "<div class='gss-queue-item'>" +
+        "<div class='gss-queue-top'><span>#"+b.id+" "+escapeHtml(b.name)+"</span><span>PKR "+b.price+"</span></div>" +
+        "<div class='gss-queue-meta'>"+escapeHtml(b.vehicle)+" &bull; "+escapeHtml(CATEGORY_LABEL[b.category]||b.category)+" &bull; "+escapeHtml(b.service)+"</div>" +
+        "<select class='gss-status-select' onchange='GSS.updateStatus("+JSON.stringify(b.id)+", this.value)'>" +
+          ["Pending","In-Process","Completed"].map(function(s){ return "<option "+(s===b.status?"selected":"")+">"+s+"</option>"; }).join("") +
+        "</select>" +
+      "</div>";
+    });
+    document.getElementById("queue-list").innerHTML = html;
+  }
+  function refreshQueue(){
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
+          renderQueue(list);
+        }).catch(function(){ getAll("bookings", renderQueue); });
+      }catch(e){ getAll("bookings", renderQueue); }
+    } else {
+      getAll("bookings", renderQueue);
+    }
+  }
+  GSS.updateStatus = function(id, status){
+    if(fbEnabled){ fbUpdate("bookings/"+id, {status:status}); }
+    openDB(function(){
+      var store = tx("bookings","readwrite");
+      var r = store.get(id);
+      r.onsuccess = function(e){
+        var rec = e.target.result;
+        if(rec){ rec.status = status; store.put(rec); }
+        toast("Status updated to "+status,"ok");
+        refreshFinance();
+      };
+      r.onerror = function(){ toast("Status updated to "+status,"ok"); refreshFinance(); };
+    });
+  };
+
+  /* ================= ADMIN: EXPENSES (50/50 split) ================= */
+  GSS.addExpense = function(){
+    var amount = parseFloat(document.getElementById("exp-amount").value);
+    var category = document.getElementById("exp-category").value;
+    var spender = document.getElementById("exp-spender").value.trim();
+    if(!amount || amount<=0 || !spender){ toast("Enter valid amount and spender.","err"); return; }
+    addRecord("expenses", {amount:amount, category:category, spender:spender, timestamp:Date.now()}, function(){
+      toast("Expense committed & split 50/50.","ok");
+      document.getElementById("exp-amount").value="";
+      document.getElementById("exp-spender").value="";
+      refreshExpenses(); refreshFinance();
+    });
+  };
+  function refreshExpenses(){
+    getAll("expenses", function(list){
+      list.sort(function(a,b){ return b.timestamp - a.timestamp; });
+      if(!list.length){ document.getElementById("expense-list").innerHTML = "<div class='gss-empty'>No expenses logged.</div>"; return; }
+      var html = "";
+      list.slice(0,25).forEach(function(x){
+        html += "<div class='gss-queue-item'>" +
+          "<div class='gss-queue-top'><span>"+escapeHtml(x.category)+"</span><span>PKR "+x.amount+"</span></div>" +
+          "<div class='gss-queue-meta'>Paid by "+escapeHtml(x.spender)+" &bull; Owner: PKR "+(x.amount*0.5).toFixed(0)+" | Labour Pool: PKR "+(x.amount*0.5).toFixed(0)+"</div>" +
+        "</div>";
+      });
+      document.getElementById("expense-list").innerHTML = html;
+    });
+  }
+
+  /* ================= ADMIN: ATTENDANCE ================= */
+  var ATTEND_STATUSES = ["Present","Half-Day","Leave","Absent"];
+  var ATTEND_CLASS = {"Present":"sel-present", "Half-Day":"sel-half", "Leave":"sel-leave", "Absent":"sel-absent"};
+
+  function refreshAttendance(){
+    getAll("staff", function(staffList){
+      if(!staffList.length){ document.getElementById("attend-list").innerHTML = "<div class='gss-empty'>Add staff profiles first.</div>"; return; }
+      var tKey = todayKey();
+      getAll("attendance", function(attList){
+        var todayMap = {};
+        attList.forEach(function(a){ if(a.date===tKey) todayMap[a.staffId]=a.status; });
+        var html = "";
+        staffList.forEach(function(s){
+          var cur = todayMap[s.id] || "";
+          html += "<div class='gss-attend-row' data-staff='"+s.id+"'>" +
+            "<span style=\"font-size:12px; font-weight:700\">"+escapeHtml(s.name)+"</span>" +
+            "<div class='gss-attend-opts'>" +
+              ATTEND_STATUSES.map(function(st){
+                return "<button class='"+(cur===st?ATTEND_CLASS[st]:"")+"' onclick='GSS.markAttendance("+s.id+",\""+st+"\")'>"+st+"</button>";
+              }).join("") +
+            "</div>" +
+          "</div>";
+        });
+        document.getElementById("attend-list").innerHTML = html;
+      });
+    });
+    // keep the monthly sheet in sync whenever this tab is shown
+    GSS.refreshMonthlySheet();
+  }
+  GSS._pendingAttendance = {};
+  GSS.markAttendance = function(staffId, status){
+    GSS._pendingAttendance[staffId] = status;
+    var row = document.querySelector('.gss-attend-row[data-staff="'+staffId+'"] .gss-attend-opts');
+    row.querySelectorAll("button").forEach(function(b){ b.className = ""; });
+    Array.prototype.forEach.call(row.children, function(b){
+      if(b.textContent === status) b.className = ATTEND_CLASS[status];
+    });
+  };
+  GSS.commitAttendance = function(){
+    var tKey = todayKey();
+    var ids = Object.keys(GSS._pendingAttendance);
+    if(!ids.length){ toast("Mark attendance before committing.","err"); return; }
+    var done = 0;
+    ids.forEach(function(staffId){
+      var status = GSS._pendingAttendance[staffId];
+      addRecord("attendance", {staffId: parseInt(staffId,10), date: tKey, status: status, timestamp:Date.now()}, function(){
+        if(fbEnabled) fbSet("attendance_public/"+tKey+"/"+staffId, status);
+        done++;
+        if(done === ids.length){
+          toast("Attendance ledger committed for today.","ok");
+          GSS._pendingAttendance = {};
+          refreshTeam();
+          GSS.refreshMonthlySheet();
+        }
+      });
+    });
+  };
+
+  /* ---- Monthly attendance summary sheet ---- */
+  GSS.refreshMonthlySheet = function(){
+    var picker = document.getElementById("month-picker");
+    if(!picker) return;
+    if(!picker.value){
+      var d = new Date();
+      picker.value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    }
+    var parts = picker.value.split("-");
+    var y = parseInt(parts[0],10), mo = parseInt(parts[1],10);
+    getAll("staff", function(staffList){
+      var target = document.getElementById("monthly-sheet");
+      if(!staffList.length){ target.innerHTML = "<div class='gss-empty'>No staff profiles yet.</div>"; return; }
+      getAll("attendance", function(attList){
+        var html = "<table class='gss-month-table'><thead><tr><th>Staff</th><th>Present</th><th>Half-Day</th><th>Leave</th><th>Absent</th><th>Marked</th></tr></thead><tbody>";
+        staffList.forEach(function(s){
+          var counts = {"Present":0, "Half-Day":0, "Leave":0, "Absent":0};
+          attList.forEach(function(a){
+            if(a.staffId !== s.id || !a.date) return;
+            var dparts = a.date.split("-");
+            if(parseInt(dparts[0],10)===y && parseInt(dparts[1],10)===mo && counts.hasOwnProperty(a.status)){
+              counts[a.status]++;
+            }
+          });
+          var marked = counts["Present"]+counts["Half-Day"]+counts["Leave"]+counts["Absent"];
+          html += "<tr><td>"+escapeHtml(s.name)+"</td><td>"+counts["Present"]+"</td><td>"+counts["Half-Day"]+"</td><td>"+counts["Leave"]+"</td><td>"+counts["Absent"]+"</td><td>"+marked+"</td></tr>";
+        });
+        html += "</tbody></table>";
+        target.innerHTML = html;
+      });
+    });
+  };
+
+  /* ================= ADMIN: STAFF PROFILES ================= */
+  var editingStaffId = null;
+
+  GSS.handleStaffImage = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      currentStaffImageB64 = ev.target.result;
+      var box = document.getElementById("staff-avatar-preview");
+      box.innerHTML = "<img src='"+currentStaffImageB64+"'/>";
+    };
+    reader.readAsDataURL(file);
+  };
+
+  GSS.saveStaff = function(){
+    var name = document.getElementById("staff-name").value.trim();
+    var role = document.getElementById("staff-role").value;
+    var salary = parseFloat(document.getElementById("staff-salary").value) || 0;
+    if(!name){ toast("Enter staff name.","err"); return; }
+    var record = {name:name, role:role, salary:salary, image: currentStaffImageB64 || "", timestamp:Date.now()};
+
+    if(editingStaffId !== null){
+      // UPDATE existing profile
+      record.id = editingStaffId;
+      putRecord("staff", record, function(){
+        if(fbEnabled) fbSet("staff/"+editingStaffId, record);
+        toast("Profile updated.","ok");
+        GSS.cancelStaffEdit();
+        refreshStaffList(); refreshTeam();
+      });
+    } else {
+      // CREATE new profile
+      addRecord("staff", record, function(id){
+        record.id = id;
+        if(fbEnabled) fbSet("staff/"+id, record);
+        toast("Profile saved.","ok");
+        resetStaffForm();
+        refreshStaffList(); refreshTeam();
+      });
+    }
+  };
+
+  function resetStaffForm(){
+    document.getElementById("staff-name").value="";
+    document.getElementById("staff-salary").value="";
+    document.getElementById("staff-role").value="owner";
+    document.getElementById("staff-avatar-preview").innerHTML = "Tap to Upload";
+    currentStaffImageB64 = null;
+  }
+
+  GSS.editStaff = function(id){
+    getOne("staff", id, function(s){
+      if(!s){ toast("Profile not found.","err"); return; }
+      editingStaffId = id;
+      document.getElementById("staff-form-title").textContent = "Editing: " + s.name;
+      document.getElementById("staff-name").value = s.name || "";
+      document.getElementById("staff-role").value = s.role || "owner";
+      document.getElementById("staff-salary").value = s.salary || 0;
+      currentStaffImageB64 = s.image || null;
+      document.getElementById("staff-avatar-preview").innerHTML = s.image ? "<img src='"+s.image+"'/>" : "Tap to Upload";
+      document.getElementById("staff-save-btn").textContent = "Update Profile";
+      document.getElementById("staff-cancel-btn").classList.remove("gss-hidden");
+      document.getElementById("staff-name").scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  };
+
+  GSS.cancelStaffEdit = function(){
+    editingStaffId = null;
+    document.getElementById("staff-form-title").textContent = "Add New Profile";
+    document.getElementById("staff-save-btn").textContent = "Save Profile";
+    document.getElementById("staff-cancel-btn").classList.add("gss-hidden");
+    resetStaffForm();
+  };
+
+  GSS.deleteStaff = function(id, name){
+    if(!window.confirm("Remove "+(name||"this profile")+" permanently? This also clears their attendance history.")){
+      return;
+    }
+    deleteRecord("staff", id, function(){
+      if(fbEnabled){ try{ fbDb.ref("staff/"+id).remove(); }catch(e){ console.error(e); } }
+      // Clean up this staff member's attendance records too, so the monthly sheet stays accurate
+      getAll("attendance", function(list){
+        list.forEach(function(a){
+          if(a.staffId === id) deleteRecord("attendance", a.id, null);
+        });
+      });
+      if(editingStaffId === id) GSS.cancelStaffEdit();
+      toast("Profile removed.","ok");
+      refreshStaffList(); refreshTeam(); GSS.refreshMonthlySheet();
+    });
+  };
+
+  function refreshStaffList(){
+    getAll("staff", function(list){
+      if(!list.length){ document.getElementById("staff-list").innerHTML = "<div class='gss-empty'>No profiles yet.</div>"; return; }
+      var roleLabel = {owner:"Executive Owner", commission:"50% Commission Labour", salary:"Fixed Salary Labour"};
+      var html = "";
+      list.forEach(function(s){
+        html += "<div class='gss-staff-list-row'>" +
+          "<img src='"+(s.image || "https://placehold.co/60x60/1a212c/00e5ff?text="+encodeURIComponent(s.name.charAt(0)))+"'/>" +
+          "<div class='info'><div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||s.role)+" &bull; PKR "+s.salary+"</div></div>" +
+          "<div class='gss-staff-actions'>" +
+            "<button class='edit' onclick='GSS.editStaff("+s.id+")'>Edit</button>" +
+            "<button class='del' onclick='GSS.deleteStaff("+s.id+",\""+escapeHtml(s.name).replace(/"/g,"&quot;")+"\")'>Delete</button>" +
+          "</div>" +
+        "</div>";
+      });
+      document.getElementById("staff-list").innerHTML = html;
+      refreshTeam();
+    });
+  }
+
+  /* ================= ADMIN: FINANCE ================= */
+  GSS.setFinanceFilter = function(f){
+    financeFilter = f;
+    document.querySelectorAll(".gss-filter-row button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-f")===f); });
+    refreshFinance();
+  };
+  function inRange(ts){
+    var now = Date.now();
+    var d = now - ts;
+    if(financeFilter==="daily") return todayKey(ts) === todayKey(now);
+    if(financeFilter==="weekly") return d <= 7*24*3600*1000;
+    if(financeFilter==="monthly") return d <= 30*24*3600*1000;
+    return true;
+  }
+  function refreshFinance(){
+    function withBookings(bookings){
+      getAll("expenses", function(expenses){
+        var revenue = 0;
+        bookings.forEach(function(b){ if(b.status==="Completed" && inRange(b.timestamp)) revenue += (b.price||0); });
+        var totalExp = 0;
+        expenses.forEach(function(x){ if(inRange(x.timestamp)) totalExp += (x.amount||0); });
+        var ownerExpShare = totalExp * 0.5;
+        var labourExpShare = totalExp * 0.5;
+        var ownerRevenueShare = revenue * 0.5;
+        var ownerNet = ownerRevenueShare - ownerExpShare;
+        var labourRevenueShare = revenue * 0.5;
+        var labourNet = labourRevenueShare - labourExpShare;
+        document.getElementById("fin-revenue").textContent = "PKR " + revenue.toFixed(0);
+        document.getElementById("fin-expenses").textContent = "PKR " + totalExp.toFixed(0);
+        document.getElementById("fin-owner").textContent = "PKR " + ownerNet.toFixed(0);
+        document.getElementById("fin-labour").textContent = "PKR " + labourNet.toFixed(0);
+      });
+    }
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
+          withBookings(list);
+        }).catch(function(){ getAll("bookings", withBookings); });
+      }catch(e){ getAll("bookings", withBookings); }
+    } else {
+      getAll("bookings", withBookings);
+    }
+  }
+
+  /* ================= BACKUP / RESTORE ================= */
+  GSS.exportBackup = function(){
+    var out = {};
+    var remaining = STORES.length;
+    STORES.forEach(function(s){
+      getAll(s, function(list){
+        out[s] = list;
+        remaining--;
+        if(remaining === 0){
+          var blob = new Blob([JSON.stringify(out, null, 2)], {type:"application/json"});
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = "gss-backup-" + Date.now() + ".json";
+          document.body.appendChild(a); a.click(); a.remove();
+          URL.revokeObjectURL(url);
+          toast("Backup downloaded.","ok");
+        }
+      });
+    });
+  };
+  GSS.importBackup = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var data = JSON.parse(ev.target.result);
+        var storesToRestore = Object.keys(data).filter(function(k){ return STORES.indexOf(k) !== -1; });
+        var remaining = storesToRestore.length;
+        storesToRestore.forEach(function(s){
+          clearStore(s, function(){
+            var items = data[s] || [];
+            if(!items.length){ remaining--; if(remaining===0) finishRestore(); return; }
+            var count = 0;
+            items.forEach(function(item){
+              openDB(function(){
+                var r = tx(s,"readwrite").put(item);
+                r.onsuccess = function(){ count++; if(count===items.length){ remaining--; if(remaining===0) finishRestore(); } };
+              });
+            });
+          });
+        });
+      }catch(err){
+        toast("Invalid backup file.","err");
+      }
+    };
+    reader.readAsText(file);
+    function finishRestore(){
+      toast("Restore complete. Reloading data...","ok");
+      refreshCountersLocalRange(); refreshTeam(); refreshReviews(); refreshAdminData();
+    }
+  };
+
+  /* ================= CLOUD SYNC (Google Sheets placeholder) ================= */
+  // To enable cloud sync:
+  // 1. Create a Google Sheet, then Extensions > Apps Script.
+  // 2. Paste a doPost(e) function that parses e.postData.contents (JSON)
+  //    and appends rows to relevant sheets per store name.
+  // 3. Deploy as Web App (execute as: Me, access: Anyone), copy the URL below.
+  var GOOGLE_APPS_SCRIPT_URL = ""; // <-- paste your deployed Apps Script Web App URL here
+
+  GSS.syncToCloud = function(){
+    if(!GOOGLE_APPS_SCRIPT_URL){
+      toast("Cloud Sync URL not configured yet.","err");
+      return;
+    }
+    var out = {};
+    var remaining = STORES.length;
+    STORES.forEach(function(s){
+      getAll(s, function(list){
+        out[s] = list;
+        remaining--;
+        if(remaining === 0){
+          fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(out)
+          }).then(function(){ toast("Synced to cloud.","ok"); })
+            .catch(function(){ toast("Cloud sync failed. Check connection.","err"); });
+        }
+      });
+    });
+  };
+
+  /* ================= UTIL ================= */
+  function escapeHtml(str){
+    if(!str) return "";
+    return String(str).replace(/[&<>"']/g, function(m){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[m];
+    });
+  }
+
+  /* ================= INIT ================= */
+  function init(){
+    try{
+      // Render the static UI shell immediately so the screen is never blank,
+      // even if storage or network calls fail below.
+      buildPinKeys();
+      startCountdown();
+      GSS.renderServices();
+      GSS.fillBookingServices();
+      refreshFab();
+    }catch(errShell){
+      console.error("GSS shell init error", errShell);
+    }
+
+    try{
+      initFirebase();
+    }catch(errFb){
+      console.error("GSS Firebase init error", errFb);
+    }
+
+    try{
+      openDB(function(){
+        try{
+          refreshCountersLocalRange();
+          refreshTeam();
+          refreshReviews();
+        }catch(errData){
+          console.error("GSS data render error", errData);
+        }
+      });
+    }catch(errDb){
+      console.error("GSS DB init error", errDb);
+      toast("Running in limited mode (storage unavailable).","err");
+    }
+
+    try{
+      // These are no-ops if Firebase isn't configured; once configured they
+      // keep counters, team, reviews, and today's attendance badges live
+      // across every device/visitor in real time.
+      setupCountersLive();
+      setupTeamLive();
+      setupReviewsLive();
+      setupAttendanceBadgeLive();
+    }catch(errLive){
+      console.error("GSS live listeners error", errLive);
+    }
+  }
+
+  if(document.readyState === "loading"){
+    window.addEventListener("DOMContentLoaded", init);
+  } else {
+    // DOM already parsed (e.g. script executed late in the page's render pipeline)
+    init();
+  }
+
+})();
+
+</script>
+</body>
+</html>
