@@ -1,0 +1,51 @@
+{
+  "rules": {
+
+    "counters": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "staff": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "offers": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "reviews": {
+      ".read": true,
+      "$reviewId": {
+        ".write": "auth != null || !data.exists()"
+      }
+    },
+
+    "bookings": {
+      ".read": true,
+      "$bookingId": {
+        ".write": "auth != null || !data.exists()"
+      }
+    },
+
+    "attendance_public": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "meta": {
+      "tokenCounter": {
+        ".read": true,
+        ".write": true
+      }
+    },
+
+    "$other": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+
+  }
+}

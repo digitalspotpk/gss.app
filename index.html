@@ -1,0 +1,3252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GSS"/>
+<meta name="theme-color" content="#0b0e12"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="icon-192.png" type="image/png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<title>Gujjar Service Station</title>
+<style>
+html, body { margin:0; padding:0; }
+
+
+:root{
+  --gss-bg:#0b0e12;
+  --gss-panel:#131820;
+  --gss-panel2:#171d27;
+  --gss-card:#1a212c;
+  --gss-border:#232b38;
+  --gss-metal:linear-gradient(145deg,#1c222c,#12161d);
+  --gss-cyan:#00e5ff;
+  --gss-cyan-dim:#00b8cc;
+  --gss-blue:#2979ff;
+  --gss-text:#e8eef4;
+  --gss-text-dim:#8a97a8;
+  --gss-danger:#ff4d6d;
+  --gss-success:#20e3a2;
+  --gss-warn:#ffb703;
+  --gss-radius:16px;
+  --gss-radius-sm:10px;
+  --gss-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--gss-bg); color:var(--gss-text); font-family:'Segoe UI',Roboto,Arial,sans-serif; overflow-x:hidden;}
+body{-webkit-font-smoothing:antialiased;}
+a{text-decoration:none; color:inherit;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+#gss-app{
+  max-width:480px; min-width:320px; margin:0 auto; position:relative;
+  min-height:100vh; background:var(--gss-bg);
+  padding-bottom:78px;
+  background-image:radial-gradient(circle at 50% 0%, rgba(0,229,255,.05), transparent 60%);
+}
+
+/* ===== Header ===== */
+.gss-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; background:var(--gss-metal);
+  border-bottom:1px solid var(--gss-border);
+  position:sticky; top:0; z-index:50;
+}
+.gss-brand{display:flex; align-items:center; gap:10px;}
+.gss-badge{
+  width:42px; height:42px; border-radius:12px;
+  background:conic-gradient(from 180deg, var(--gss-cyan), var(--gss-blue), var(--gss-cyan));
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px; color:#04151a;
+  box-shadow:0 0 18px rgba(0,229,255,.45);
+}
+.gss-brand h1{font-size:15px; margin:0; letter-spacing:.3px; font-weight:700;}
+.gss-brand span{display:block; font-size:10px; color:var(--gss-text-dim); font-weight:400;}
+.gss-header-icon{
+  width:36px; height:36px; border-radius:10px; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:var(--gss-cyan);
+}
+.gss-install-btn{
+  padding:8px 12px; border-radius:10px; border:1px solid rgba(0,229,255,.4);
+  background:rgba(0,229,255,.1); color:var(--gss-cyan); font-size:11px; font-weight:800;
+  white-space:nowrap;
+}
+.gss-install-btn:active{transform:scale(.96);}
+
+/* ===== Promo ribbon ===== */
+.gss-promo{
+  margin:12px; padding:10px 12px; border-radius:14px;
+  background:linear-gradient(120deg, rgba(0,229,255,.12), rgba(41,121,255,.10));
+  border:1px solid rgba(0,229,255,.35);
+  box-shadow:0 0 22px rgba(0,229,255,.15);
+  animation:gssPulse 2.2s ease-in-out infinite;
+  text-align:center;
+}
+@keyframes gssPulse{
+  0%,100%{box-shadow:0 0 14px rgba(0,229,255,.15);}
+  50%{box-shadow:0 0 28px rgba(0,229,255,.4);}
+}
+.gss-promo-text{font-weight:700; font-size:12.5px; color:var(--gss-cyan); letter-spacing:.2px;}
+.gss-promo-timer{
+  margin-top:6px; font-size:11px; color:var(--gss-text); font-weight:600;
+  background:rgba(0,0,0,.35); display:inline-block; padding:4px 10px; border-radius:20px;
+  border:1px solid var(--gss-border);
+}
+.gss-promo-timer b{color:var(--gss-warn);}
+
+/* ===== Pages / tabs ===== */
+.gss-page{display:none; padding:4px 14px 20px;}
+.gss-page.active{display:block; animation:gssFade .25s ease;}
+@keyframes gssFade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.gss-section-title{
+  font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--gss-text-dim);
+  margin:18px 0 10px; font-weight:700;
+}
+
+/* ===== Counters ===== */
+.gss-counter-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+
+/* ===== Pull to refresh ===== */
+.gss-ptr-indicator{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  height:0; overflow:hidden; opacity:0; transition:height .2s ease, opacity .2s ease;
+  color:var(--gss-cyan); font-size:11px; font-weight:700;
+}
+.gss-ptr-indicator.show{height:44px; opacity:1;}
+.gss-ptr-spinner{
+  width:16px; height:16px; border-radius:50%; border:2px solid rgba(0,229,255,.25);
+  border-top-color:var(--gss-cyan); animation:gssSpin .7s linear infinite;
+}
+@keyframes gssSpin{ to{ transform:rotate(360deg); } }
+
+/* ===== Public stats cards (no money, ever) ===== */
+.gss-public-stats-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:4px;}
+.gss-public-stat-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius);
+  padding:14px 10px; text-align:center; box-shadow:var(--gss-shadow);
+}
+.gss-public-stat-card .ic{font-size:20px; margin-bottom:4px;}
+.gss-public-stat-card .v{font-size:19px; font-weight:800;}
+.gss-public-stat-card .l{font-size:9.5px; color:var(--gss-text-dim); margin-top:2px;}
+.gss-public-stat-card.cyan .v{color:var(--gss-cyan);}
+.gss-public-stat-card.orange .v{color:#ff9d3d;}
+
+/* ===== Monthly goal (admin only) ===== */
+.gss-goal-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px 14px;
+}
+.gss-goal-top{display:flex; justify-content:space-between; font-size:11.5px; font-weight:700; margin-bottom:8px;}
+.gss-goal-top span:last-child{color:var(--gss-cyan);}
+.gss-goal-track{width:100%; height:8px; border-radius:6px; background:var(--gss-panel2); overflow:hidden;}
+.gss-goal-fill{height:100%; border-radius:6px; background:linear-gradient(90deg, var(--gss-cyan), var(--gss-blue)); transition:width .4s ease;}
+
+/* ===== Quick actions (admin only) ===== */
+.gss-quick-actions-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+.gss-qa-btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px 4px; color:var(--gss-text);
+}
+.gss-qa-btn .ic{font-size:18px;}
+.gss-qa-btn .lbl{font-size:9.5px; font-weight:700; color:var(--gss-text-dim); text-align:center;}
+.gss-qa-btn:active{transform:scale(.95); border-color:var(--gss-cyan);}
+
+/* ===== Live at GSS ===== */
+.gss-live-row{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+.gss-live-chip{
+  display:flex; align-items:center; gap:10px; background:var(--gss-card); border:1px solid var(--gss-border);
+  border-radius:var(--gss-radius-sm); padding:11px 12px;
+}
+.gss-live-chip .ic{font-size:18px;}
+.gss-live-chip .v{font-size:12px; font-weight:800;}
+.gss-live-chip .l{font-size:9px; color:var(--gss-text-dim); margin-top:1px;}
+
+/* ===== Swipeable offers carousel ===== */
+.gss-offers-carousel{
+  display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; margin-top:12px;
+  padding-bottom:4px; -ms-overflow-style:none; scrollbar-width:none;
+}
+.gss-offers-carousel::-webkit-scrollbar{display:none;}
+.gss-offer-slide{
+  flex:0 0 82%; scroll-snap-align:start; background:linear-gradient(120deg, rgba(0,229,255,.10), rgba(41,121,255,.08));
+  border:1px solid rgba(0,229,255,.3); border-radius:var(--gss-radius); padding:14px;
+}
+.gss-offer-slide .ic{font-size:22px;}
+.gss-offer-slide .t{font-size:13px; font-weight:800; margin-top:6px;}
+.gss-offer-slide .d{font-size:11px; color:var(--gss-text-dim); margin-top:3px;}
+.gss-offer-slide .timer{font-size:10.5px; color:var(--gss-warn); font-weight:700; margin-top:6px;}
+.gss-offer-slide button{
+  margin-top:10px; padding:8px 14px; border-radius:20px; border:none;
+  background:linear-gradient(120deg, var(--gss-cyan), var(--gss-blue)); color:#03131a; font-weight:800; font-size:11px;
+}
+
+/* ===== Print Receipt (Quick Action) ===== */
+.gss-print-only{ display:none; }
+@media print{
+  body *{ visibility:hidden; }
+  #print-receipt-area, #print-receipt-area *{ visibility:visible; }
+  #print-receipt-area{
+    display:block !important; position:absolute; top:0; left:0; width:100%; padding:24px;
+    color:#000; background:#fff; font-family:'Courier New', monospace;
+  }
+  .pr-header{ font-size:19px; font-weight:800; text-align:center; }
+  .pr-sub{ text-align:center; font-size:12px; margin-bottom:16px; color:#333; }
+  .pr-row{ display:flex; justify-content:space-between; font-size:12px; padding:5px 0; border-bottom:1px dashed #999; }
+  .pr-total{ display:flex; justify-content:space-between; font-size:15px; font-weight:800; margin-top:12px; border-top:2px solid #000; padding-top:8px; }
+  .pr-footer{ text-align:center; margin-top:18px; font-size:11px; color:#333; }
+}
+.gss-counter-header{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:18px; flex-wrap:wrap;}
+.gss-counter-header .gss-section-title{white-space:nowrap;}
+
+/* ===== GSS By The Numbers (trust cards) ===== */
+.gss-numbers-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+.gss-number-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:14px 8px; text-align:center;
+}
+.gss-number-card .v{font-size:21px; font-weight:800; color:var(--gss-cyan);}
+.gss-number-card .l{font-size:9.5px; color:var(--gss-text-dim); margin-top:4px; line-height:1.3;}
+
+/* ===== Our Services (quick-book grid) ===== */
+.gss-quick-services-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+.gss-qs-btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius);
+  padding:18px 6px; color:var(--gss-text);
+}
+.gss-qs-btn .ic{font-size:26px;}
+.gss-qs-btn .lbl{font-size:11.5px; font-weight:700;}
+.gss-qs-btn:active{transform:scale(.96); border-color:var(--gss-cyan);}
+
+/* ===== Reviews preview carousel ===== */
+.gss-reviews-preview-carousel{
+  display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; margin-top:10px;
+  padding-bottom:4px; -ms-overflow-style:none; scrollbar-width:none;
+}
+.gss-reviews-preview-carousel::-webkit-scrollbar{display:none;}
+.gss-review-preview-card{
+  flex:0 0 78%; scroll-snap-align:start; background:var(--gss-card); border:1px solid var(--gss-border);
+  border-radius:var(--gss-radius-sm); padding:12px;
+}
+.gss-review-preview-card .stars{color:var(--gss-warn); font-size:12px;}
+.gss-review-preview-card .name{font-size:12px; font-weight:700; margin-top:5px;}
+.gss-review-preview-card .msg{font-size:11px; color:var(--gss-text-dim); margin-top:4px;}
+.gss-review-preview-card .date{font-size:9px; color:var(--gss-text-dim); opacity:.7; margin-top:6px;}
+
+/* ===== Visit GSS ===== */
+.gss-visit-photo{position:relative; border-radius:var(--gss-radius); overflow:hidden; margin-top:4px;}
+.gss-visit-photo img{width:100%; display:block; height:150px; object-fit:cover;}
+.gss-visit-photo-overlay{
+  position:absolute; bottom:0; left:0; right:0; padding:10px 12px; font-size:11.5px; font-weight:700;
+  background:linear-gradient(to top, rgba(0,0,0,.75), transparent);
+}
+.gss-visit-map{border-radius:var(--gss-radius-sm); overflow:hidden; margin-top:10px; border:1px solid var(--gss-border);}
+.gss-visit-map iframe{width:100%; height:200px; border:0; display:block;}
+.gss-visit-address{font-size:11.5px; color:var(--gss-text-dim); margin-top:10px; line-height:1.5;}
+.gss-visit-btns{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:12px;}
+.gss-visit-btns a{text-align:center; display:block;}
+
+/* ===== Services matrix ===== */
+.gss-select-wrap{margin-top:10px;}
+.gss-select{
+  width:100%; padding:12px; border-radius:var(--gss-radius-sm); background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:13px; appearance:none;
+}
+.gss-service-row{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px; margin-top:8px;
+}
+.gss-service-name{font-size:13px; font-weight:600;}
+.gss-service-price{font-size:13px; font-weight:700; color:var(--gss-cyan);}
+.gss-free-badge{
+  background:rgba(32,227,162,.15); color:var(--gss-success); border:1px solid rgba(32,227,162,.4);
+  font-size:10px; padding:3px 8px; border-radius:20px; margin-left:6px; font-weight:700;
+  animation:gssGlow 1.6s ease-in-out infinite;
+}
+@keyframes gssGlow{0%,100%{opacity:.7;} 50%{opacity:1;}}
+
+/* ===== Team ===== */
+.gss-team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.gss-team-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  text-align:center; padding:10px 6px;
+}
+.gss-team-card img{width:52px; height:52px; border-radius:50%; object-fit:cover; border:2px solid var(--gss-cyan);}
+.gss-team-card .n{font-size:11px; font-weight:700; margin-top:6px;}
+.gss-team-card .r{font-size:9px; color:var(--gss-text-dim);}
+
+/* ===== Reviews ===== */
+.gss-review-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px; margin-top:8px;
+}
+.gss-review-top{display:flex; justify-content:space-between; align-items:center;}
+.gss-stars{color:var(--gss-warn); font-size:12px;}
+.gss-review-msg{font-size:12px; color:var(--gss-text-dim); margin-top:6px;}
+.gss-star-input{font-size:22px; letter-spacing:4px; cursor:pointer; color:#3a4453;}
+.gss-star-input span.active{color:var(--gss-warn);}
+
+/* ===== Forms ===== */
+.gss-form{
+  background:var(--gss-panel); border:1px solid var(--gss-border); border-radius:var(--gss-radius);
+  padding:16px; margin-top:10px;
+}
+.gss-field{margin-bottom:12px;}
+.gss-field label{font-size:11px; color:var(--gss-text-dim); display:block; margin-bottom:5px; font-weight:600;}
+.gss-input, .gss-textarea{
+  width:100%; padding:11px; border-radius:var(--gss-radius-sm); background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:13px;
+}
+.gss-textarea{min-height:70px; resize:vertical;}
+.gss-btn{
+  width:100%; padding:13px; border-radius:var(--gss-radius-sm); border:none;
+  background:linear-gradient(120deg, var(--gss-cyan), var(--gss-blue));
+  color:#03131a; font-weight:800; font-size:13px; letter-spacing:.3px;
+  box-shadow:0 6px 18px rgba(0,229,255,.25);
+}
+.gss-btn:active{transform:scale(.98);}
+.gss-btn-outline{
+  width:100%; padding:12px; border-radius:var(--gss-radius-sm);
+  background:transparent; border:1px solid var(--gss-cyan); color:var(--gss-cyan); font-weight:700; font-size:12.5px;
+}
+.gss-btn-danger{background:linear-gradient(120deg, #ff6b81, var(--gss-danger)); color:#2a0410;}
+.gss-btn-sm{padding:9px; font-size:11.5px;}
+
+/* ===== Tracker ===== */
+.gss-stepper{display:flex; align-items:center; justify-content:space-between; margin-top:16px;}
+.gss-step{flex:1; text-align:center; position:relative;}
+.gss-step .dot{
+  width:26px; height:26px; border-radius:50%; background:var(--gss-panel2); border:2px solid var(--gss-border);
+  margin:0 auto 6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800;
+}
+.gss-step.done .dot{background:var(--gss-success); border-color:var(--gss-success); color:#04170f;}
+.gss-step.current .dot{background:var(--gss-cyan); border-color:var(--gss-cyan); color:#03131a; box-shadow:0 0 12px var(--gss-cyan);}
+.gss-step .lbl2{font-size:10px; color:var(--gss-text-dim);}
+.gss-step:not(:last-child):after{
+  content:''; position:absolute; top:13px; left:60%; width:80%; height:2px; background:var(--gss-border); z-index:-1;
+}
+
+/* ===== Bottom nav ===== */
+.gss-bottomnav{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px; background:var(--gss-metal);
+  border-top:1px solid var(--gss-border);
+  display:flex; z-index:60; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.gss-navbtn{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:6px 0; color:var(--gss-text-dim); font-size:9.5px; font-weight:700; border-radius:10px;
+}
+.gss-navbtn .ic{font-size:18px;}
+.gss-navbtn.active{color:var(--gss-cyan); background:rgba(0,229,255,.08);}
+
+/* ===== FAB ===== */
+.gss-fab{
+  position:fixed; bottom:88px; right:calc(50% - 240px + 16px); z-index:65;
+  width:52px; height:52px; border-radius:50%; background:#25d366;
+  display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff;
+  box-shadow:0 8px 20px rgba(37,211,102,.4);
+}
+@media (max-width:480px){ .gss-fab{ right:16px; } }
+
+/* ===== Admin ===== */
+.gss-pin-gate{
+  position:fixed; inset:0; background:rgba(5,7,10,.92); z-index:200;
+  display:none; align-items:center; justify-content:center; flex-direction:column; padding:20px;
+}
+.gss-pin-gate.show{display:flex;}
+.gss-pin-box{
+  background:var(--gss-panel); border:1px solid var(--gss-cyan); border-radius:var(--gss-radius);
+  padding:22px; width:100%; max-width:300px; text-align:center; box-shadow:0 0 30px rgba(0,229,255,.2);
+}
+.gss-pin-dots{display:flex; gap:10px; justify-content:center; margin:16px 0;}
+.gss-pin-dots span{width:12px; height:12px; border-radius:50%; background:var(--gss-panel2); border:1px solid var(--gss-border);}
+.gss-pin-dots span.filled{background:var(--gss-cyan); box-shadow:0 0 8px var(--gss-cyan);}
+.gss-pin-keys{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;}
+.gss-pin-key{
+  padding:14px 0; background:var(--gss-panel2); border:1px solid var(--gss-border); border-radius:10px;
+  color:var(--gss-text); font-size:16px; font-weight:700;
+}
+
+.gss-admin-menu-grid{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin:4px 0 14px;
+}
+.gss-admin-card{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  background:var(--gss-panel2); border:1px solid var(--gss-border); border-radius:14px;
+  padding:12px 3px 10px; text-align:center; transition:background .18s, border-color .18s, transform .12s, box-shadow .18s;
+}
+.gss-admin-card .ic{font-size:clamp(16px, 4.5vw, 20px); line-height:1;}
+.gss-admin-card .lbl{
+  font-size:8.5px; font-weight:800; color:var(--gss-text-dim); letter-spacing:.2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+}
+.gss-admin-card.active{
+  background:linear-gradient(150deg, rgba(0,229,255,.18), rgba(41,121,255,.12));
+  border-color:var(--gss-cyan); box-shadow:0 0 14px rgba(0,229,255,.2);
+}
+.gss-admin-card.active .lbl{color:var(--gss-cyan);}
+.gss-admin-card:active{transform:scale(.93);}
+
+@media (max-width:360px){
+  .gss-admin-card{padding:10px 2px 8px;}
+  .gss-admin-card .lbl{font-size:7.8px;}
+}
+.gss-apanel{display:none;}
+.gss-apanel.active{display:block; animation:gssFade .2s ease;}
+
+.gss-counter-btns{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
+.gss-counter-btns button{
+  padding:14px 4px; border-radius:var(--gss-radius-sm); background:var(--gss-card); border:1px solid var(--gss-border);
+  color:var(--gss-cyan); font-weight:700; font-size:12px;
+}
+
+.gss-queue-item{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:10px; margin-top:8px;
+}
+.gss-queue-top{display:flex; justify-content:space-between; font-size:12px; font-weight:700;}
+.gss-queue-meta{font-size:10.5px; color:var(--gss-text-dim); margin-top:3px;}
+.gss-status-select{
+  margin-top:8px; width:100%; padding:8px; border-radius:8px; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text); font-size:12px;
+}
+
+.gss-attend-row{
+  display:flex; align-items:center; justify-content:space-between; background:var(--gss-card);
+  border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm); padding:10px; margin-top:8px;
+}
+.gss-attend-opts{display:flex; gap:6px;}
+.gss-attend-opts button{
+  padding:6px 9px; font-size:10px; border-radius:8px; background:var(--gss-panel2); border:1px solid var(--gss-border); color:var(--gss-text-dim); font-weight:700;
+}
+.gss-attend-opts button.sel-present{background:var(--gss-success); color:#04170f; border-color:var(--gss-success);}
+.gss-attend-opts button.sel-absent{background:var(--gss-danger); color:#2a0410; border-color:var(--gss-danger);}
+.gss-attend-opts button.sel-leave{background:var(--gss-warn); color:#2a1c00; border-color:var(--gss-warn);}
+.gss-attend-opts button.sel-half{background:var(--gss-blue); color:#04101f; border-color:var(--gss-blue);}
+
+/* ===== Monthly attendance sheet ===== */
+.gss-month-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:10.5px;}
+.gss-month-table th, .gss-month-table td{padding:7px 4px; text-align:center; border-bottom:1px solid var(--gss-border);}
+.gss-month-table th{color:var(--gss-text-dim); font-weight:700; text-transform:uppercase; font-size:8.5px; letter-spacing:.3px;}
+.gss-month-table td:first-child, .gss-month-table th:first-child{text-align:left;}
+.gss-month-table tbody tr:last-child td{border-bottom:none;}
+
+/* ===== Public attendance badge on team card ===== */
+.gss-attend-tag{display:inline-block; margin-top:5px; font-size:8px; font-weight:800; padding:2px 7px; border-radius:8px; letter-spacing:.2px;}
+.gss-attend-tag.tag-present{background:rgba(32,227,162,.18); color:var(--gss-success);}
+.gss-attend-tag.tag-half{background:rgba(41,121,255,.18); color:var(--gss-blue);}
+.gss-attend-tag.tag-leave{background:rgba(255,183,3,.18); color:var(--gss-warn);}
+.gss-attend-tag.tag-absent{background:rgba(255,77,109,.18); color:var(--gss-danger);}
+
+/* ===== Booking success modal (reuses pin-gate overlay styles) ===== */
+.gss-success-emoji{font-size:36px;}
+.gss-token-display{font-size:24px; font-weight:800; color:var(--gss-cyan); margin:10px 0; letter-spacing:.5px;}
+
+.gss-stat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px;}
+.gss-stat-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm); padding:12px;
+}
+.gss-stat-card .v{font-size:17px; font-weight:800;}
+.gss-stat-card .l{font-size:10px; color:var(--gss-text-dim); margin-top:2px;}
+.gss-filter-row{display:flex; gap:6px; margin-top:10px;}
+.gss-filter-row button{
+  flex:1; padding:8px; border-radius:8px; font-size:11px; font-weight:700; background:var(--gss-panel2);
+  border:1px solid var(--gss-border); color:var(--gss-text-dim);
+}
+.gss-filter-row button.active{background:var(--gss-cyan); color:#03131a; border-color:var(--gss-cyan);}
+
+/* ===== ROZNAMCHA (Daily Cash Ledger) - additive module ===== */
+.gss-roznamcha-container{margin-top:4px;}
+.gss-roz-stat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:6px;}
+.gss-roz-stat-card{
+  background:var(--gss-card); border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm);
+  padding:12px;
+}
+.gss-roz-stat-card .v{font-size:16px; font-weight:800;}
+.gss-roz-stat-card .v.pos{color:var(--gss-success);}
+.gss-roz-stat-card .v.neg{color:var(--gss-danger);}
+.gss-roz-stat-card .l{font-size:9.5px; color:var(--gss-text-dim); margin-top:3px;}
+.gss-roz-cash-card{
+  grid-column:1 / -1; background:linear-gradient(120deg, rgba(0,229,255,.10), rgba(41,121,255,.08));
+  border:1px solid rgba(0,229,255,.35);
+}
+.gss-roz-cash-card .v{font-size:22px; color:var(--gss-cyan);}
+
+.gss-roz-filter-bar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:14px; flex-wrap:wrap;}
+.gss-roz-pills{display:flex; gap:6px; background:var(--gss-panel2); border:1px solid var(--gss-border); border-radius:20px; padding:3px;}
+.gss-roz-pills button{
+  padding:7px 11px; border-radius:16px; border:none; background:transparent; color:var(--gss-text-dim);
+  font-size:10.5px; font-weight:700; white-space:nowrap;
+}
+.gss-roz-pills button.active{background:linear-gradient(120deg, var(--gss-cyan), var(--gss-blue)); color:#03131a;}
+.gss-roz-date{width:auto; min-width:140px; padding:9px 10px; font-size:11.5px;}
+
+.gss-roz-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:11px;}
+.gss-roz-table th, .gss-roz-table td{padding:8px 6px; text-align:left; border-bottom:1px solid var(--gss-border);}
+.gss-roz-table th{color:var(--gss-text-dim); font-weight:700; text-transform:uppercase; font-size:8.5px; letter-spacing:.3px;}
+.gss-roz-table tbody tr:last-child td{border-bottom:none;}
+.roz-type-badge{font-size:9px; font-weight:800; padding:2px 8px; border-radius:10px;}
+.roz-type-badge.roz-in{background:rgba(32,227,162,.15); color:var(--gss-success);}
+.roz-type-badge.roz-out{background:rgba(255,77,109,.15); color:var(--gss-danger);}
+td.roz-in{color:var(--gss-success); font-weight:700;}
+td.roz-out{color:var(--gss-danger); font-weight:700;}
+.roz-del{background:transparent; border:none; color:var(--gss-text-dim); font-size:14px; padding:4px;}
+.roz-del:active{color:var(--gss-danger);}
+
+.gss-staff-avatar-picker{
+  width:70px; height:70px; border-radius:50%; background:var(--gss-panel2); border:1px dashed var(--gss-border);
+  display:flex; align-items:center; justify-content:center; margin:0 auto 10px; overflow:hidden; font-size:11px; color:var(--gss-text-dim);
+}
+.gss-staff-avatar-picker img{width:100%; height:100%; object-fit:cover;}
+.gss-staff-list-row{
+  display:flex; align-items:center; gap:10px; background:var(--gss-card); border:1px solid var(--gss-border);
+  border-radius:var(--gss-radius-sm); padding:8px; margin-top:8px;
+}
+.gss-staff-list-row img{width:36px; height:36px; border-radius:50%; object-fit:cover;}
+.gss-staff-list-row .info{flex:1;}
+.gss-staff-list-row .info .n{font-size:12px; font-weight:700;}
+.gss-staff-list-row .info .r{font-size:10px; color:var(--gss-text-dim);}
+.gss-staff-actions{display:flex; gap:6px;}
+.gss-staff-actions button{
+  padding:7px 10px; border-radius:8px; font-size:10px; font-weight:700; border:1px solid var(--gss-border);
+  background:var(--gss-panel2); color:var(--gss-text-dim);
+}
+.gss-staff-actions button.edit{color:var(--gss-cyan); border-color:rgba(0,229,255,.35);}
+.gss-staff-actions button.del{color:var(--gss-danger); border-color:rgba(255,77,109,.35);}
+
+/* ===== Toast ===== */
+.gss-toast-wrap{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:300; width:calc(100% - 40px); max-width:440px;}
+.gss-toast{
+  background:var(--gss-panel); border:1px solid var(--gss-cyan); border-radius:12px; padding:12px 14px;
+  font-size:12.5px; font-weight:600; margin-bottom:8px; box-shadow:0 8px 22px rgba(0,0,0,.5);
+  animation:gssToastIn .25s ease;
+}
+.gss-toast.err{border-color:var(--gss-danger); color:#ffdfe4;}
+.gss-toast.ok{border-color:var(--gss-success); color:#d9fff1;}
+@keyframes gssToastIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);}}
+
+/* ===== Confetti ===== */
+.gss-confetti-piece{
+  position:fixed; top:-10px; width:8px; height:14px; z-index:250; opacity:.95;
+  animation:gssFall linear forwards;
+}
+@keyframes gssFall{ to{ transform:translateY(110vh) rotate(600deg); opacity:0; } }
+
+.gss-empty{text-align:center; color:var(--gss-text-dim); font-size:12px; padding:20px 0;}
+.gss-hidden{display:none !important;}
+
+/* ===== Recent logs / delete rows (new) ===== */
+.gss-recent-row{
+  display:flex; align-items:center; justify-content:space-between; background:var(--gss-card);
+  border:1px solid var(--gss-border); border-radius:var(--gss-radius-sm); padding:9px 10px; margin-top:6px;
+}
+.gss-recent-row .info{font-size:11.5px; font-weight:600;}
+.gss-recent-row .meta{font-size:9.5px; color:var(--gss-text-dim); margin-top:2px;}
+.gss-row-del{
+  background:rgba(255,77,109,.12); border:1px solid rgba(255,77,109,.4); color:var(--gss-danger);
+  font-size:10px; font-weight:700; padding:6px 10px; border-radius:8px;
+}
+.gss-row-actions{display:flex; gap:6px;}
+.gss-btn-cancel{
+  background:rgba(255,77,109,.12); border:1px solid rgba(255,77,109,.4); color:var(--gss-danger);
+  font-size:10.5px; font-weight:700; padding:8px; border-radius:8px; width:100%; margin-top:6px;
+}
+.gss-btn-edit-sm{
+  background:rgba(0,229,255,.1); border:1px solid rgba(0,229,255,.35); color:var(--gss-cyan);
+  font-size:10px; font-weight:700; padding:6px 10px; border-radius:8px;
+}
+
+</style>
+</head>
+<body>
+<div class='app-container' id='gss-app'>
+
+  <!-- HEADER -->
+  <div class='gss-header'>
+    <div class='gss-brand'>
+      <div class='gss-badge'>GSS</div>
+      <div>
+        <h1>Gujjar Service Station</h1>
+        <span>Premium Auto Care</span>
+      </div>
+    </div>
+    <div style='display:flex; align-items:center; gap:8px;'>
+      <button class='gss-install-btn gss-hidden' id='gss-install-btn' onclick='GSS.installApp()'>&#8681; Install App</button>
+      <div class='gss-header-icon' onclick='GSS.nav("admin")'>&#9881;</div>
+    </div>
+  </div>
+
+  <!-- PROMO RIBBON -->
+  <div class='gss-promo'>
+    <div class='gss-promo-text'>&#128293; EXCLUSIVE DEAL: FREE OIL CHANGE WITH FREE LABOUR! &#128295;</div>
+    <div class='gss-promo-timer'>Offer Ends In: <b id='gss-countdown'>00h 00m 00s</b></div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class='gss-toast-wrap' id='gss-toast-wrap'></div>
+
+  <!-- ================= HOME PAGE ================= -->
+  <div class='gss-page active' id='page-home'>
+
+    <!-- PULL TO REFRESH INDICATOR -->
+    <div class='gss-ptr-indicator' id='ptr-indicator'>
+      <div class='gss-ptr-spinner' id='ptr-spinner'></div>
+      <span id='ptr-label'>Pull to refresh</span>
+    </div>
+
+    <!-- SECTION 1: EXCLUSIVE DEALS (swipeable, admin-editable) -->
+    <div class='gss-section-title' style='margin-top:4px;'>Exclusive Deals</div>
+    <div class='gss-offers-carousel' id='offers-carousel'></div>
+
+    <!-- SECTION 2: GSS BY THE NUMBERS (trust cards) -->
+    <div class='gss-section-title'>GSS By The Numbers</div>
+    <div class='gss-numbers-grid'>
+      <div class='gss-number-card'><div class='v' id='num-all-time'>0</div><div class='l'>Vehicles Served<br/>All Time</div></div>
+      <div class='gss-number-card'><div class='v' id='num-happy-customers'>0</div><div class='l'>Happy Customers</div></div>
+      <div class='gss-number-card'><div class='v' id='num-this-month'>0</div><div class='l'>This Month<br/>Vehicles</div></div>
+      <div class='gss-number-card'><div class='v' id='num-google-rating'>0&#9733;</div><div class='l'>Google Rating</div></div>
+    </div>
+
+    <!-- Live operational snapshot (kept from previous upgrade - no money, real-time) -->
+    <div class='gss-public-stats-grid'>
+      <div class='gss-public-stat-card cyan'>
+        <div class='ic'>&#128663;</div>
+        <div class='v' id='pub-vehicles-today'>0</div>
+        <div class='l'>Vehicles Served Today</div>
+      </div>
+      <div class='gss-public-stat-card orange'>
+        <div class='ic'>&#9203;</div>
+        <div class='v' id='pub-wait-time'>0 min</div>
+        <div class='l'>Avg. Wait Time</div>
+      </div>
+    </div>
+
+    <!-- MONTHLY GOAL - ADMIN ONLY -->
+    <div class='gss-hidden' id='home-admin-goal'>
+      <div class='gss-section-title' style='margin-top:16px;'>This Month's Goal</div>
+      <div class='gss-goal-card'>
+        <div class='gss-goal-top'><span id='goal-text'>0 / 200 Vehicles</span><span id='goal-percent'>0%</span></div>
+        <div class='gss-goal-track'><div class='gss-goal-fill' id='goal-fill' style='width:0%'></div></div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS - ADMIN ONLY -->
+    <div class='gss-hidden' id='home-quick-actions'>
+      <div class='gss-section-title'>Quick Actions</div>
+      <div class='gss-quick-actions-grid'>
+        <button class='gss-qa-btn' onclick='GSS.nav("book")'><div class='ic'>&#128663;</div><div class='lbl'>+ New Booking</div></button>
+        <button class='gss-qa-btn' onclick='GSS.quickAddExpense()'><div class='ic'>&#128181;</div><div class='lbl'>+ Add Expense</div></button>
+        <button class='gss-qa-btn' onclick='GSS.openPrintReceipt()'><div class='ic'>&#128424;</div><div class='lbl'>Print Receipt</div></button>
+      </div>
+    </div>
+
+    <!-- SECTION 3: OUR SERVICES (quick-book grid) -->
+    <div class='gss-section-title'>Our Services</div>
+    <div class='gss-quick-services-grid'>
+      <button class='gss-qs-btn' onclick='GSS.quickBookService("Car Wash")'><div class='ic'>&#128704;</div><div class='lbl'>Car Wash</div></button>
+      <button class='gss-qs-btn' onclick='GSS.quickBookService("Oil Change")'><div class='ic'>&#129713;</div><div class='lbl'>Oil Change</div></button>
+      <button class='gss-qs-btn' onclick='GSS.quickBookService("General Service")'><div class='ic'>&#128295;</div><div class='lbl'>General Service</div></button>
+      <button class='gss-qs-btn' onclick='GSS.quickBookService("AC Service")'><div class='ic'>&#10052;&#65039;</div><div class='lbl'>AC Service</div></button>
+    </div>
+
+    <!-- SECTION 4: LIVE AT GSS (queue + team-on-duty, no names, no money) -->
+    <div class='gss-section-title'>Live at GSS</div>
+    <div class='gss-live-row'>
+      <div class='gss-live-chip'>
+        <div class='ic'>&#9203;</div>
+        <div><div class='v' id='live-queue-count'>0 Vehicles Waiting</div><div class='l'>Live Queue</div></div>
+      </div>
+      <div class='gss-live-chip'>
+        <div class='ic'>&#128101;</div>
+        <div><div class='v' id='live-team-count'>0 Members</div><div class='l'>Team On Duty</div></div>
+      </div>
+    </div>
+
+    <div class='gss-section-title'>Services Menu</div>
+    <div class='gss-select-wrap'>
+      <select class='gss-select' id='svc-category' onchange='GSS.renderServices()'>
+        <option value='2w'>2-Wheeler</option>
+        <option value='3w'>3-Wheeler</option>
+        <option value='hatch'>Hatchback</option>
+        <option value='sedan'>Sedan</option>
+        <option value='suv'>SUV</option>
+      </select>
+    </div>
+    <div id='services-list'></div>
+
+    <div class='gss-section-title'>Our Team</div>
+    <div class='gss-team-grid' id='team-grid'>
+      <div class='gss-empty'>Team profiles will appear here once added by Admin.</div>
+    </div>
+
+    <!-- SECTION 5: CUSTOMER REVIEWS -->
+    <div class='gss-section-title'>Customer Reviews</div>
+    <div class='gss-reviews-preview-carousel' id='reviews-preview-carousel'></div>
+    <button class='gss-btn-outline' id='view-all-reviews-btn' onclick='GSS.openGoogleReviews()'>View All Reviews</button>
+
+    <div class='gss-form' style='margin-top:14px;'>
+      <div class='gss-field'><label>Your Name</label><input class='gss-input' id='rev-name' placeholder='Enter your name' type='text'/></div>
+      <div class='gss-field'>
+        <label>Rating</label>
+        <div class='gss-star-input' id='rev-stars' data-val='5'>
+          <span data-v='1'>&#9733;</span><span data-v='2'>&#9733;</span><span data-v='3'>&#9733;</span><span data-v='4'>&#9733;</span><span data-v='5'>&#9733;</span>
+        </div>
+      </div>
+      <div class='gss-field'><label>Message</label><textarea class='gss-textarea' id='rev-msg' placeholder='Share your experience...'></textarea></div>
+      <button class='gss-btn' onclick='GSS.submitReview()'>Post Review</button>
+    </div>
+    <div id='reviews-list'></div>
+
+    <!-- SECTION 6: VISIT GSS -->
+    <div class='gss-section-title'>Visit GSS</div>
+    <div class='gss-visit-photo'>
+      <img alt='Gujjar Service Station front view' src='https://placehold.co/800x300/12161d/00e5ff?text=GSS+Front+View'/>
+      <div class='gss-visit-photo-overlay'>Open: 8AM - 9PM | 7 Days</div>
+    </div>
+    <div class='gss-visit-map'>
+      <iframe allowfullscreen='' id='gss-map-iframe' loading='lazy' src=''></iframe>
+    </div>
+    <div class='gss-visit-address'>&#128205; Gujjar Service Station, Opposite Aziz Hospital, AWC Road, Bohti Morh, Wah Cantt</div>
+    <div class='gss-visit-btns'>
+      <button class='gss-btn-outline' onclick='GSS.openDirections()'>&#129517; Get Directions</button>
+      <a class='gss-btn' href='tel:03065772734'>&#128222; Call Now: 0306-5772734</a>
+    </div>
+
+  </div>
+
+  <!-- ================= BOOK NOW PAGE ================= -->
+  <div class='gss-page' id='page-book'>
+    <div class='gss-section-title'>Book Your Service</div>
+    <div class='gss-form'>
+      <div class='gss-field'><label>Full Name</label><input class='gss-input' id='bk-name' placeholder='e.g. Ali Khan' type='text'/></div>
+      <div class='gss-field'><label>Phone Number</label><input class='gss-input' id='bk-phone' placeholder='03xx-xxxxxxx' type='tel'/></div>
+      <div class='gss-field'><label>Vehicle Number</label><input class='gss-input' id='bk-vehicle' placeholder='e.g. LEA-1234' type='text'/></div>
+      <div class='gss-field'>
+        <label>Vehicle Category</label>
+        <select class='gss-select' id='bk-category' onchange='GSS.fillBookingServices()'>
+          <option value='2w'>2-Wheeler</option>
+          <option value='3w'>3-Wheeler</option>
+          <option value='hatch'>Hatchback</option>
+          <option value='sedan'>Sedan</option>
+          <option value='suv'>SUV</option>
+        </select>
+      </div>
+      <div class='gss-field'>
+        <label>Select Service</label>
+        <select class='gss-select' id='bk-service'></select>
+      </div>
+      <button class='gss-btn' onclick='GSS.submitBooking()'>Confirm Booking &amp; Send via WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- ================= TRACK STATUS PAGE ================= -->
+  <div class='gss-page' id='page-track'>
+    <div class='gss-section-title'>Track Your Order</div>
+    <div class='gss-form'>
+      <div class='gss-field'><label>Vehicle Number or Token</label><input class='gss-input' id='trk-input' placeholder='e.g. LEA-1234' type='text'/></div>
+      <button class='gss-btn' onclick='GSS.trackOrder()'>Check Status</button>
+    </div>
+    <div id='track-result'></div>
+  </div>
+
+  <!-- ================= ADMIN PAGE ================= -->
+  <div class='gss-page' id='page-admin'>
+    <div style='display:flex; align-items:center; justify-content:space-between;'>
+      <div class='gss-section-title' style='margin:0;'>GSS Admin ERP Dashboard</div>
+      <button class='gss-install-btn gss-hidden' id='admin-signout-btn' onclick='GSS.adminSignOut()'>Sign Out</button>
+    </div>
+    <div style='height:14px;'></div>
+
+    <div class='gss-admin-menu-grid'>
+      <div class='gss-admin-card active' data-t='logger' onclick='GSS.adminTab("logger")'><div class='ic'>&#128663;</div><div class='lbl'>Logger</div></div>
+      <div class='gss-admin-card' data-t='queue' onclick='GSS.adminTab("queue")'><div class='ic'>&#128203;</div><div class='lbl'>Queue</div></div>
+      <div class='gss-admin-card' data-t='expense' onclick='GSS.adminTab("expense")'><div class='ic'>&#128181;</div><div class='lbl'>Expenses</div></div>
+      <div class='gss-admin-card' data-t='attend' onclick='GSS.adminTab("attend")'><div class='ic'>&#128197;</div><div class='lbl'>Attendance</div></div>
+      <div class='gss-admin-card' data-t='staff' onclick='GSS.adminTab("staff")'><div class='ic'>&#128101;</div><div class='lbl'>Staff</div></div>
+      <div class='gss-admin-card' data-t='reviews' onclick='GSS.adminTab("reviews")'><div class='ic'>&#11088;</div><div class='lbl'>Reviews</div></div>
+      <div class='gss-admin-card' data-t='finance' onclick='GSS.adminTab("finance")'><div class='ic'>&#128202;</div><div class='lbl'>Finance</div></div>
+      <div class='gss-admin-card' data-t='roznamcha' onclick='GSS.adminTab("roznamcha")'><div class='ic'>&#128209;</div><div class='lbl'>Roznamcha</div></div>
+      <div class='gss-admin-card' data-t='offers' onclick='GSS.adminTab("offers")'><div class='ic'>&#127881;</div><div class='lbl'>Offers</div></div>
+      <div class='gss-admin-card' data-t='backup' onclick='GSS.adminTab("backup")'><div class='ic'>&#128190;</div><div class='lbl'>Backup</div></div>
+    </div>
+
+    <!-- LOGGER -->
+    <div class='gss-apanel active' id='apanel-logger'>
+      <div class='gss-field'>
+        <label>Logging For Date</label>
+        <div style='display:flex; gap:8px;'>
+          <input class='gss-input' id='logger-date-picker' style='flex:1;' type='date'/>
+          <button class='gss-btn-outline gss-btn-sm' onclick='GSS.resetLoggerDate()'>Today</button>
+        </div>
+      </div>
+      <div class='gss-counter-btns'>
+        <button onclick='GSS.logVehicle("2w")'>+ 2 Wheeler</button>
+        <button onclick='GSS.logVehicle("3w")'>+ 3 Wheeler</button>
+        <button onclick='GSS.logVehicle("car")'>+ Light Car</button>
+        <button onclick='GSS.logVehicle("suv")'>+ SUV / Heavy</button>
+      </div>
+      <div class='gss-section-title'>Recent Logs (tap Remove to fix a mistake)</div>
+      <div id='recent-vehicles-list'></div>
+    </div>
+
+    <!-- QUEUE -->
+    <div class='gss-apanel' id='apanel-queue'>
+      <div id='queue-list'></div>
+    </div>
+
+    <!-- EXPENSE -->
+    <div class='gss-apanel' id='apanel-expense'>
+      <div class='gss-form'>
+        <div class='gss-field'>
+          <label>Expense Date</label>
+          <div style='display:flex; gap:8px;'>
+            <input class='gss-input' id='exp-date-picker' style='flex:1;' type='date'/>
+            <button class='gss-btn-outline gss-btn-sm' onclick='GSS.resetExpenseDate()'>Today</button>
+          </div>
+        </div>
+        <div class='gss-field'><label>Amount (PKR)</label><input class='gss-input' id='exp-amount' placeholder='0' type='number'/></div>
+        <div class='gss-field'>
+          <label>Category</label>
+          <select class='gss-select' id='exp-category'>
+            <option>Electricity Bill</option><option>Water Supply</option><option>Lunch</option>
+            <option>Tea</option><option>Travel/Fuel</option><option>Miscellaneous</option>
+          </select>
+        </div>
+        <div class='gss-field'><label>Spender's Name</label><input class='gss-input' id='exp-spender' placeholder='Who paid?' type='text'/></div>
+        <button class='gss-btn' onclick='GSS.addExpense()'>Commit Expense (Auto 50/50 Split)</button>
+      </div>
+      <div class='gss-section-title'>Recent Expenses</div>
+      <div id='expense-list'></div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class='gss-apanel' id='apanel-attend'>
+      <div class='gss-field'>
+        <label>Marking Attendance For Date</label>
+        <div style='display:flex; gap:8px;'>
+          <input class='gss-input' id='attend-date-picker' style='flex:1;' type='date' onchange='GSS.setAttendanceDate(this.value)'/>
+          <button class='gss-btn-outline gss-btn-sm' onclick='GSS.resetAttendanceDate()'>Today</button>
+        </div>
+      </div>
+      <div class='gss-section-title' id='attend-list-title'>Mark Attendance</div>
+      <div id='attend-list'></div>
+      <button class='gss-btn' style='margin-top:12px;' onclick='GSS.commitAttendance()'>Commit Ledger For This Date</button>
+
+      <div class='gss-section-title'>Monthly Attendance Sheet</div>
+      <div class='gss-field'>
+        <input class='gss-input' id='month-picker' type='month' onchange='GSS.refreshMonthlySheet()'/>
+      </div>
+      <div id='monthly-sheet'></div>
+    </div>
+
+    <!-- STAFF -->
+    <div class='gss-apanel' id='apanel-staff'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;' id='staff-form-title'>Add New Profile</div>
+        <div class='gss-staff-avatar-picker' id='staff-avatar-preview' onclick='document.getElementById("staff-img-input").click()'>Tap to Upload</div>
+        <input accept='image/*' id='staff-img-input' style='display:none' type='file' onchange='GSS.handleStaffImage(event)'/>
+        <div class='gss-field'><label>Full Name</label><input class='gss-input' id='staff-name' placeholder='e.g. Bilal Ahmed' type='text'/></div>
+        <div class='gss-field'>
+          <label>Role</label>
+          <select class='gss-select' id='staff-role'>
+            <option value='owner'>Executive Owner</option>
+            <option value='commission'>50% Commission Labour</option>
+            <option value='salary'>Fixed Monthly Salary Labour</option>
+          </select>
+        </div>
+        <div class='gss-field'><label>Base Salary Tier (PKR)</label><input class='gss-input' id='staff-salary' placeholder='0' type='number'/></div>
+        <button class='gss-btn' id='staff-save-btn' onclick='GSS.saveStaff()'>Save Profile</button>
+        <div style='height:8px;'></div>
+        <button class='gss-btn-outline gss-btn-sm gss-hidden' id='staff-cancel-btn' onclick='GSS.cancelStaffEdit()'>Cancel Edit</button>
+      </div>
+      <div class='gss-section-title'>All Profiles</div>
+      <div id='staff-list'></div>
+    </div>
+
+    <!-- REVIEWS (moderation) -->
+    <div class='gss-apanel' id='apanel-reviews'>
+      <div class='gss-section-title' style='margin-top:0;'>Moderate Client Reviews</div>
+      <div id='admin-reviews-list'></div>
+    </div>
+
+    <!-- FINANCE -->
+    <div class='gss-apanel' id='apanel-finance'>
+      <div class='gss-filter-row'>
+        <button class='active' data-f='daily' onclick='GSS.setFinanceFilter("daily")'>Daily</button>
+        <button data-f='weekly' onclick='GSS.setFinanceFilter("weekly")'>Weekly</button>
+        <button data-f='monthly' onclick='GSS.setFinanceFilter("monthly")'>Monthly</button>
+      </div>
+      <div class='gss-stat-grid'>
+        <div class='gss-stat-card'><div class='v' id='fin-revenue'>PKR 0</div><div class='l'>Gross Inbound Revenue</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-expenses'>PKR 0</div><div class='l'>Total Split Expenses</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-owner'>PKR 0</div><div class='l'>Owner Net Yield</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-labour'>PKR 0</div><div class='l'>Total Labour Share</div></div>
+      </div>
+    </div>
+
+    <!-- ROZNAMCHA (Daily Cash Ledger) -->
+    <div class='gss-apanel' id='apanel-roznamcha'>
+      <div class='gss-roznamcha-container'>
+
+        <div class='gss-roz-stat-grid'>
+          <div class='gss-roz-stat-card'><div class='v' id='roz-opening'>PKR 0</div><div class='l'>Opening Balance</div></div>
+          <div class='gss-roz-stat-card'><div class='v pos' id='roz-income'>PKR 0</div><div class='l'>Total Income (+)</div></div>
+          <div class='gss-roz-stat-card'><div class='v neg' id='roz-expense'>PKR 0</div><div class='l'>Total Expenses (-)</div></div>
+          <div class='gss-roz-stat-card'><div class='v pos' id='roz-profit'>PKR 0</div><div class='l'>Net Profit</div></div>
+          <div class='gss-roz-stat-card gss-roz-cash-card'><div class='v' id='roz-cash'>PKR 0</div><div class='l'>Current Net Cash-in-Hand</div></div>
+        </div>
+
+        <div class='gss-section-title' id='roz-form-title'>Quick Log Entry</div>
+        <div class='gss-form'>
+          <div class='gss-field'>
+            <label>Entry Date (also controls which day's ledger you're viewing below)</label>
+            <div style='display:flex; gap:8px;'>
+              <input class='gss-input' id='roz-date' style='flex:1;' type='date' onchange='GSS.rozSetDate(this.value)'/>
+              <button class='gss-btn-outline gss-btn-sm' onclick='GSS.rozResetDate()'>Today</button>
+            </div>
+          </div>
+          <div class='gss-field'><label>Amount (PKR)</label><input class='gss-input' id='roz-amount' min='1' placeholder='0' type='number'/></div>
+          <div class='gss-field'>
+            <label>Type</label>
+            <select class='gss-select' id='roz-type' onchange='GSS.rozTypeChange()'>
+              <option value='Income'>Income (+)</option>
+              <option value='Expense'>Expense (-)</option>
+            </select>
+          </div>
+          <div class='gss-field'>
+            <label>Category</label>
+            <select class='gss-select' id='roz-category'></select>
+          </div>
+          <div class='gss-field'><label>Narration / Description</label><input class='gss-input' id='roz-desc' placeholder='e.g. Ali sab se cash pakra' type='text'/></div>
+          <button class='gss-btn' onclick='GSS.rozSaveEntry()' id='roz-save-btn'>Save Entry</button>
+          <div style='height:8px;'></div>
+          <button class='gss-btn-outline gss-btn-sm gss-hidden' id='roz-cancel-edit-btn' onclick='GSS.rozCancelEdit()'>Cancel Edit</button>
+        </div>
+
+        <div class='gss-roz-filter-bar'>
+          <div class='gss-roz-pills' id='roz-filter-pills'>
+            <button class='active' data-f='all' onclick='GSS.rozSetFilter("all")'>All</button>
+            <button data-f='income' onclick='GSS.rozSetFilter("income")'>Income Only</button>
+            <button data-f='expense' onclick='GSS.rozSetFilter("expense")'>Expenses Only</button>
+          </div>
+        </div>
+
+        <div class='gss-section-title' id='roz-ledger-title'>Ledger</div>
+        <div id='roz-ledger-table'></div>
+
+      </div>
+    </div>
+
+    <!-- OFFERS (Exclusive Deals banner - max 3, public) -->
+    <div class='gss-apanel' id='apanel-offers'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;'>Add / Edit Offer (max 3)</div>
+        <div class='gss-field'><label>Emoji (e.g. &#128293;)</label><input class='gss-input' id='offer-emoji' placeholder='&#128293;' type='text'/></div>
+        <div class='gss-field'><label>Title</label><input class='gss-input' id='offer-title' placeholder='e.g. FREE Oil Change' type='text'/></div>
+        <div class='gss-field'><label>Description</label><input class='gss-input' id='offer-desc' placeholder='e.g. On any service, today only' type='text'/></div>
+        <div class='gss-field' style='display:flex; align-items:center; gap:8px;'>
+          <input id='offer-timer' style='width:auto;' type='checkbox'/>
+          <label style='margin:0;' for='offer-timer'>Show live countdown timer on this offer</label>
+        </div>
+        <button class='gss-btn' id='offer-save-btn' onclick='GSS.adminSaveOffer()'>Add Offer</button>
+        <div style='height:8px;'></div>
+        <button class='gss-btn-outline gss-btn-sm gss-hidden' id='offer-cancel-btn' onclick='GSS.adminCancelOfferEdit()'>Cancel Edit</button>
+      </div>
+      <div class='gss-section-title'>Active Offers</div>
+      <div id='admin-offers-list'></div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class='gss-apanel' id='apanel-backup'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;'>Export / Backup</div>
+        <button class='gss-btn-outline' onclick='GSS.exportBackup()'>Download Full Backup (.json)</button>
+        <div class='gss-section-title'>Restore / Import</div>
+        <input accept='.json,application/json' id='restore-input' style='display:none' type='file' onchange='GSS.importBackup(event)'/>
+        <button class='gss-btn-outline' onclick='document.getElementById("restore-input").click()'>Select Backup File to Restore</button>
+        <div class='gss-section-title'>Cloud Sync</div>
+        <button class='gss-btn-outline' onclick='GSS.syncToCloud()'>Sync Now (Google Sheets)</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WHATSAPP FAB -->
+  <a class='gss-fab' href='#' id='gss-fab' target='_blank'>&#128241;</a>
+
+  <!-- BOTTOM NAV -->
+  <div class='gss-bottomnav'>
+    <div class='gss-navbtn active' data-p='home' onclick='GSS.nav("home")'><div class='ic'>&#127968;</div>Home</div>
+    <div class='gss-navbtn' data-p='book' onclick='GSS.nav("book")'><div class='ic'>&#128197;</div>Book Now</div>
+    <div class='gss-navbtn' data-p='track' onclick='GSS.nav("track")'><div class='ic'>&#128269;</div>Track</div>
+    <div class='gss-navbtn' data-p='admin' onclick='GSS.nav("admin")'><div class='ic'>&#128274;</div>Admin</div>
+  </div>
+
+  <!-- PIN GATE -->
+  <div class='gss-pin-gate' id='pin-gate'>
+    <div class='gss-pin-box'>
+      <div style='font-weight:800; font-size:14px;'>GSS Admin Access</div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin-top:4px;'>Enter 4-digit Master PIN</div>
+      <div class='gss-pin-dots' id='pin-dots'>
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class='gss-pin-keys' id='pin-keys'></div>
+      <div style='display:flex; gap:8px; margin-top:10px;'>
+        <button class='gss-btn-outline gss-btn-sm' onclick='GSS.pinClear()'>Clear</button>
+        <button class='gss-btn-outline gss-btn-sm' onclick='GSS.pinCancel()'>Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING SUCCESS / TOKEN MODAL -->
+  <div class='gss-pin-gate' id='booking-success'>
+    <div class='gss-pin-box'>
+      <div class='gss-success-emoji'>&#9989;</div>
+      <div style='font-weight:800; font-size:15px; margin-top:4px;'>Booking Confirmed!</div>
+      <div class='gss-token-display'>Token #<span id='success-token'>0</span></div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin-bottom:14px;'>Save this token. Use it under Track Status to check your vehicle's progress anytime.</div>
+      <a class='gss-btn' id='success-whatsapp-btn' href='#' target='_blank' onclick='GSS.closeBookingSuccess()'>Send Details via WhatsApp</a>
+      <div style='height:8px;'></div>
+      <button class='gss-btn-outline gss-btn-sm' onclick='GSS.closeBookingSuccess()'>Close</button>
+    </div>
+  </div>
+  <!-- ADMIN SIGN-IN (Firebase email/password - required once Firebase is configured,
+       so admin writes are actually protected by Security Rules, not just the local PIN) -->
+  <div class='gss-pin-gate' id='admin-login-modal'>
+    <div class='gss-pin-box'>
+      <div style='font-weight:800; font-size:14px;'>Admin Sign In</div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin:4px 0 14px;'>This app is publicly hosted - sign in with your admin account to make changes.</div>
+      <div class='gss-field' style='text-align:left;'><label>Email</label><input class='gss-input' id='admin-login-email' placeholder='admin@example.com' type='email'/></div>
+      <div class='gss-field' style='text-align:left;'><label>Password</label><input class='gss-input' id='admin-login-password' placeholder='********' type='password'/></div>
+      <button class='gss-btn' onclick='GSS.adminSignIn()'>Sign In</button>
+      <div style='height:8px;'></div>
+      <button class='gss-btn-outline gss-btn-sm' onclick='GSS.cancelAdminLogin()'>Cancel</button>
+    </div>
+  </div>
+
+  <!-- PRINT RECEIPT (Quick Action - admin only) -->
+  <div class='gss-pin-gate' id='print-receipt-modal'>
+    <div class='gss-pin-box'>
+      <div style='font-weight:800; font-size:14px;'>Print Receipt</div>
+      <div style='font-size:11px; color:var(--gss-text-dim); margin:4px 0 14px;'>Look up a booking by its token or vehicle number.</div>
+      <div class='gss-field' style='text-align:left;'><label>Token or Vehicle Number</label><input class='gss-input' id='pr-lookup-input' placeholder='e.g. 1042 or LEA-1234' type='text'/></div>
+      <button class='gss-btn' onclick='GSS.findAndPrintReceipt()'>Find &amp; Print</button>
+      <div style='height:8px;'></div>
+      <button class='gss-btn-outline gss-btn-sm' onclick='GSS.closePrintReceipt()'>Cancel</button>
+    </div>
+  </div>
+
+  <!-- Hidden printable receipt - only rendered visible by @media print -->
+  <div class='gss-print-only' id='print-receipt-area'>
+    <div class='pr-header'>Gujjar Service Station</div>
+    <div class='pr-sub'>Service Receipt</div>
+    <div class='pr-row'><span>Token</span><span id='pr-token'>-</span></div>
+    <div class='pr-row'><span>Date</span><span id='pr-date'>-</span></div>
+    <div class='pr-row'><span>Customer</span><span id='pr-name'>-</span></div>
+    <div class='pr-row'><span>Phone</span><span id='pr-phone'>-</span></div>
+    <div class='pr-row'><span>Vehicle</span><span id='pr-vehicle'>-</span></div>
+    <div class='pr-row'><span>Category</span><span id='pr-category'>-</span></div>
+    <div class='pr-row'><span>Service</span><span id='pr-service'>-</span></div>
+    <div class='pr-row'><span>Status</span><span id='pr-status'>-</span></div>
+    <div class='pr-total'><span>Total</span><span id='pr-price'>PKR 0</span></div>
+    <div class='pr-footer'>Thank you for visiting GSS!</div>
+  </div>
+
+</div>
+
+<!-- Firebase (used only for the public-facing live data layer: counters, team, reviews,
+     bookings/tracker, and today's attendance badges. Everything still works fully offline
+     via IndexedDB if Firebase is not configured or the device has no internet.) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+<script>
+
+(function(){
+  var GSS = {};
+  window.GSS = GSS;
+
+  /* ================= CONFIG ================= */
+  var MASTER_PIN = "7254";
+  var DB_NAME = "GSS_DB";
+  var DB_VERSION = 3; // bumped 1->2 for "ledger", 2->3 to add "offers" (admin-editable deals banner)
+  var STORES = ["vehicles","bookings","reviews","staff","expenses","attendance","settings","ledger","offers"];
+
+  var PRICES = {
+    "2w":   { "Car Wash":200, "Tuning":300, "Oil Change":000, "Compound Polish":150, "General Service":400, "AC Service":300 },
+    "3w":   { "Car Wash":300, "Tuning":400, "Oil Change":000, "Compound Polish":250, "General Service":600, "AC Service":500 },
+    "hatch":{ "Car Wash":400, "Tuning":600, "Oil Change":000, "Compound Polish":300, "General Service":1000, "AC Service":1200 },
+    "sedan":{ "Car Wash":500, "Tuning":800,"Oil Change":000, "Compound Polish":500, "General Service":1400, "AC Service":1600 },
+    "suv":  { "Car Wash":600, "Tuning":1200,"Oil Change":000,"Compound Polish":500, "General Service":2000, "AC Service":2200 }
+  };
+  var OIL_CHANGE_LABOUR_FREE = 100; // labour portion waived during promo, shown as PKR 0 labour
+  var CATEGORY_LABEL = {"2w":"2-Wheeler","3w":"3-Wheeler","hatch":"Hatchback","sedan":"Sedan","suv":"SUV / Heavy"};
+  var WHATSAPP_NUMBER = "923065772734"; // replace with real GSS WhatsApp number
+
+  // "GSS By The Numbers" trust section + "Visit GSS" section config.
+  // We don't have a live Google Business Profile API connection, so the Google
+  // rating/review-count/link below are simple editable values - update them by
+  // hand whenever your real Google listing numbers change.
+  var GOOGLE_RATING = 4.8;
+  var GOOGLE_REVIEW_COUNT = 127;
+  var GOOGLE_REVIEWS_URL = ""; // paste your Google Maps/Business "write a review" or reviews-tab link here
+  var GSS_ADDRESS = "Gujjar Service Station, Opposite Aziz Hospital, AWC Road, Bohti Morh, Wah Cantt";
+  var GSS_MAP_QUERY = encodeURIComponent(GSS_ADDRESS);
+
+  var db = null;
+  var pinBuffer = "";
+  var financeFilter = "daily";
+  var currentStaffImageB64 = null;
+
+  /* ================= FIREBASE (public real-time layer) =================
+     How to enable cross-device live sync for counters, team, reviews, bookings/tracker
+     and today's attendance badges:
+       1. Go to https://console.firebase.google.com -> Add project.
+       2. Build > Realtime Database -> Create Database -> start in test mode
+          (then tighten the rules before going to production).
+       3. Project settings (gear icon) > General > "Your apps" > Web app (</>)
+          -> copy the config object values into FIREBASE_CONFIG below.
+       4. Save this file. If FIREBASE_CONFIG is left blank, the app runs fully
+          local/offline via IndexedDB only (nothing breaks, it just won't sync
+          across different phones/devices).
+  ========================================================================= */
+  var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA9wEbzMTQ5lWfzS6JFwMN-iiA6dqY--l8",
+  authDomain: "gujjar-service-station.firebaseapp.com",
+  databaseURL: "https://gujjar-service-station-default-rtdb.firebaseio.com",
+  projectId: "gujjar-service-station",
+  storageBucket: "gujjar-service-station.firebasestorage.app",
+  messagingSenderId: "232025392131",
+  appId: "1:232025392131:web:7c4e4375b5015ed5b13a36"
+  };
+  var fbEnabled = false;
+  var fbDb = null;
+  var fbAuth = null;
+  var fbAdminSignedIn = false;
+  function initFirebase(){
+    try{
+      if(!FIREBASE_CONFIG.databaseURL || typeof firebase === "undefined"){
+        fbEnabled = false;
+        return;
+      }
+      firebase.initializeApp(FIREBASE_CONFIG);
+      fbDb = firebase.database();
+      fbEnabled = true;
+      if(firebase.auth){
+        fbAuth = firebase.auth();
+        fbAuth.onAuthStateChanged(function(user){
+          fbAdminSignedIn = !!user;
+          var btn = document.getElementById("admin-signout-btn");
+          if(btn) btn.classList.toggle("gss-hidden", !fbAdminSignedIn);
+          refreshHomeAdminVisibility();
+        });
+      }
+      console.log("GSS: Firebase connected - public data will sync live across devices.");
+    }catch(e){
+      console.error("GSS Firebase init failed, running local-only.", e);
+      fbEnabled = false;
+    }
+  }
+  function fbSet(path, val){ if(!fbEnabled) return; try{ fbDb.ref(path).set(val); }catch(e){ console.error("fbSet",e); } }
+  function fbUpdate(path, val){ if(!fbEnabled) return; try{ fbDb.ref(path).update(val); }catch(e){ console.error("fbUpdate",e); } }
+  function fbRemove(path){ if(!fbEnabled) return; try{ fbDb.ref(path).remove(); }catch(e){ console.error("fbRemove",e); } }
+  function fbListen(path, cb){
+    if(!fbEnabled) return;
+    try{ fbDb.ref(path).on("value", function(snap){ cb(snap.val() || {}); }); }catch(e){ console.error("fbListen",e); }
+  }
+  function fbNextToken(cb){
+    if(!fbEnabled){ cb(null); return; }
+    try{
+      fbDb.ref("meta/tokenCounter").transaction(function(cur){ return (cur || 1000) + 1; }, function(err, committed, snap){
+        if(err || !committed){ cb(null); return; }
+        cb(snap.val());
+      });
+    }catch(e){ console.error("fbNextToken",e); cb(null); }
+  }
+
+  /* ================= INDEXEDDB (with in-memory fallback) =================
+     Some contexts (opening the file directly from Downloads/WhatsApp via a
+     content:// or file:// link, some locked-down WebViews) block IndexedDB
+     entirely. Rather than getting stuck, the app detects that and silently
+     switches to an in-memory store for the rest of the session, so every
+     screen - including the Admin PIN gate - keeps working. Data just won't
+     survive a page reload in that mode; a banner tells the admin why.
+  ========================================================================= */
+  var dbReady = false;
+  var dbQueue = [];
+  var memMode = false;
+  var STORE_KEYFIELD = {
+    vehicles:"id", bookings:"id", reviews:"id", staff:"id",
+    expenses:"id", attendance:"id", ledger:"id", settings:"key"
+  };
+  var memStore = {};
+  var memAutoId = {};
+  STORES.forEach(function(s){ memStore[s] = []; memAutoId[s] = 1; });
+
+  function memKeyField(store){ return STORE_KEYFIELD[store] || "id"; }
+  function memAdd(store, obj){
+    var kf = memKeyField(store);
+    if(obj[kf] === undefined || obj[kf] === null){
+      obj[kf] = memAutoId[store]++;
+    } else if(typeof obj[kf] === "number" && obj[kf] >= memAutoId[store]){
+      memAutoId[store] = obj[kf] + 1;
+    }
+    memStore[store].push(obj);
+    return obj[kf];
+  }
+  function memPut(store, obj){
+    var kf = memKeyField(store);
+    var idx = memStore[store].findIndex(function(x){ return x[kf] === obj[kf]; });
+    if(idx >= 0){ memStore[store][idx] = obj; } else { memAdd(store, obj); }
+  }
+  function memDelete(store, key){
+    var kf = memKeyField(store);
+    memStore[store] = memStore[store].filter(function(x){ return x[kf] !== key; });
+  }
+  function memGetOne(store, key){
+    var kf = memKeyField(store);
+    var out = null;
+    memStore[store].forEach(function(x){ if(x[kf] === key) out = x; });
+    return out;
+  }
+  function memGetAll(store){ return memStore[store].slice(); }
+  function memClearStore(store){ memStore[store] = []; }
+
+  function enterMemoryMode(reason){
+    if(memMode) return;
+    memMode = true;
+    console.warn("GSS: switching to in-memory storage fallback -", reason);
+    toast("Temporary mode: data won't be saved. Open this app via a hosted https:// link (not a downloaded file) to save data permanently.","err");
+  }
+  function flushQueueAsMemory(){
+    var q = dbQueue.slice(); dbQueue = [];
+    q.forEach(function(fn){ try{ fn(null); }catch(errCb){ console.error("GSS mem-queue callback error", errCb); } });
+  }
+
+  function openDB(cb){
+    try{
+      if (memMode) { cb(null); return; }
+      if (db && dbReady) { cb(db); return; }
+      if (!window.indexedDB){
+        enterMemoryMode("IndexedDB not available in this browsing context.");
+        cb(null);
+        return;
+      }
+      dbQueue.push(cb);
+      if (db || openDB._opening) return; // already opening, will flush queue on success
+      openDB._opening = true;
+      var req;
+      try{
+        req = indexedDB.open(DB_NAME, DB_VERSION);
+      }catch(errOpenSync){
+        openDB._opening = false;
+        enterMemoryMode("indexedDB.open() threw synchronously (" + errOpenSync.message + ").");
+        flushQueueAsMemory();
+        return;
+      }
+      req.onupgradeneeded = function(e){
+        try{
+          var _db = e.target.result;
+          if(!_db.objectStoreNames.contains("vehicles")) _db.createObjectStore("vehicles",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("bookings")) _db.createObjectStore("bookings",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("reviews")) _db.createObjectStore("reviews",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("staff")) _db.createObjectStore("staff",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("expenses")) _db.createObjectStore("expenses",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("attendance")) _db.createObjectStore("attendance",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("settings")) _db.createObjectStore("settings",{keyPath:"key"});
+          if(!_db.objectStoreNames.contains("ledger")) _db.createObjectStore("ledger",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("offers")) _db.createObjectStore("offers",{keyPath:"id",autoIncrement:true});
+        }catch(errUp){ console.error("GSS DB upgrade error", errUp); }
+      };
+      req.onsuccess = function(e){
+        db = e.target.result; dbReady = true; openDB._opening = false;
+        var q = dbQueue.slice(); dbQueue = [];
+        q.forEach(function(fn){ try{ fn(db); }catch(errCb){ console.error("GSS DB callback error", errCb); } });
+      };
+      req.onerror = function(e){
+        openDB._opening = false;
+        console.error("GSS DB error", e);
+        enterMemoryMode("indexedDB.open() failed (blocked origin, private mode, or unsupported context).");
+        flushQueueAsMemory();
+      };
+      req.onblocked = function(){
+        console.warn("GSS DB blocked - another tab may be open with an older version.");
+      };
+    }catch(errOuter){
+      console.error("GSS openDB fatal error", errOuter);
+      enterMemoryMode("Storage engine crashed (" + errOuter.message + ").");
+      cb(null);
+    }
+  }
+
+  function tx(storeName, mode){
+    return db.transaction(storeName, mode).objectStore(storeName);
+  }
+  function addRecord(store, obj, cb){
+    openDB(function(){
+      if(memMode){ var newId = memAdd(store, obj); if(cb) cb(newId); return; }
+      var r = tx(store,"readwrite").add(obj);
+      r.onsuccess = function(e){ if(cb) cb(e.target.result); };
+      r.onerror = function(e){ console.error(e); toast("Save failed","err"); };
+    });
+  }
+  function addRecordWithId(store, obj, cb){
+    // Like addRecord, but obj already carries its own "id" (e.g. a Firebase token)
+    openDB(function(){
+      if(memMode){ memPut(store, obj); if(cb) cb(obj[memKeyField(store)]); return; }
+      var r = tx(store,"readwrite").put(obj);
+      r.onsuccess = function(e){ if(cb) cb(e.target.result); };
+      r.onerror = function(e){ console.error(e); toast("Save failed","err"); };
+    });
+  }
+  function getAll(store, cb){
+    openDB(function(){
+      if(memMode){ cb(memGetAll(store)); return; }
+      var out = [];
+      var req = tx(store,"readonly").openCursor();
+      req.onsuccess = function(e){
+        var cur = e.target.result;
+        if(cur){ out.push(cur.value); cur.continue(); } else { cb(out); }
+      };
+      req.onerror = function(){ cb([]); };
+    });
+  }
+  function putRecord(store, obj, cb){
+    openDB(function(){
+      if(memMode){ memPut(store, obj); if(cb) cb(); return; }
+      var r = tx(store,"readwrite").put(obj);
+      r.onsuccess = function(){ if(cb) cb(); };
+    });
+  }
+  function deleteRecord(store, id, cb){
+    openDB(function(){
+      if(memMode){ memDelete(store, id); if(cb) cb(); return; }
+      var r = tx(store,"readwrite").delete(id);
+      r.onsuccess = function(){ if(cb) cb(); };
+      r.onerror = function(e){ console.error(e); toast("Delete failed","err"); };
+    });
+  }
+  function getOne(store, id, cb){
+    openDB(function(){
+      if(memMode){ cb(memGetOne(store, id)); return; }
+      var r = tx(store,"readonly").get(id);
+      r.onsuccess = function(e){ cb(e.target.result || null); };
+      r.onerror = function(){ cb(null); };
+    });
+  }
+  function clearStore(store, cb){
+    openDB(function(){
+      if(memMode){ memClearStore(store); if(cb) cb(); return; }
+      var r = tx(store,"readwrite").clear();
+      r.onsuccess = function(){ if(cb) cb(); };
+    });
+  }
+
+  /* ================= TOAST ================= */
+  function toast(msg, type){
+    var wrap = document.getElementById("gss-toast-wrap");
+    var el = document.createElement("div");
+    el.className = "gss-toast" + (type==="err" ? " err" : type==="ok" ? " ok" : "");
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(function(){ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(function(){ el.remove(); }, 300); }, 2600);
+  }
+
+  /* ================= NAVIGATION ================= */
+  GSS.nav = function(page){
+    if(page === "admin"){
+      var unlocked = sessionStorage ? false : false;
+      if(!GSS._adminUnlocked){
+        showPinGate();
+        return;
+      }
+    }
+    document.querySelectorAll(".gss-page").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("page-"+page).classList.add("active");
+    document.querySelectorAll(".gss-navbtn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelector('.gss-navbtn[data-p="'+page+'"]').classList.add("active");
+    if(page === "admin"){ refreshAdminData(); }
+    if(page === "book"){ GSS.fillBookingServices(); }
+  };
+
+  /* ================= PIN GATE ================= */
+  GSS._adminUnlocked = false;
+  function buildPinKeys(){
+    var keys = ["1","2","3","4","5","6","7","8","9","","0","DEL"];
+    var wrap = document.getElementById("pin-keys");
+    wrap.innerHTML = "";
+    keys.forEach(function(k){
+      var b = document.createElement("button");
+      b.className = "gss-pin-key";
+      b.textContent = k === "DEL" ? "&#9003;" : k;
+      if(k==="DEL"){ b.innerHTML = "&#9003;"; }
+      if(k===""){ b.style.visibility="hidden"; }
+      b.onclick = function(){
+        if(k==="DEL"){ pinBuffer = pinBuffer.slice(0,-1); }
+        else if(k!==""){ if(pinBuffer.length<4) pinBuffer += k; }
+        renderPinDots();
+        if(pinBuffer.length === 4){ checkPin(); }
+      };
+      wrap.appendChild(b);
+    });
+  }
+  function renderPinDots(){
+    var dots = document.querySelectorAll("#pin-dots span");
+    dots.forEach(function(d,i){ d.classList.toggle("filled", i < pinBuffer.length); });
+  }
+  function showPinGate(){
+    pinBuffer = "";
+    renderPinDots();
+    document.getElementById("pin-gate").classList.add("show");
+  }
+  GSS.pinCancel = function(){
+    pinBuffer = "";
+    document.getElementById("pin-gate").classList.remove("show");
+  };
+  GSS.pinClear = function(){ pinBuffer=""; renderPinDots(); };
+  function checkPin(){
+    getOne("settings", "masterPin", function(rec){
+      var savedPin = (rec && rec.value) ? rec.value : MASTER_PIN;
+      if(pinBuffer === savedPin){
+        GSS._adminUnlocked = true;
+        document.getElementById("pin-gate").classList.remove("show");
+        toast("Access Granted","ok");
+        proceedToAdmin();
+      } else {
+        toast("Invalid PIN. Try again.","err");
+        pinBuffer=""; renderPinDots();
+      }
+    });
+  }
+
+  function proceedToAdmin(){
+    // If Firebase is configured, real admin writes (counters, staff, status changes,
+    // etc.) are protected by Firebase Security Rules that require a signed-in admin
+    // account - not just the local 4-digit PIN. So once the PIN is correct, also
+    // make sure there's an active Firebase sign-in before opening the dashboard.
+    if(fbEnabled && fbAuth && !fbAdminSignedIn){
+      showAdminLoginModal();
+    } else {
+      refreshHomeAdminVisibility();
+      GSS.nav("admin");
+    }
+  }
+
+  // Single source of truth for "is this device currently allowed to act as admin".
+  // Drives which Home-page sections (Monthly Goal, Quick Actions) are visible -
+  // public visitors never see these, even for a flash, since it's re-checked on
+  // every login/logout/sign-in transition.
+  function isAdminMode(){
+    return !!GSS._adminUnlocked && (!fbEnabled || fbAdminSignedIn);
+  }
+  function refreshHomeAdminVisibility(){
+    var admin = isAdminMode();
+    var goalBox = document.getElementById("home-admin-goal");
+    var qaBox = document.getElementById("home-quick-actions");
+    if(goalBox) goalBox.classList.toggle("gss-hidden", !admin);
+    if(qaBox) qaBox.classList.toggle("gss-hidden", !admin);
+    if(admin) refreshMonthlyGoal();
+  }
+
+  function showAdminLoginModal(){
+    document.getElementById("admin-login-modal").classList.add("show");
+  }
+  GSS.cancelAdminLogin = function(){
+    document.getElementById("admin-login-modal").classList.remove("show");
+    GSS._adminUnlocked = false; // require the PIN again next time
+    refreshHomeAdminVisibility();
+  };
+  GSS.adminSignIn = function(){
+    var email = document.getElementById("admin-login-email").value.trim();
+    var pass = document.getElementById("admin-login-password").value;
+    if(!email || !pass){ toast("Enter your admin email and password.","err"); return; }
+    if(!fbAuth){ toast("Firebase Authentication isn't set up yet.","err"); return; }
+    fbAuth.signInWithEmailAndPassword(email, pass).then(function(){
+      document.getElementById("admin-login-modal").classList.remove("show");
+      document.getElementById("admin-login-email").value = "";
+      document.getElementById("admin-login-password").value = "";
+      toast("Signed in as admin.","ok");
+      refreshHomeAdminVisibility();
+      GSS.nav("admin");
+    }).catch(function(err){
+      toast("Sign-in failed: " + (err && err.message ? err.message : "check email/password."), "err");
+    });
+  };
+  GSS.adminSignOut = function(){
+    if(fbAuth){ fbAuth.signOut(); }
+    GSS._adminUnlocked = false;
+    toast("Signed out.","ok");
+    refreshHomeAdminVisibility();
+    GSS.nav("home");
+  };
+
+  /* ================= COUNTDOWN TIMER ================= */
+  function startCountdown(){
+    var cycleMs = 3*60*60*1000; // 3 hour rolling cycle for continuous FOMO offer
+    function tick(){
+      var now = Date.now();
+      var remaining = cycleMs - (now % cycleMs);
+      var h = Math.floor(remaining/3600000);
+      var m = Math.floor((remaining%3600000)/60000);
+      var s = Math.floor((remaining%60000)/1000);
+      var pad = function(n){ return n<10 ? "0"+n : ""+n; };
+      var text = pad(h)+"h "+pad(m)+"m "+pad(s)+"s";
+      var el = document.getElementById("gss-countdown");
+      if(el) el.textContent = text;
+      var el2 = document.getElementById("gss-countdown-home");
+      if(el2) el2.textContent = text;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  /* ================= COUNTERS ================= */
+  var lastCountersAll = {};         // cached raw {dateKey:{cat:count}} from Firebase
+
+  function todayKey(d){
+    var dt = d ? new Date(d) : new Date();
+    return dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate();
+  }
+
+  /* ---- Shared "backdate a missed day" helpers (Logger / Expenses / Attendance) ----
+     Each of these panels has a <input type="date"> picker (defaults to today).
+     Instead of always stamping new entries with "right now", we read the picker's
+     date and build a timestamp on THAT date - so if a day was missed, the admin can
+     switch the picker to that date and everything entered gets correctly filed
+     under it (counters, expenses, attendance), not lumped into today. */
+  function todayDateInputValue(){
+    var d = new Date();
+    return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+  }
+  function ensureDatePickerDefault(pickerId){
+    var el = document.getElementById(pickerId);
+    if(el && !el.value) el.value = todayDateInputValue();
+  }
+  function selectedDateTimestamp(pickerId){
+    var el = document.getElementById(pickerId);
+    var val = el && el.value ? el.value : todayDateInputValue();
+    var parts = val.split("-").map(function(n){ return parseInt(n,10); });
+    var now = new Date();
+    return new Date(parts[0], parts[1]-1, parts[2], now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()).getTime();
+  }
+  function isPickerOnToday(pickerId){
+    var el = document.getElementById(pickerId);
+    var val = el && el.value ? el.value : todayDateInputValue();
+    return val === todayDateInputValue();
+  }
+  function sumCatTotals(t){ return (t["2w"]||0) + (t["3w"]||0) + (t["car"]||0) + (t["suv"]||0); }
+  function dateKeyToTime(dateKey){
+    var p = dateKey.split("-").map(function(n){ return parseInt(n,10); });
+    return new Date(p[0], (p[1]||1)-1, p[2]||1).getTime();
+  }
+  function dateInRange(ts, range, now){
+    if(range === "today") return todayKey(ts) === todayKey(now);
+    if(range === "yesterday") return todayKey(ts) === todayKey(now - 24*3600*1000);
+    if(range === "week") return (now - ts) <= 7*24*3600*1000 && ts <= now;
+    if(range === "month") return (now - ts) <= 30*24*3600*1000 && ts <= now;
+    return true; // all-time
+  }
+  function aggregateCountersFromFirebase(all, range){
+    var totals = {"2w":0,"3w":0,"car":0,"suv":0};
+    var now = Date.now();
+    Object.keys(all||{}).forEach(function(dateKey){
+      if(!dateInRange(dateKeyToTime(dateKey), range, now)) return;
+      var day = all[dateKey] || {};
+      Object.keys(day).forEach(function(cat){
+        if(totals.hasOwnProperty(cat)) totals[cat] += (day[cat]||0);
+      });
+    });
+    return totals;
+  }
+
+  /* ---- "GSS By The Numbers" trust cards: All-Time / This Month vehicle totals ---- */
+  function refreshVehicleNumberCards(){
+    if(fbEnabled){
+      renderVehicleNumberCards(
+        aggregateCountersFromFirebase(lastCountersAll, "all"),
+        aggregateCountersFromFirebase(lastCountersAll, "month")
+      );
+    } else {
+      getAll("vehicles", function(list){
+        var now = Date.now();
+        var allT = {"2w":0,"3w":0,"car":0,"suv":0};
+        var monthT = {"2w":0,"3w":0,"car":0,"suv":0};
+        list.forEach(function(v){
+          if(!allT.hasOwnProperty(v.category)) return;
+          allT[v.category]++;
+          if(dateInRange(v.timestamp,"month",now)) monthT[v.category]++;
+        });
+        renderVehicleNumberCards(allT, monthT);
+      });
+    }
+  }
+  function renderVehicleNumberCards(allTotals, monthTotals){
+    var elAll = document.getElementById("num-all-time");
+    var elMonth = document.getElementById("num-this-month");
+    var elHappy = document.getElementById("num-happy-customers");
+    var allTotal = sumCatTotals(allTotals);
+    if(elAll) elAll.textContent = allTotal;
+    if(elMonth) elMonth.textContent = sumCatTotals(monthTotals);
+    // "Happy Customers" intentionally mirrors "Vehicles Served All-Time" - same number,
+    // and it updates live the moment a vehicle is logged, since both are driven by the
+    // same counters data (no separate booking-based calculation anymore).
+    if(elHappy) elHappy.textContent = allTotal;
+  }
+
+  /* ---- Google Rating (config value - no live Google API connection) ---- */
+  function refreshTrustNumbers(){
+    var ratingEl = document.getElementById("num-google-rating");
+    if(ratingEl) ratingEl.textContent = GOOGLE_RATING + "\u2605";
+  }
+
+  function setupCountersLive(){
+    if(!fbEnabled) return;
+    // Listening on the whole "counters" node (one small tree, grouped by day) keeps
+    // every number-card live and instant, and it's the exact same data the Admin >
+    // Logger buttons write to - so admin taps reflect here immediately.
+    fbListen("counters", function(all){
+      lastCountersAll = all || {};
+      refreshVehicleNumberCards();
+      refreshPublicStats();
+      if(isAdminMode()) refreshMonthlyGoal();
+    });
+  }
+  GSS.logVehicle = function(cat){
+    var ts = selectedDateTimestamp("logger-date-picker");
+    var dKey = todayKey(ts);
+    addRecord("vehicles", {category:cat, timestamp:ts}, function(){
+      toast((isPickerOnToday("logger-date-picker") ? "Vehicle logged: " : "Vehicle logged for "+dKey+": ")+cat.toUpperCase(),"ok");
+      if(fbEnabled){
+        try{
+          fbDb.ref("counters/"+dKey+"/"+cat).transaction(function(cur){ return (cur||0)+1; });
+        }catch(e){ console.error(e); refreshVehicleNumberCards(); }
+      } else {
+        refreshVehicleNumberCards();
+      }
+      refreshRecentVehicles();
+      refreshPublicStats();
+      if(isAdminMode()) refreshMonthlyGoal();
+    });
+  };
+
+  /* ---- Public Stats Cards: "Vehicles Served Today" + "Avg. Wait Time" - no money, ever ---- */
+  function refreshPublicStats(){
+    // Vehicles Served Today - always TODAY
+    if(fbEnabled){
+      renderVehiclesTodayStat(aggregateCountersFromFirebase(lastCountersAll, "today"));
+    } else {
+      getAll("vehicles", function(list){
+        var now = Date.now();
+        var totals = {"2w":0,"3w":0,"car":0,"suv":0};
+        list.forEach(function(v){ if(dateInRange(v.timestamp,"today",now) && totals.hasOwnProperty(v.category)) totals[v.category]++; });
+        renderVehiclesTodayStat(totals);
+      });
+    }
+    // Avg. Wait Time - average time-in-queue for bookings still Pending / In-Process
+    getBookingsForRoznamcha(function(list){
+      var now = Date.now();
+      var waiting = list.filter(function(b){ return b.status === "Pending" || b.status === "In-Process"; });
+      var el = document.getElementById("pub-wait-time");
+      if(!el) return;
+      if(!waiting.length){ el.textContent = "0 min"; return; }
+      var totalMinutes = 0;
+      waiting.forEach(function(b){ totalMinutes += Math.max(0, (now - b.timestamp) / 60000); });
+      el.textContent = Math.round(totalMinutes / waiting.length) + " min";
+    });
+  }
+  function renderVehiclesTodayStat(totals){
+    var el = document.getElementById("pub-vehicles-today");
+    if(!el) return;
+    el.textContent = sumCatTotals(totals);
+  }
+
+  /* ---- Monthly Goal (admin only) ---- */
+  var MONTHLY_VEHICLE_GOAL = 200; // edit this number to change the target
+  function refreshMonthlyGoal(){
+    var textEl = document.getElementById("goal-text");
+    var pctEl = document.getElementById("goal-percent");
+    var fillEl = document.getElementById("goal-fill");
+    if(!textEl || !fillEl) return;
+    function render(totals){
+      var total = sumCatTotals(totals);
+      var pct = Math.max(0, Math.min(100, Math.round((total / MONTHLY_VEHICLE_GOAL) * 100)));
+      textEl.textContent = total + " / " + MONTHLY_VEHICLE_GOAL + " Vehicles";
+      pctEl.textContent = pct + "%";
+      fillEl.style.width = pct + "%";
+    }
+    if(fbEnabled){
+      render(aggregateCountersFromFirebase(lastCountersAll, "month"));
+    } else {
+      getAll("vehicles", function(list){
+        var now = Date.now();
+        var totals = {"2w":0,"3w":0,"car":0,"suv":0};
+        list.forEach(function(v){ if(dateInRange(v.timestamp,"month",now) && totals.hasOwnProperty(v.category)) totals[v.category]++; });
+        render(totals);
+      });
+    }
+  }
+
+  /* ---- Live at GSS: queue count + team-on-duty count (no names, no money) ---- */
+  function refreshLiveAtGSS(){
+    getBookingsForRoznamcha(function(list){
+      var waiting = list.filter(function(b){ return b.status === "Pending" || b.status === "In-Process"; }).length;
+      var el = document.getElementById("live-queue-count");
+      if(el) el.textContent = waiting + (waiting === 1 ? " Vehicle Waiting" : " Vehicles Waiting");
+    });
+    var onDuty = 0;
+    Object.keys(lastAttendanceTodayMap || {}).forEach(function(staffId){
+      var st = lastAttendanceTodayMap[staffId];
+      if(st === "Present" || st === "Half-Day") onDuty++;
+    });
+    var teamEl = document.getElementById("live-team-count");
+    if(teamEl) teamEl.textContent = onDuty + (onDuty === 1 ? " Member" : " Members");
+  }
+
+  /* ---- Swipeable offers carousel - admin-editable, max 3 (public data) ---- */
+  var DEFAULT_OFFERS = [
+    { emoji:"&#128293;", title:"FREE Oil Change + Labour", desc:"On any service, today only", showTimer:true },
+    { emoji:"&#129701;", title:"10% Off Car Wash", desc:"Valid all week", showTimer:false },
+    { emoji:"&#128295;", title:"Free Vehicle Inspection", desc:"With any paid service", showTimer:false }
+  ];
+  var MAX_OFFERS = 3;
+  var lastOffersList = [];
+
+  function seedDefaultOffersIfEmpty(){
+    getAll("offers", function(list){
+      if(list.length) return;
+      DEFAULT_OFFERS.forEach(function(o){
+        addRecord("offers", o, function(id){
+          if(fbEnabled){ var rec = Object.assign({id:id}, o); fbSet("offers/"+id, rec); }
+        });
+      });
+    });
+  }
+
+  function renderOffersFromList(list){
+    lastOffersList = list || [];
+    var wrap = document.getElementById("offers-carousel");
+    if(!wrap) return;
+    if(!lastOffersList.length){
+      wrap.innerHTML = "<div class='gss-empty'>No active deals right now - check back soon!</div>";
+      return;
+    }
+    var html = "";
+    lastOffersList.forEach(function(o){
+      html += "<div class='gss-offer-slide'>" +
+        "<div class='ic'>"+(o.emoji||"&#127881;")+"</div>" +
+        "<div class='t'>"+escapeHtml(o.title||"")+"</div>" +
+        "<div class='d'>"+escapeHtml(o.desc||"")+"</div>" +
+        (o.showTimer ? "<div class='timer'>Offer Ends In: <span id='gss-countdown-home'>00h 00m 00s</span></div>" : "") +
+        "<button onclick='GSS.nav(\"book\")'>Book Now</button>" +
+      "</div>";
+    });
+    wrap.innerHTML = html;
+  }
+  function refreshOffers(){
+    getAll("offers", renderOffersFromList);
+  }
+  function renderOffersCarousel(){ refreshOffers(); }
+  function setupOffersLive(){
+    if(!fbEnabled) return;
+    fbListen("offers", function(map){
+      var list = Object.keys(map||{}).map(function(k){
+        var o = map[k]; if(o.id===undefined) o.id = isNaN(k)?k:parseInt(k,10); return o;
+      });
+      renderOffersFromList(list);
+    });
+  }
+
+  /* ---- Admin: manage offers (Admin dashboard > Offers tab) ---- */
+  var editingOfferId = null;
+  GSS.adminSaveOffer = function(){
+    var emoji = document.getElementById("offer-emoji").value.trim() || "&#127881;";
+    var title = document.getElementById("offer-title").value.trim();
+    var desc = document.getElementById("offer-desc").value.trim();
+    var showTimer = document.getElementById("offer-timer").checked;
+    if(!title){ toast("Enter an offer title.","err"); return; }
+    var record = {emoji:emoji, title:title, desc:desc, showTimer:showTimer};
+
+    if(editingOfferId !== null){
+      record.id = editingOfferId;
+      putRecord("offers", record, function(){
+        if(fbEnabled) fbSet("offers/"+editingOfferId, record);
+        toast("Offer updated.","ok");
+        GSS.adminCancelOfferEdit();
+        refreshAdminOffersList(); refreshOffers();
+      });
+    } else {
+      getAll("offers", function(list){
+        if(list.length >= MAX_OFFERS){ toast("Max "+MAX_OFFERS+" offers - delete one first.","err"); return; }
+        addRecord("offers", record, function(id){
+          record.id = id;
+          if(fbEnabled) fbSet("offers/"+id, record);
+          toast("Offer added.","ok");
+          resetOfferForm();
+          refreshAdminOffersList(); refreshOffers();
+        });
+      });
+    }
+  };
+  function resetOfferForm(){
+    document.getElementById("offer-emoji").value = "";
+    document.getElementById("offer-title").value = "";
+    document.getElementById("offer-desc").value = "";
+    document.getElementById("offer-timer").checked = false;
+  }
+  GSS.adminEditOffer = function(id){
+    getOne("offers", id, function(o){
+      if(!o){ toast("Offer not found.","err"); return; }
+      editingOfferId = id;
+      document.getElementById("offer-emoji").value = o.emoji || "";
+      document.getElementById("offer-title").value = o.title || "";
+      document.getElementById("offer-desc").value = o.desc || "";
+      document.getElementById("offer-timer").checked = !!o.showTimer;
+      document.getElementById("offer-save-btn").textContent = "Update Offer";
+      document.getElementById("offer-cancel-btn").classList.remove("gss-hidden");
+    });
+  };
+  GSS.adminCancelOfferEdit = function(){
+    editingOfferId = null;
+    resetOfferForm();
+    document.getElementById("offer-save-btn").textContent = "Add Offer";
+    document.getElementById("offer-cancel-btn").classList.add("gss-hidden");
+  };
+  GSS.adminDeleteOffer = function(id){
+    if(!window.confirm("Remove this offer?")) return;
+    deleteRecord("offers", id, function(){
+      if(fbEnabled){ try{ fbDb.ref("offers/"+id).remove(); }catch(e){ console.error(e); } }
+      if(editingOfferId === id) GSS.adminCancelOfferEdit();
+      toast("Offer removed.","ok");
+      refreshAdminOffersList(); refreshOffers();
+    });
+  };
+  function refreshAdminOffersList(){
+    getAll("offers", function(list){
+      var target = document.getElementById("admin-offers-list");
+      if(!target) return;
+      if(!list.length){ target.innerHTML = "<div class='gss-empty'>No offers yet.</div>"; return; }
+      var html = "";
+      list.forEach(function(o){
+        html += "<div class='gss-staff-list-row'>" +
+          "<div class='info'><div class='n'>"+o.emoji+" "+escapeHtml(o.title)+"</div><div class='r'>"+escapeHtml(o.desc||"")+(o.showTimer?" &bull; has countdown":"")+"</div></div>" +
+          "<div class='gss-staff-actions'>" +
+            "<button class='edit' onclick='GSS.adminEditOffer("+o.id+")'>Edit</button>" +
+            "<button class='del' onclick='GSS.adminDeleteOffer("+o.id+")'>Delete</button>" +
+          "</div>" +
+        "</div>";
+      });
+      target.innerHTML = html;
+    });
+  }
+
+
+  /* ---- Recent vehicle logs (edit-mistake / delete option) ---- */
+  GSS.resetLoggerDate = function(){
+    document.getElementById("logger-date-picker").value = todayDateInputValue();
+    toast("Logger date reset to today.","ok");
+  };
+  var VEHICLE_CAT_LABEL = {"2w":"2-Wheeler","3w":"3-Wheeler","car":"Light Car","suv":"SUV / Heavy"};
+  function renderRecentVehicles(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; }).slice(0,15);
+    var target = document.getElementById("recent-vehicles-list");
+    if(!target) return;
+    if(!list.length){ target.innerHTML = "<div class='gss-empty'>No vehicles logged yet.</div>"; return; }
+    var html = "";
+    list.forEach(function(v){
+      var d = new Date(v.timestamp);
+      var timeStr = d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) + " &bull; " + d.toLocaleDateString();
+      html += "<div class='gss-recent-row'>" +
+        "<div><div class='info'>"+(VEHICLE_CAT_LABEL[v.category]||v.category)+"</div><div class='meta'>"+timeStr+"</div></div>" +
+        "<button class='gss-row-del' onclick='GSS.deleteVehicleLog("+v.id+")'>Remove</button>" +
+      "</div>";
+    });
+    target.innerHTML = html;
+  }
+  function refreshRecentVehicles(){
+    getAll("vehicles", renderRecentVehicles);
+  }
+  GSS.deleteVehicleLog = function(id){
+    if(!window.confirm("Remove this vehicle log entry? This will also correct today's counters.")) return;
+    getOne("vehicles", id, function(rec){
+      deleteRecord("vehicles", id, function(){
+        if(fbEnabled && rec){
+          try{
+            fbDb.ref("counters/"+todayKey(rec.timestamp)+"/"+rec.category).transaction(function(cur){
+              return Math.max((cur||0)-1, 0);
+            });
+          }catch(e){ console.error(e); }
+        }
+        toast("Vehicle log removed.","ok");
+        refreshRecentVehicles();
+        refreshVehicleNumberCards();
+      });
+    });
+  };
+
+  /* ================= SERVICES ================= */
+  GSS.renderServices = function(){
+    var cat = document.getElementById("svc-category").value;
+    var list = PRICES[cat];
+    var html = "";
+    Object.keys(list).forEach(function(name){
+      var price = list[name];
+      var isOil = (name === "Oil Change");
+      html += "<div class='gss-service-row'>" +
+        "<div class='gss-service-name'>"+name+(isOil ? " <span class='gss-free-badge'>LABOUR: PKR 0 (FREE)</span>" : "")+"</div>" +
+        "<div class='gss-service-price'>PKR "+price+"</div>" +
+      "</div>";
+    });
+    document.getElementById("services-list").innerHTML = html;
+  };
+
+  GSS.fillBookingServices = function(){
+    var cat = document.getElementById("bk-category").value;
+    var list = PRICES[cat];
+    var sel = document.getElementById("bk-service");
+    sel.innerHTML = "";
+    Object.keys(list).forEach(function(name){
+      var opt = document.createElement("option");
+      opt.value = name; opt.textContent = name + " - PKR " + list[name];
+      sel.appendChild(opt);
+    });
+  };
+
+  /* ---- "Our Services" quick-book grid: jump to Book Now with the service pre-selected ---- */
+  GSS.quickBookService = function(serviceName){
+    GSS.nav("book");
+    GSS.fillBookingServices();
+    var sel = document.getElementById("bk-service");
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].value === serviceName){ sel.selectedIndex = i; break; }
+    }
+    toast("Pre-selected: " + serviceName, "ok");
+  };
+
+  /* ---- "Visit GSS" section: live map embed + directions ---- */
+  function setupVisitGSS(){
+    var iframe = document.getElementById("gss-map-iframe");
+    if(iframe) iframe.src = "https://www.google.com/maps?q=" + GSS_MAP_QUERY + "&output=embed";
+  }
+  GSS.openDirections = function(){
+    window.open("https://www.google.com/maps/dir/?api=1&destination=" + GSS_MAP_QUERY, "_blank");
+  };
+
+  /* ================= TEAM ================= */
+  var lastStaffList = [];
+  var lastAttendanceTodayMap = {};
+  var badgeClassMap = {"Present":"tag-present", "Half-Day":"tag-half", "Leave":"tag-leave", "Absent":"tag-absent"};
+
+  function renderTeamGrid(list, statusMap){
+    lastStaffList = list || [];
+    lastAttendanceTodayMap = statusMap || {};
+    refreshLiveAtGSS();
+    if(!lastStaffList.length){
+      document.getElementById("team-grid").innerHTML = "<div class='gss-empty'>Team profiles will appear here once added by Admin.</div>";
+      return;
+    }
+    var html = "";
+    var roleLabel = {owner:"Owner", commission:"Technician", salary:"Technician"};
+    lastStaffList.forEach(function(s){
+      var st = lastAttendanceTodayMap[s.id];
+      var badge = st ? "<span class='gss-attend-tag "+(badgeClassMap[st]||"")+"'>"+escapeHtml(st)+"</span>" : "";
+      html += "<div class='gss-team-card'>" +
+        "<img src='"+(s.image || "https://placehold.co/80x80/1a212c/00e5ff?text="+encodeURIComponent((s.name||"?").charAt(0)))+"'/>" +
+        "<div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||"Staff")+"</div>" + badge +
+      "</div>";
+    });
+    document.getElementById("team-grid").innerHTML = html;
+  }
+
+  function refreshTeam(){
+    getAll("staff", function(list){
+      var tKey = todayKey();
+      getAll("attendance", function(attList){
+        var todayMap = {};
+        attList.forEach(function(a){ if(a.date===tKey) todayMap[a.staffId]=a.status; });
+        renderTeamGrid(list, todayMap);
+      });
+    });
+  }
+  function setupTeamLive(){
+    if(!fbEnabled) return;
+    fbListen("staff", function(map){
+      var list = Object.keys(map||{}).map(function(k){
+        var s = map[k]; if(!s.id) s.id = isNaN(k) ? k : parseInt(k,10); return s;
+      });
+      renderTeamGrid(list, lastAttendanceTodayMap);
+    });
+  }
+  function setupAttendanceBadgeLive(){
+    if(!fbEnabled) return;
+    fbListen("attendance_public/"+todayKey(), function(map){
+      renderTeamGrid(lastStaffList, map);
+    });
+  }
+
+  /* ================= REVIEWS ================= */
+  document.addEventListener("click", function(e){
+    if(e.target && e.target.closest && e.target.closest("#rev-stars span")){
+      var span = e.target.closest("span");
+      var val = parseInt(span.getAttribute("data-v"),10);
+      document.getElementById("rev-stars").setAttribute("data-val", val);
+      renderStars(val);
+    }
+  });
+  function renderStars(val){
+    document.querySelectorAll("#rev-stars span").forEach(function(s){
+      s.classList.toggle("active", parseInt(s.getAttribute("data-v"),10) <= val);
+    });
+  }
+  renderStars(5);
+
+  var lastReviewSubmitAt = 0;
+  GSS.submitReview = function(){
+    var now = Date.now();
+    if(now - lastReviewSubmitAt < 8000){
+      toast("Please wait a moment before posting again.","err");
+      return;
+    }
+    var name = document.getElementById("rev-name").value.trim();
+    var msg = document.getElementById("rev-msg").value.trim();
+    var rating = parseInt(document.getElementById("rev-stars").getAttribute("data-val"),10);
+    if(!name || !msg){ toast("Please fill your name and message.","err"); return; }
+    lastReviewSubmitAt = now;
+    var record = {name:name, rating:rating, message:msg, timestamp:Date.now()};
+    addRecord("reviews", record, function(id){
+      record.id = id;
+      if(fbEnabled) fbSet("reviews/"+id, record);
+      toast("Thanks for your review!","ok");
+      document.getElementById("rev-name").value=""; document.getElementById("rev-msg").value="";
+      refreshReviews();
+    });
+  };
+  function renderReviews(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    renderReviewsPreview(list);
+    if(!list.length){
+      document.getElementById("reviews-list").innerHTML = "<div class='gss-empty'>No reviews yet. Be the first!</div>";
+      return;
+    }
+    var html = "";
+    list.forEach(function(r){
+      var stars = "";
+      for(var i=0;i<5;i++){ stars += i < r.rating ? "&#9733;" : "&#9734;"; }
+      html += "<div class='gss-review-card'>" +
+        "<div class='gss-review-top'><b style=\"font-size:12px\">"+escapeHtml(r.name)+"</b><span class='gss-stars'>"+stars+"</span></div>" +
+        "<div class='gss-review-msg'>"+escapeHtml(r.message)+"</div>" +
+      "</div>";
+    });
+    document.getElementById("reviews-list").innerHTML = html;
+  }
+  /* ---- "Customer Reviews" horizontal preview: last 3, with a "View All" link out to Google ---- */
+  function renderReviewsPreview(sortedList){
+    var wrap = document.getElementById("reviews-preview-carousel");
+    var btn = document.getElementById("view-all-reviews-btn");
+    if(btn) btn.textContent = "View All Reviews";
+    if(!wrap) return;
+    var top3 = (sortedList||[]).slice(0,3);
+    if(!top3.length){
+      wrap.innerHTML = "<div class='gss-empty'>No reviews yet. Be the first!</div>";
+      return;
+    }
+    var html = "";
+    top3.forEach(function(r){
+      var stars = "";
+      for(var i=0;i<5;i++){ stars += i < r.rating ? "&#9733;" : "&#9734;"; }
+      var d = new Date(r.timestamp);
+      var dateStr = d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
+      html += "<div class='gss-review-preview-card'>" +
+        "<div class='stars'>"+stars+"</div>" +
+        "<div class='name'>"+escapeHtml(r.name)+"</div>" +
+        "<div class='msg'>"+escapeHtml(r.message)+"</div>" +
+        "<div class='date'>"+dateStr+"</div>" +
+      "</div>";
+    });
+    wrap.innerHTML = html;
+  }
+  GSS.openGoogleReviews = function(){
+    if(!GOOGLE_REVIEWS_URL){
+      toast("Google Reviews link isn't configured yet.","err");
+      return;
+    }
+    window.open(GOOGLE_REVIEWS_URL, "_blank");
+  };
+  function refreshReviews(){
+    getAll("reviews", renderReviews);
+  }
+  function setupReviewsLive(){
+    if(!fbEnabled) return;
+    fbListen("reviews", function(map){
+      var list = Object.keys(map||{}).map(function(k){
+        var r = map[k]; if(!r.id) r.id = isNaN(k) ? k : parseInt(k,10); return r;
+      });
+      renderReviews(list);
+    });
+  }
+
+  /* ---- Admin: Reviews moderation (edit / delete a wrongly posted review) ---- */
+  function renderAdminReviews(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    var target = document.getElementById("admin-reviews-list");
+    if(!target) return;
+    if(!list.length){ target.innerHTML = "<div class='gss-empty'>No reviews yet.</div>"; return; }
+    var html = "";
+    list.forEach(function(r){
+      var stars = "";
+      for(var i=0;i<5;i++){ stars += i < r.rating ? "&#9733;" : "&#9734;"; }
+      html += "<div class='gss-review-card'>" +
+        "<div class='gss-review-top'><b style=\"font-size:12px\">"+escapeHtml(r.name)+"</b><span class='gss-stars'>"+stars+"</span></div>" +
+        "<div class='gss-review-msg'>"+escapeHtml(r.message)+"</div>" +
+        "<div class='gss-row-actions' style='margin-top:8px; justify-content:flex-end;'>" +
+          "<button class='gss-btn-edit-sm' onclick='GSS.editReview("+r.id+")'>Edit</button>" +
+          "<button class='gss-row-del' onclick='GSS.deleteReview("+r.id+")'>Delete</button>" +
+        "</div>" +
+      "</div>";
+    });
+    target.innerHTML = html;
+  }
+  function refreshAdminReviews(){
+    getAll("reviews", renderAdminReviews);
+  }
+  GSS.editReview = function(id){
+    getOne("reviews", id, function(r){
+      if(!r){ toast("Review not found.","err"); return; }
+      var newMsg = window.prompt("Edit review message:", r.message);
+      if(newMsg === null) return;
+      newMsg = newMsg.trim();
+      if(!newMsg){ toast("Message cannot be empty.","err"); return; }
+      var newRatingStr = window.prompt("Edit rating (1-5):", r.rating);
+      if(newRatingStr === null) return;
+      var newRating = parseInt(newRatingStr,10);
+      if(isNaN(newRating) || newRating<1 || newRating>5){ toast("Rating must be 1-5.","err"); return; }
+      r.message = newMsg; r.rating = newRating;
+      putRecord("reviews", r, function(){
+        if(fbEnabled) fbSet("reviews/"+id, r);
+        toast("Review updated.","ok");
+        refreshAdminReviews(); refreshReviews();
+      });
+    });
+  };
+  GSS.deleteReview = function(id){
+    if(!window.confirm("Delete this review permanently?")) return;
+    deleteRecord("reviews", id, function(){
+      if(fbEnabled) fbRemove("reviews/"+id);
+      toast("Review deleted.","ok");
+      refreshAdminReviews(); refreshReviews();
+    });
+  };
+
+  /* ================= BOOKING ================= */
+  var lastBookingSubmitAt = 0;
+  GSS.submitBooking = function(){
+    var now = Date.now();
+    if(now - lastBookingSubmitAt < 4000){
+      toast("Please wait a moment before submitting again.","err");
+      return;
+    }
+    var name = document.getElementById("bk-name").value.trim();
+    var phone = document.getElementById("bk-phone").value.trim();
+    var vehicle = document.getElementById("bk-vehicle").value.trim();
+    var cat = document.getElementById("bk-category").value;
+    var service = document.getElementById("bk-service").value;
+    if(!name || !phone || !vehicle || !service){ toast("Please fill all fields.","err"); return; }
+    lastBookingSubmitAt = now;
+    var price = (PRICES[cat] && PRICES[cat][service]) ? PRICES[cat][service] : 0;
+    var record = {
+      name:name, phone:phone, vehicle:vehicle, category:cat, service:service,
+      price:price, status:"Pending", timestamp:Date.now()
+    };
+    fbNextToken(function(fbToken){
+      if(fbToken){
+        record.id = fbToken;
+        fbSet("bookings/"+fbToken, record);
+        addRecordWithId("bookings", record, function(){ finalizeBooking(fbToken, record); });
+      } else {
+        addRecord("bookings", record, function(localId){ finalizeBooking(localId, record); });
+      }
+    });
+  };
+
+  function finalizeBooking(token, record){
+    fireConfetti();
+    showBookingSuccess(token, record);
+    document.getElementById("bk-name").value="";
+    document.getElementById("bk-phone").value="";
+    document.getElementById("bk-vehicle").value="";
+    refreshLiveAtGSS();
+    refreshPublicStats();
+  }
+
+  function showBookingSuccess(token, record){
+    var msg = "GSS Booking Request:%0A" +
+      "Name: "+encodeURIComponent(record.name)+"%0A" +
+      "Phone: "+encodeURIComponent(record.phone)+"%0A" +
+      "Vehicle No: "+encodeURIComponent(record.vehicle)+"%0A" +
+      "Category: "+encodeURIComponent(CATEGORY_LABEL[record.category]||record.category)+"%0A" +
+      "Service: "+encodeURIComponent(record.service)+"%0A" +
+      "Token: #"+token;
+    var url = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+msg;
+    document.getElementById("success-token").textContent = token;
+    document.getElementById("success-whatsapp-btn").setAttribute("href", url);
+    document.getElementById("booking-success").classList.add("show");
+    toast("Booking confirmed! Token #"+token,"ok");
+  }
+  GSS.closeBookingSuccess = function(){
+    document.getElementById("booking-success").classList.remove("show");
+  };
+
+  function fireConfetti(){
+    var colors = ["#00e5ff","#2979ff","#20e3a2","#ffb703","#ff4d6d"];
+    for(var i=0;i<28;i++){
+      var piece = document.createElement("div");
+      piece.className = "gss-confetti-piece";
+      piece.style.left = (Math.random()*100)+"vw";
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDuration = (1.2 + Math.random()*1.4)+"s";
+      document.body.appendChild(piece);
+      (function(p){ setTimeout(function(){ p.remove(); }, 3000); })(piece);
+    }
+  }
+
+  /* ================= WHATSAPP FAB ================= */
+  function refreshFab(){
+    var fab = document.getElementById("gss-fab");
+    var msg = "Hi GSS! I'd like to know more about your services.";
+    fab.href = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg);
+  }
+
+  /* ================= TRACK ORDER ================= */
+  GSS.trackOrder = function(){
+    var q = document.getElementById("trk-input").value.trim().toLowerCase();
+    if(!q){ toast("Enter a vehicle number or token.","err"); return; }
+    if(q.charAt(0) === "#") q = q.substring(1);
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var found = null;
+          Object.keys(all).forEach(function(k){
+            var b = all[k];
+            if(String(k) === q || String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q)) found = b;
+          });
+          if(found){ renderTrackResult(found); } else { trackLocal(q); }
+        }).catch(function(){ trackLocal(q); });
+      }catch(e){ trackLocal(q); }
+    } else {
+      trackLocal(q);
+    }
+  };
+  function trackLocal(q){
+    getAll("bookings", function(list){
+      var found = null;
+      list.forEach(function(b){
+        if(String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q)) found = b;
+      });
+      renderTrackResult(found);
+    });
+  }
+  function renderTrackResult(found){
+    var box = document.getElementById("track-result");
+    if(!found){
+      box.innerHTML = "<div class='gss-empty'>No active order found for that vehicle/token.</div>";
+      return;
+    }
+    if(found.status === "Cancelled"){
+      box.innerHTML = "<div class='gss-form'><b style=\"font-size:12px\">Token #"+(found.id!==undefined?found.id:"")+" &bull; "+escapeHtml(found.vehicle)+"</b>" +
+        "<div class='gss-empty' style='color:var(--gss-danger)'>This booking was cancelled.</div></div>";
+      return;
+    }
+    var steps = ["Pending","In-Process","Completed"];
+    var idx = steps.indexOf(found.status);
+    var html = "<div class='gss-form'><b style=\"font-size:12px\">Token #"+(found.id!==undefined?found.id:"")+" &bull; "+escapeHtml(found.vehicle)+"</b>" +
+      "<div class='gss-stepper'>";
+    steps.forEach(function(s, i){
+      var cls = i < idx ? "done" : (i === idx ? "current" : "");
+      html += "<div class='gss-step "+cls+"'><div class='dot'>"+(i<idx?"&#10003;":(i+1))+"</div><div class='lbl2'>"+s+"</div></div>";
+    });
+    html += "</div></div>";
+    box.innerHTML = html;
+  }
+
+  /* ================= ADMIN: TAB SWITCH ================= */
+  GSS.adminTab = function(t){
+    document.querySelectorAll(".gss-admin-card").forEach(function(a){ a.classList.toggle("active", a.getAttribute("data-t")===t); });
+    document.querySelectorAll(".gss-apanel").forEach(function(p){ p.classList.remove("active"); });
+    document.getElementById("apanel-"+t).classList.add("active");
+    if(t==="logger"){ ensureDatePickerDefault("logger-date-picker"); refreshRecentVehicles(); }
+    if(t==="queue") refreshQueue();
+    if(t==="expense"){ ensureDatePickerDefault("exp-date-picker"); refreshExpenses(); }
+    if(t==="attend") refreshAttendance();
+    if(t==="staff") refreshStaffList();
+    if(t==="reviews") refreshAdminReviews();
+    if(t==="finance") refreshFinance();
+    if(t==="roznamcha") refreshRoznamcha();
+    if(t==="offers") refreshAdminOffersList();
+  };
+
+  function refreshAdminData(){
+    ensureDatePickerDefault("logger-date-picker");
+    ensureDatePickerDefault("exp-date-picker");
+    refreshRecentVehicles(); refreshQueue(); refreshExpenses(); refreshAttendance();
+    refreshStaffList(); refreshAdminReviews(); refreshFinance(); refreshRoznamcha();
+    refreshAdminOffersList();
+  }
+
+  /* ================= ADMIN: QUEUE ================= */
+  function renderQueue(list){
+    list = (list||[]).slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    if(!list.length){ document.getElementById("queue-list").innerHTML = "<div class='gss-empty'>No bookings yet.</div>"; return; }
+    var html = "";
+    list.forEach(function(b){
+      var isCancelled = b.status === "Cancelled";
+      html += "<div class='gss-queue-item'>" +
+        "<div class='gss-queue-top'><span>#"+b.id+" "+escapeHtml(b.name)+"</span><span>PKR "+b.price+"</span></div>" +
+        "<div class='gss-queue-meta'>"+escapeHtml(b.vehicle)+" &bull; "+escapeHtml(CATEGORY_LABEL[b.category]||b.category)+" &bull; "+escapeHtml(b.service)+"</div>" +
+        "<select class='gss-status-select' "+(isCancelled?"disabled":"")+" onchange='GSS.updateStatus("+JSON.stringify(b.id)+", this.value)'>" +
+          ["Pending","In-Process","Completed","Cancelled"].map(function(s){ return "<option "+(s===b.status?"selected":"")+">"+s+"</option>"; }).join("") +
+        "</select>" +
+        (isCancelled ? "" : "<button class='gss-btn-cancel' onclick='GSS.cancelBooking("+JSON.stringify(b.id)+")'>Cancel Order</button>") +
+        "<button class='gss-row-del' style='margin-top:6px; width:100%;' onclick='GSS.deleteBooking("+JSON.stringify(b.id)+")'>Delete Permanently</button>" +
+      "</div>";
+    });
+    document.getElementById("queue-list").innerHTML = html;
+  }
+  function refreshQueue(){
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
+          renderQueue(list);
+        }).catch(function(){ getAll("bookings", renderQueue); });
+      }catch(e){ getAll("bookings", renderQueue); }
+    } else {
+      getAll("bookings", renderQueue);
+    }
+  }
+  GSS.updateStatus = function(id, status){
+    if(fbEnabled){ fbUpdate("bookings/"+id, {status:status}); }
+    getOne("bookings", id, function(rec){
+      if(rec){ rec.status = status; putRecord("bookings", rec); }
+      toast("Status updated to "+status,"ok");
+      refreshQueue();
+      refreshFinance();
+      refreshLiveAtGSS();
+      refreshPublicStats();
+      refreshTrustNumbers();
+    });
+  };
+  GSS.cancelBooking = function(id){
+    if(!window.confirm("Cancel this order? The customer's slot will be released.")) return;
+    GSS.updateStatus(id, "Cancelled");
+    toast("Order cancelled.","ok");
+  };
+  GSS.deleteBooking = function(id){
+    if(!window.confirm("Permanently delete this booking record? This cannot be undone.")) return;
+    deleteRecord("bookings", id, function(){
+      if(fbEnabled) fbRemove("bookings/"+id);
+      toast("Booking deleted.","ok");
+      refreshQueue(); refreshFinance();
+      refreshLiveAtGSS(); refreshPublicStats();
+      refreshTrustNumbers();
+    });
+  };
+
+  /* ================= ADMIN: EXPENSES (50/50 split) ================= */
+  GSS.resetExpenseDate = function(){
+    document.getElementById("exp-date-picker").value = todayDateInputValue();
+    toast("Expense date reset to today.","ok");
+  };
+  GSS.addExpense = function(){
+    var amount = parseFloat(document.getElementById("exp-amount").value);
+    var category = document.getElementById("exp-category").value;
+    var spender = document.getElementById("exp-spender").value.trim();
+    if(!amount || amount<=0 || !spender){ toast("Enter valid amount and spender.","err"); return; }
+    var ts = selectedDateTimestamp("exp-date-picker");
+    addRecord("expenses", {amount:amount, category:category, spender:spender, timestamp:ts}, function(){
+      toast(isPickerOnToday("exp-date-picker") ? "Expense committed & split 50/50." : "Expense logged for "+todayKey(ts)+" & split 50/50.","ok");
+      document.getElementById("exp-amount").value="";
+      document.getElementById("exp-spender").value="";
+      refreshExpenses(); refreshFinance();
+    });
+  };
+  GSS.deleteExpense = function(id){
+    if(!window.confirm("Delete this expense entry? This cannot be undone.")) return;
+    deleteRecord("expenses", id, function(){
+      toast("Expense deleted.","ok");
+      refreshExpenses(); refreshFinance();
+    });
+  };
+  function refreshExpenses(){
+    getAll("expenses", function(list){
+      list.sort(function(a,b){ return b.timestamp - a.timestamp; });
+      if(!list.length){ document.getElementById("expense-list").innerHTML = "<div class='gss-empty'>No expenses logged.</div>"; return; }
+      var html = "";
+      list.slice(0,25).forEach(function(x){
+        html += "<div class='gss-queue-item'>" +
+          "<div class='gss-queue-top'><span>"+escapeHtml(x.category)+"</span><span>PKR "+x.amount+"</span></div>" +
+          "<div class='gss-queue-meta'>Paid by "+escapeHtml(x.spender)+" &bull; Owner: PKR "+(x.amount*0.5).toFixed(0)+" | Labour Pool: PKR "+(x.amount*0.5).toFixed(0)+"</div>" +
+          "<button class='gss-row-del' style='margin-top:6px; width:100%;' onclick='GSS.deleteExpense("+x.id+")'>Remove</button>" +
+        "</div>";
+      });
+      document.getElementById("expense-list").innerHTML = html;
+    });
+  }
+
+  /* ================= ADMIN: ATTENDANCE ================= */
+  var ATTEND_STATUSES = ["Present","Half-Day","Leave","Absent"];
+  var ATTEND_CLASS = {"Present":"sel-present", "Half-Day":"sel-half", "Leave":"sel-leave", "Absent":"sel-absent"};
+
+  function selectedAttendanceDateKey(){
+    return todayKey(selectedDateTimestamp("attend-date-picker"));
+  }
+  GSS.setAttendanceDate = function(){
+    GSS._pendingAttendance = {}; // switching days clears any unsaved (uncommitted) taps
+    refreshAttendance();
+  };
+  GSS.resetAttendanceDate = function(){
+    document.getElementById("attend-date-picker").value = todayDateInputValue();
+    GSS._pendingAttendance = {};
+    refreshAttendance();
+  };
+
+  function refreshAttendance(){
+    ensureDatePickerDefault("attend-date-picker");
+    var titleEl = document.getElementById("attend-list-title");
+    if(titleEl){
+      titleEl.textContent = isPickerOnToday("attend-date-picker") ? "Mark Today's Attendance" : "Mark Attendance for " + document.getElementById("attend-date-picker").value;
+    }
+    getAll("staff", function(staffList){
+      if(!staffList.length){ document.getElementById("attend-list").innerHTML = "<div class='gss-empty'>Add staff profiles first.</div>"; return; }
+      var tKey = selectedAttendanceDateKey();
+      getAll("attendance", function(attList){
+        var dayMap = {};
+        attList.forEach(function(a){ if(a.date===tKey) dayMap[a.staffId]=a.status; });
+        var html = "";
+        staffList.forEach(function(s){
+          var cur = dayMap[s.id] || "";
+          html += "<div class='gss-attend-row' data-staff='"+s.id+"'>" +
+            "<span style=\"font-size:12px; font-weight:700\">"+escapeHtml(s.name)+"</span>" +
+            "<div class='gss-attend-opts'>" +
+              ATTEND_STATUSES.map(function(st){
+                return "<button class='"+(cur===st?ATTEND_CLASS[st]:"")+"' onclick='GSS.markAttendance("+s.id+",\""+st+"\")'>"+st+"</button>";
+              }).join("") +
+            "</div>" +
+          "</div>";
+        });
+        document.getElementById("attend-list").innerHTML = html;
+      });
+    });
+    // keep the monthly sheet in sync whenever this tab is shown
+    GSS.refreshMonthlySheet();
+  }
+  GSS._pendingAttendance = {};
+  GSS.markAttendance = function(staffId, status){
+    GSS._pendingAttendance[staffId] = status;
+    var row = document.querySelector('.gss-attend-row[data-staff="'+staffId+'"] .gss-attend-opts');
+    row.querySelectorAll("button").forEach(function(b){ b.className = ""; });
+    Array.prototype.forEach.call(row.children, function(b){
+      if(b.textContent === status) b.className = ATTEND_CLASS[status];
+    });
+  };
+  GSS.commitAttendance = function(){
+    var tKey = selectedAttendanceDateKey();
+    var onToday = isPickerOnToday("attend-date-picker");
+    var ids = Object.keys(GSS._pendingAttendance);
+    if(!ids.length){ toast("Mark attendance before committing.","err"); return; }
+    getAll("attendance", function(attList){
+      var existingMap = {};
+      attList.forEach(function(a){ if(a.date===tKey) existingMap[a.staffId]=a; });
+      var done = 0;
+      ids.forEach(function(staffIdStr){
+        var staffId = parseInt(staffIdStr,10);
+        var status = GSS._pendingAttendance[staffIdStr];
+        var existing = existingMap[staffId];
+        function afterSave(){
+          // "attendance_public" powers the live Present/Absent badge shown on the
+          // public Home page team cards - that badge means TODAY, so only push to
+          // it when the admin is actually logging today (not backdating a missed day).
+          if(fbEnabled && onToday) fbSet("attendance_public/"+tKey+"/"+staffId, status);
+          done++;
+          if(done === ids.length){
+            toast(onToday ? "Attendance ledger committed for today." : "Attendance ledger committed for "+tKey+".","ok");
+            GSS._pendingAttendance = {};
+            refreshTeam();
+            GSS.refreshMonthlySheet();
+          }
+        }
+        if(existing){
+          // EDIT: overwrite this date's existing record instead of creating a duplicate
+          existing.status = status; existing.timestamp = Date.now();
+          putRecord("attendance", existing, afterSave);
+        } else {
+          addRecord("attendance", {staffId: staffId, date: tKey, status: status, timestamp:Date.now()}, afterSave);
+        }
+      });
+    });
+  };
+
+  /* ---- Monthly attendance summary sheet ---- */
+  GSS.refreshMonthlySheet = function(){
+    var picker = document.getElementById("month-picker");
+    if(!picker) return;
+    if(!picker.value){
+      var d = new Date();
+      picker.value = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    }
+    var parts = picker.value.split("-");
+    var y = parseInt(parts[0],10), mo = parseInt(parts[1],10);
+    getAll("staff", function(staffList){
+      var target = document.getElementById("monthly-sheet");
+      if(!staffList.length){ target.innerHTML = "<div class='gss-empty'>No staff profiles yet.</div>"; return; }
+      getAll("attendance", function(attList){
+        var html = "<table class='gss-month-table'><thead><tr><th>Staff</th><th>Present</th><th>Half-Day</th><th>Leave</th><th>Absent</th><th>Marked</th></tr></thead><tbody>";
+        staffList.forEach(function(s){
+          var counts = {"Present":0, "Half-Day":0, "Leave":0, "Absent":0};
+          attList.forEach(function(a){
+            if(a.staffId !== s.id || !a.date) return;
+            var dparts = a.date.split("-");
+            if(parseInt(dparts[0],10)===y && parseInt(dparts[1],10)===mo && counts.hasOwnProperty(a.status)){
+              counts[a.status]++;
+            }
+          });
+          var marked = counts["Present"]+counts["Half-Day"]+counts["Leave"]+counts["Absent"];
+          html += "<tr><td>"+escapeHtml(s.name)+"</td><td>"+counts["Present"]+"</td><td>"+counts["Half-Day"]+"</td><td>"+counts["Leave"]+"</td><td>"+counts["Absent"]+"</td><td>"+marked+"</td></tr>";
+        });
+        html += "</tbody></table>";
+        target.innerHTML = html;
+      });
+    });
+  };
+
+  /* ================= ADMIN: STAFF PROFILES ================= */
+  var editingStaffId = null;
+
+  GSS.handleStaffImage = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      currentStaffImageB64 = ev.target.result;
+      var box = document.getElementById("staff-avatar-preview");
+      box.innerHTML = "<img src='"+currentStaffImageB64+"'/>";
+    };
+    reader.readAsDataURL(file);
+  };
+
+  function publicStaffCopy(record){
+    // Salary is private admin data - never sync it to the public Firebase node.
+    // It stays only in local IndexedDB, used for the admin's own Staff panel.
+    return {id: record.id, name: record.name, role: record.role, image: record.image || "", timestamp: record.timestamp};
+  }
+
+  GSS.saveStaff = function(){
+    var name = document.getElementById("staff-name").value.trim();
+    var role = document.getElementById("staff-role").value;
+    var salary = parseFloat(document.getElementById("staff-salary").value) || 0;
+    if(!name){ toast("Enter staff name.","err"); return; }
+    var record = {name:name, role:role, salary:salary, image: currentStaffImageB64 || "", timestamp:Date.now()};
+
+    if(editingStaffId !== null){
+      // UPDATE existing profile
+      record.id = editingStaffId;
+      putRecord("staff", record, function(){
+        if(fbEnabled) fbSet("staff/"+editingStaffId, publicStaffCopy(record));
+        toast("Profile updated.","ok");
+        GSS.cancelStaffEdit();
+        refreshStaffList(); refreshTeam();
+      });
+    } else {
+      // CREATE new profile
+      addRecord("staff", record, function(id){
+        record.id = id;
+        if(fbEnabled) fbSet("staff/"+id, publicStaffCopy(record));
+        toast("Profile saved.","ok");
+        resetStaffForm();
+        refreshStaffList(); refreshTeam();
+      });
+    }
+  };
+
+  function resetStaffForm(){
+    document.getElementById("staff-name").value="";
+    document.getElementById("staff-salary").value="";
+    document.getElementById("staff-role").value="owner";
+    document.getElementById("staff-avatar-preview").innerHTML = "Tap to Upload";
+    currentStaffImageB64 = null;
+  }
+
+  GSS.editStaff = function(id){
+    getOne("staff", id, function(s){
+      if(!s){ toast("Profile not found.","err"); return; }
+      editingStaffId = id;
+      document.getElementById("staff-form-title").textContent = "Editing: " + s.name;
+      document.getElementById("staff-name").value = s.name || "";
+      document.getElementById("staff-role").value = s.role || "owner";
+      document.getElementById("staff-salary").value = s.salary || 0;
+      currentStaffImageB64 = s.image || null;
+      document.getElementById("staff-avatar-preview").innerHTML = s.image ? "<img src='"+s.image+"'/>" : "Tap to Upload";
+      document.getElementById("staff-save-btn").textContent = "Update Profile";
+      document.getElementById("staff-cancel-btn").classList.remove("gss-hidden");
+      document.getElementById("staff-name").scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  };
+
+  GSS.cancelStaffEdit = function(){
+    editingStaffId = null;
+    document.getElementById("staff-form-title").textContent = "Add New Profile";
+    document.getElementById("staff-save-btn").textContent = "Save Profile";
+    document.getElementById("staff-cancel-btn").classList.add("gss-hidden");
+    resetStaffForm();
+  };
+
+  GSS.deleteStaff = function(id, name){
+    if(!window.confirm("Remove "+(name||"this profile")+" permanently? This also clears their attendance history.")){
+      return;
+    }
+    deleteRecord("staff", id, function(){
+      if(fbEnabled){ try{ fbDb.ref("staff/"+id).remove(); }catch(e){ console.error(e); } }
+      // Clean up this staff member's attendance records too, so the monthly sheet stays accurate
+      getAll("attendance", function(list){
+        list.forEach(function(a){
+          if(a.staffId === id) deleteRecord("attendance", a.id, null);
+        });
+      });
+      if(editingStaffId === id) GSS.cancelStaffEdit();
+      toast("Profile removed.","ok");
+      refreshStaffList(); refreshTeam(); GSS.refreshMonthlySheet();
+    });
+  };
+
+  function refreshStaffList(){
+    getAll("staff", function(list){
+      if(!list.length){ document.getElementById("staff-list").innerHTML = "<div class='gss-empty'>No profiles yet.</div>"; return; }
+      var roleLabel = {owner:"Executive Owner", commission:"50% Commission Labour", salary:"Fixed Salary Labour"};
+      var html = "";
+      list.forEach(function(s){
+        html += "<div class='gss-staff-list-row'>" +
+          "<img src='"+(s.image || "https://placehold.co/60x60/1a212c/00e5ff?text="+encodeURIComponent(s.name.charAt(0)))+"'/>" +
+          "<div class='info'><div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||s.role)+" &bull; PKR "+s.salary+"</div></div>" +
+          "<div class='gss-staff-actions'>" +
+            "<button class='edit' onclick='GSS.editStaff("+s.id+")'>Edit</button>" +
+            "<button class='del' onclick='GSS.deleteStaff("+s.id+",\""+escapeHtml(s.name).replace(/"/g,"&quot;")+"\")'>Delete</button>" +
+          "</div>" +
+        "</div>";
+      });
+      document.getElementById("staff-list").innerHTML = html;
+      refreshTeam();
+    });
+  }
+
+  /* ================= ADMIN: FINANCE ================= */
+  GSS.setFinanceFilter = function(f){
+    financeFilter = f;
+    document.querySelectorAll(".gss-filter-row button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-f")===f); });
+    refreshFinance();
+  };
+  function inRange(ts){
+    var now = Date.now();
+    var d = now - ts;
+    if(financeFilter==="daily") return todayKey(ts) === todayKey(now);
+    if(financeFilter==="weekly") return d <= 7*24*3600*1000;
+    if(financeFilter==="monthly") return d <= 30*24*3600*1000;
+    return true;
+  }
+  function refreshFinance(){
+    function withBookings(bookings){
+      getAll("expenses", function(expenses){
+        var revenue = 0;
+        bookings.forEach(function(b){ if(b.status==="Completed" && inRange(b.timestamp)) revenue += (b.price||0); });
+        var totalExp = 0;
+        expenses.forEach(function(x){ if(inRange(x.timestamp)) totalExp += (x.amount||0); });
+        var ownerExpShare = totalExp * 0.5;
+        var labourExpShare = totalExp * 0.5;
+        var ownerRevenueShare = revenue * 0.5;
+        var ownerNet = ownerRevenueShare - ownerExpShare;
+        var labourRevenueShare = revenue * 0.5;
+        var labourNet = labourRevenueShare - labourExpShare;
+        document.getElementById("fin-revenue").textContent = "PKR " + revenue.toFixed(0);
+        document.getElementById("fin-expenses").textContent = "PKR " + totalExp.toFixed(0);
+        document.getElementById("fin-owner").textContent = "PKR " + ownerNet.toFixed(0);
+        document.getElementById("fin-labour").textContent = "PKR " + labourNet.toFixed(0);
+      });
+    }
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
+          withBookings(list);
+        }).catch(function(){ getAll("bookings", withBookings); });
+      }catch(e){ getAll("bookings", withBookings); }
+    } else {
+      getAll("bookings", withBookings);
+    }
+  }
+
+  /* ================= ROZNAMCHA (Daily Cash Ledger & Cash Flow) ================= */
+  var ROZ_INCOME_CATEGORIES = ["Services","Advance Payment","Cash Injection"];
+  var ROZ_EXPENSE_CATEGORIES = ["Tea/Lunch","Bill","Petrol","Spare Parts","Labour Payout"];
+  var roznamchaFilter = "all";     // all | income | expense
+  var roznamchaDate = null;        // "YYYY-MM-DD", set to today on first use
+  var editingLedgerId = null;      // when set, Save Entry becomes Update Entry
+
+  function pad2(n){ return n < 10 ? "0" + n : "" + n; }
+  function tsToDateKeyPadded(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function todayDateKeyPadded(){ return tsToDateKeyPadded(Date.now()); }
+
+  // Reuses the same fbEnabled-aware booking source pattern as Finance, kept as its own
+  // local copy so the existing refreshFinance() function above is never touched.
+  function getBookingsForRoznamcha(cb){
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
+          cb(list);
+        }).catch(function(){ getAll("bookings", cb); });
+      }catch(e){ getAll("bookings", cb); }
+    } else {
+      getAll("bookings", cb);
+    }
+  }
+
+  GSS.rozTypeChange = function(){
+    var type = document.getElementById("roz-type").value;
+    var catSelect = document.getElementById("roz-category");
+    var cats = (type === "Income") ? ROZ_INCOME_CATEGORIES : ROZ_EXPENSE_CATEGORIES;
+    var opts = "";
+    cats.forEach(function(c){ opts += "<option>" + c + "</option>"; });
+    catSelect.innerHTML = opts;
+  };
+
+  GSS.rozSetFilter = function(f){
+    roznamchaFilter = f;
+    document.querySelectorAll("#roz-filter-pills button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-f") === f);
+    });
+    refreshRoznamcha();
+  };
+
+  GSS.rozSetDate = function(val){
+    roznamchaDate = val || todayDateKeyPadded();
+    refreshRoznamcha();
+  };
+  GSS.rozResetDate = function(){
+    roznamchaDate = todayDateKeyPadded();
+    document.getElementById("roz-date").value = roznamchaDate;
+    refreshRoznamcha();
+    toast("Roznamcha date reset to today.","ok");
+  };
+
+  GSS.rozSaveEntry = function(){
+    var amount = parseFloat(document.getElementById("roz-amount").value);
+    var type = document.getElementById("roz-type").value;
+    var category = document.getElementById("roz-category").value;
+    var desc = document.getElementById("roz-desc").value.trim();
+    if(!amount || amount <= 0 || Math.floor(amount) !== amount){
+      toast("Enter a valid whole PKR amount.","err");
+      return;
+    }
+    if(editingLedgerId !== null){
+      getOne("ledger", editingLedgerId, function(rec){
+        if(!rec){ toast("Entry not found.","err"); GSS.rozCancelEdit(); return; }
+        rec.amount = amount; rec.type = type; rec.category = category; rec.description = desc;
+        putRecord("ledger", rec, function(){
+          toast("Entry updated.","ok");
+          GSS.rozCancelEdit();
+          refreshRoznamcha();
+        });
+      });
+      return;
+    }
+    var record = {
+      timestamp: Date.now(),
+      dateKey: roznamchaDate || todayDateKeyPadded(),
+      description: desc,
+      type: type,
+      category: category,
+      amount: amount,
+      handOverTo: "",
+      loggedBy: "Admin"
+    };
+    addRecord("ledger", record, function(){
+      toast((type === "Income" ? "Income" : "Expense") + " entry saved.","ok");
+      document.getElementById("roz-amount").value = "";
+      document.getElementById("roz-desc").value = "";
+      refreshRoznamcha();
+    });
+  };
+
+  GSS.rozEditEntry = function(id){
+    getOne("ledger", id, function(rec){
+      if(!rec){ toast("Entry not found.","err"); return; }
+      editingLedgerId = id;
+      document.getElementById("roz-amount").value = rec.amount;
+      document.getElementById("roz-type").value = rec.type;
+      GSS.rozTypeChange();
+      document.getElementById("roz-category").value = rec.category;
+      document.getElementById("roz-desc").value = rec.description || "";
+      document.getElementById("roz-save-btn").textContent = "Update Entry";
+      document.getElementById("roz-cancel-edit-btn").classList.remove("gss-hidden");
+      var formTitleEl = document.getElementById("roz-form-title");
+      if(formTitleEl) formTitleEl.textContent = "Editing Entry (dated " + (rec.dateKey || roznamchaDate) + ")";
+      document.getElementById("roz-amount").scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  };
+  GSS.rozCancelEdit = function(){
+    editingLedgerId = null;
+    document.getElementById("roz-amount").value = "";
+    document.getElementById("roz-desc").value = "";
+    document.getElementById("roz-save-btn").textContent = "Save Entry";
+    document.getElementById("roz-cancel-edit-btn").classList.add("gss-hidden");
+    var formTitleEl = document.getElementById("roz-form-title");
+    if(formTitleEl){
+      var onToday = (roznamchaDate === todayDateKeyPadded());
+      formTitleEl.textContent = onToday ? "Quick Log Entry" : "Quick Log Entry - for " + roznamchaDate;
+    }
+  };
+
+  GSS.rozDeleteEntry = function(id){
+    if(!window.confirm("Delete this ledger entry? This cannot be undone.")) return;
+    deleteRecord("ledger", id, function(){
+      toast("Entry deleted.","ok");
+      if(editingLedgerId === id) GSS.rozCancelEdit();
+      refreshRoznamcha();
+    });
+  };
+
+  function renderRoznamchaStats(opening, income, expense, profit, cash){
+    document.getElementById("roz-opening").textContent = "PKR " + opening.toFixed(0);
+    document.getElementById("roz-income").textContent = "PKR " + income.toFixed(0);
+    document.getElementById("roz-expense").textContent = "PKR " + expense.toFixed(0);
+    var profitEl = document.getElementById("roz-profit");
+    profitEl.textContent = "PKR " + profit.toFixed(0);
+    profitEl.classList.toggle("neg", profit < 0);
+    profitEl.classList.toggle("pos", profit >= 0);
+    document.getElementById("roz-cash").textContent = "PKR " + cash.toFixed(0);
+  }
+
+  function renderRoznamchaTable(entries){
+    entries = entries.slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+    if(roznamchaFilter === "income") entries = entries.filter(function(e){ return e.type === "Income"; });
+    if(roznamchaFilter === "expense") entries = entries.filter(function(e){ return e.type === "Expense"; });
+    var target = document.getElementById("roz-ledger-table");
+    if(!entries.length){
+      target.innerHTML = "<div class='gss-empty'>No entries for this day yet.</div>";
+      return;
+    }
+    var html = "<table class='gss-roz-table'><thead><tr><th>Time</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th></th></tr></thead><tbody>";
+    entries.forEach(function(e){
+      var d = new Date(e.timestamp);
+      var hh = d.getHours(), mm = d.getMinutes();
+      var hour12 = hh % 12 === 0 ? 12 : hh % 12;
+      var timeStr = hour12 + ":" + pad2(mm) + " " + (hh < 12 ? "AM" : "PM");
+      var isIncome = e.type === "Income";
+      var sign = isIncome ? "+" : "-";
+      var cls = isIncome ? "roz-in" : "roz-out";
+      html += "<tr>" +
+        "<td>" + timeStr + "</td>" +
+        "<td>" + escapeHtml(e.description || "-") + "</td>" +
+        "<td>" + escapeHtml(e.category || "-") + "</td>" +
+        "<td><span class='roz-type-badge " + cls + "'>" + e.type + "</span></td>" +
+        "<td class='" + cls + "'>" + sign + "PKR " + e.amount + "</td>" +
+        "<td><div class='gss-row-actions'>" +
+          "<button class='gss-btn-edit-sm' onclick='GSS.rozEditEntry(" + e.id + ")'>Edit</button>" +
+          "<button class='roz-del' onclick='GSS.rozDeleteEntry(" + e.id + ")'>&#128465;</button>" +
+        "</div></td>" +
+      "</tr>";
+    });
+    html += "</tbody></table>";
+    target.innerHTML = html;
+  }
+
+  function refreshRoznamcha(){
+    if(!roznamchaDate) roznamchaDate = todayDateKeyPadded();
+    var dateInput = document.getElementById("roz-date");
+    if(dateInput && !dateInput.value) dateInput.value = roznamchaDate;
+    var catSelect = document.getElementById("roz-category");
+    if(catSelect && !catSelect.options.length) GSS.rozTypeChange();
+
+    var onToday = (roznamchaDate === todayDateKeyPadded());
+    var formTitleEl = document.getElementById("roz-form-title");
+    if(formTitleEl && editingLedgerId === null){
+      formTitleEl.textContent = onToday ? "Quick Log Entry" : "Quick Log Entry - for " + roznamchaDate;
+    }
+    var ledgerTitleEl = document.getElementById("roz-ledger-title");
+    if(ledgerTitleEl){
+      ledgerTitleEl.textContent = onToday ? "Ledger (Today)" : "Ledger for " + roznamchaDate;
+    }
+
+    getAll("ledger", function(ledgerList){
+      getBookingsForRoznamcha(function(bookingList){
+        // Opening Balance = cumulative net (Income - Expense) of ALL activity strictly
+        // BEFORE the selected date. This automatically chains each day's closing balance
+        // forward as the next day's opening balance, with no separate storage needed.
+        var openingBalance = 0;
+        ledgerList.forEach(function(e){
+          if(e.dateKey && e.dateKey < roznamchaDate){
+            openingBalance += (e.type === "Income" ? e.amount : -e.amount);
+          }
+        });
+        bookingList.forEach(function(b){
+          if(b.status === "Completed" && tsToDateKeyPadded(b.timestamp) < roznamchaDate){
+            openingBalance += (b.price || 0);
+          }
+        });
+
+        // Selected day's figures
+        var dayEntries = ledgerList.filter(function(e){ return e.dateKey === roznamchaDate; });
+        var manualIncome = 0, todaysExpense = 0;
+        dayEntries.forEach(function(e){
+          if(e.type === "Income") manualIncome += e.amount; else todaysExpense += e.amount;
+        });
+        var bookingRevenue = 0;
+        bookingList.forEach(function(b){
+          if(b.status === "Completed" && tsToDateKeyPadded(b.timestamp) === roznamchaDate){
+            bookingRevenue += (b.price || 0);
+          }
+        });
+        var todaysIncome = manualIncome + bookingRevenue;
+        var netProfit = todaysIncome - todaysExpense;
+        var cashInHand = openingBalance + netProfit;
+
+        renderRoznamchaStats(openingBalance, todaysIncome, todaysExpense, netProfit, cashInHand);
+        renderRoznamchaTable(dayEntries);
+      });
+    });
+  }
+
+  /* ================= BACKUP / RESTORE ================= */
+  GSS.exportBackup = function(){
+    var out = {};
+    var remaining = STORES.length;
+    STORES.forEach(function(s){
+      getAll(s, function(list){
+        out[s] = list;
+        remaining--;
+        if(remaining === 0){
+          var blob = new Blob([JSON.stringify(out, null, 2)], {type:"application/json"});
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = "gss-backup-" + Date.now() + ".json";
+          document.body.appendChild(a); a.click(); a.remove();
+          URL.revokeObjectURL(url);
+          toast("Backup downloaded.","ok");
+        }
+      });
+    });
+  };
+  GSS.importBackup = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var data = JSON.parse(ev.target.result);
+        var storesToRestore = Object.keys(data).filter(function(k){ return STORES.indexOf(k) !== -1; });
+        var remaining = storesToRestore.length;
+        storesToRestore.forEach(function(s){
+          clearStore(s, function(){
+            var items = data[s] || [];
+            if(!items.length){ remaining--; if(remaining===0) finishRestore(); return; }
+            var count = 0;
+            items.forEach(function(item){
+              putRecord(s, item, function(){
+                count++; if(count===items.length){ remaining--; if(remaining===0) finishRestore(); }
+              });
+            });
+          });
+        });
+      }catch(err){
+        toast("Invalid backup file.","err");
+      }
+    };
+    reader.readAsText(file);
+    function finishRestore(){
+      toast("Restore complete. Reloading data...","ok");
+      refreshVehicleNumberCards(); refreshTeam(); refreshReviews(); refreshAdminData();
+    }
+  };
+
+  /* ================= CLOUD SYNC (Google Sheets placeholder) ================= */
+  // To enable cloud sync:
+  // 1. Create a Google Sheet, then Extensions > Apps Script.
+  // 2. Paste a doPost(e) function that parses e.postData.contents (JSON)
+  //    and appends rows to relevant sheets per store name.
+  // 3. Deploy as Web App (execute as: Me, access: Anyone), copy the URL below.
+  var GOOGLE_APPS_SCRIPT_URL = ""; // <-- paste your deployed Apps Script Web App URL here
+
+  GSS.syncToCloud = function(){
+    if(!GOOGLE_APPS_SCRIPT_URL){
+      toast("Cloud Sync URL not configured yet.","err");
+      return;
+    }
+    var out = {};
+    var remaining = STORES.length;
+    STORES.forEach(function(s){
+      getAll(s, function(list){
+        out[s] = list;
+        remaining--;
+        if(remaining === 0){
+          fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(out)
+          }).then(function(){ toast("Synced to cloud.","ok"); })
+            .catch(function(){ toast("Cloud sync failed. Check connection.","err"); });
+        }
+      });
+    });
+  };
+
+  /* ================= HOME: QUICK ACTIONS (admin only) ================= */
+  GSS.quickAddExpense = function(){
+    GSS.nav("admin");
+    GSS.adminTab("expense");
+  };
+
+  GSS.openPrintReceipt = function(){
+    document.getElementById("pr-lookup-input").value = "";
+    document.getElementById("print-receipt-modal").classList.add("show");
+  };
+  GSS.closePrintReceipt = function(){
+    document.getElementById("print-receipt-modal").classList.remove("show");
+  };
+  function findBookingLocal(q, cb){
+    getAll("bookings", function(list){
+      var found = list.filter(function(b){
+        return String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q);
+      })[0] || null;
+      cb(found);
+    });
+  }
+  GSS.findAndPrintReceipt = function(){
+    var q = document.getElementById("pr-lookup-input").value.trim().toLowerCase();
+    if(!q){ toast("Enter a token or vehicle number.","err"); return; }
+    if(q.charAt(0) === "#") q = q.substring(1);
+    function finish(found){
+      if(!found){ toast("No booking found for that token/vehicle.","err"); return; }
+      populateAndPrintReceipt(found);
+    }
+    if(fbEnabled){
+      try{
+        fbDb.ref("bookings").once("value").then(function(snap){
+          var all = snap.val() || {};
+          var found = null;
+          Object.keys(all).forEach(function(k){
+            var b = all[k]; if(b.id===undefined) b.id = k;
+            if(String(k) === q || String(b.id) === q || (b.vehicle && b.vehicle.toLowerCase() === q)) found = b;
+          });
+          if(found){ finish(found); } else { findBookingLocal(q, finish); }
+        }).catch(function(){ findBookingLocal(q, finish); });
+      }catch(e){ findBookingLocal(q, finish); }
+    } else {
+      findBookingLocal(q, finish);
+    }
+  };
+  function populateAndPrintReceipt(b){
+    document.getElementById("pr-token").textContent = "#" + (b.id !== undefined ? b.id : "-");
+    document.getElementById("pr-date").textContent = new Date(b.timestamp).toLocaleString();
+    document.getElementById("pr-name").textContent = b.name || "-";
+    document.getElementById("pr-phone").textContent = b.phone || "-";
+    document.getElementById("pr-vehicle").textContent = b.vehicle || "-";
+    document.getElementById("pr-category").textContent = CATEGORY_LABEL[b.category] || b.category || "-";
+    document.getElementById("pr-service").textContent = b.service || "-";
+    document.getElementById("pr-status").textContent = b.status || "-";
+    document.getElementById("pr-price").textContent = "PKR " + (b.price || 0);
+    GSS.closePrintReceipt();
+    setTimeout(function(){ window.print(); }, 200);
+  }
+
+  /* ================= PULL TO REFRESH (all users) ================= */
+  function setupPullToRefresh(){
+    var startY = null;
+    var pulling = false;
+    var indicator = document.getElementById("ptr-indicator");
+    var label = document.getElementById("ptr-label");
+    var THRESHOLD = 70;
+
+    window.addEventListener("touchstart", function(e){
+      if(window.scrollY <= 0){
+        startY = e.touches[0].clientY;
+        pulling = true;
+      } else {
+        startY = null;
+        pulling = false;
+      }
+    }, {passive:true});
+
+    window.addEventListener("touchmove", function(e){
+      if(!pulling || startY === null) return;
+      var dy = e.touches[0].clientY - startY;
+      if(dy > 0 && window.scrollY <= 0){
+        indicator.classList.add("show");
+        label.textContent = dy > THRESHOLD ? "Release to refresh" : "Pull to refresh";
+      }
+    }, {passive:true});
+
+    window.addEventListener("touchend", function(e){
+      if(!pulling) return;
+      var dy = (indicator.classList.contains("show")) ? THRESHOLD + 1 : 0; // approximate; real delta already gated the label
+      pulling = false;
+      startY = null;
+      if(indicator.classList.contains("show")){
+        var wasReady = label.textContent === "Release to refresh";
+        indicator.classList.remove("show");
+        if(wasReady) GSS.refreshHomeData();
+      }
+    }, {passive:true});
+  }
+  GSS.refreshHomeData = function(){
+    toast("Refreshing...","ok");
+    refreshVehicleNumberCards();
+    refreshTrustNumbers();
+    refreshPublicStats();
+    refreshLiveAtGSS();
+    refreshTeam();
+    refreshReviews();
+    refreshOffers();
+    if(isAdminMode()) refreshMonthlyGoal();
+  };
+
+  /* ================= UTIL ================= */
+  function escapeHtml(str){
+    if(!str) return "";
+    return String(str).replace(/[&<>"']/g, function(m){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[m];
+    });
+  }
+
+  /* ================= INIT ================= */
+  function checkHostingContext(){
+    var proto = window.location.protocol;
+    if(proto === "file:" || proto === "content:" || proto === "about:"){
+      toast("You're opening this file directly (not via a web link). Storage may not save - host it online (Firebase Hosting / Netlify) for full functionality.","err");
+    }
+  }
+
+  /* ================= PWA: install prompt + service worker ================= */
+  var deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    var btn = document.getElementById("gss-install-btn");
+    if(btn) btn.classList.remove("gss-hidden");
+  });
+  window.addEventListener("appinstalled", function(){
+    deferredInstallPrompt = null;
+    var btn = document.getElementById("gss-install-btn");
+    if(btn) btn.classList.add("gss-hidden");
+    toast("GSS installed! Find it on your home screen.","ok");
+  });
+  GSS.installApp = function(){
+    if(!deferredInstallPrompt){
+      toast("Already installed, or your browser doesn't support one-tap install here - use the browser menu > Add to Home Screen.","err");
+      return;
+    }
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function(choice){
+      if(choice.outcome === "accepted"){ toast("Installing GSS...","ok"); }
+      deferredInstallPrompt = null;
+      var btn = document.getElementById("gss-install-btn");
+      if(btn) btn.classList.add("gss-hidden");
+    });
+  };
+  function registerServiceWorker(){
+    try{
+      if(!("serviceWorker" in navigator)) return;
+      // Only valid on real http/https origins - silently skip in file:// / content:// contexts
+      if(window.location.protocol !== "http:" && window.location.protocol !== "https:") return;
+      navigator.serviceWorker.register("sw.js").catch(function(err){
+        console.error("GSS: service worker registration failed", err);
+      });
+    }catch(e){
+      console.error("GSS: service worker registration error", e);
+    }
+  }
+
+  function init(){
+    try{
+      // Render the static UI shell immediately so the screen is never blank,
+      // even if storage or network calls fail below.
+      buildPinKeys();
+      startCountdown();
+      GSS.renderServices();
+      GSS.fillBookingServices();
+      refreshFab();
+      checkHostingContext();
+      registerServiceWorker();
+      refreshHomeAdminVisibility();
+      setupPullToRefresh();
+      setupVisitGSS();
+    }catch(errShell){
+      console.error("GSS shell init error", errShell);
+    }
+
+    try{
+      initFirebase();
+    }catch(errFb){
+      console.error("GSS Firebase init error", errFb);
+    }
+
+    try{
+      openDB(function(){
+        try{
+          refreshVehicleNumberCards();
+          refreshTrustNumbers();
+          refreshTeam();
+          refreshReviews();
+          refreshPublicStats();
+          refreshLiveAtGSS();
+          seedDefaultOffersIfEmpty();
+          renderOffersCarousel();
+        }catch(errData){
+          console.error("GSS data render error", errData);
+        }
+      });
+    }catch(errDb){
+      console.error("GSS DB init error", errDb);
+      toast("Running in limited mode (storage unavailable).","err");
+    }
+
+    try{
+      // These are no-ops if Firebase isn't configured; once configured they
+      // keep counters, team, reviews, offers, and today's attendance badges
+      // live across every device/visitor in real time.
+      setupCountersLive();
+      setupTeamLive();
+      setupReviewsLive();
+      setupAttendanceBadgeLive();
+      setupOffersLive();
+    }catch(errLive){
+      console.error("GSS live listeners error", errLive);
+    }
+  }
+
+  if(document.readyState === "loading"){
+    window.addEventListener("DOMContentLoaded", init);
+  } else {
+    // DOM already parsed (e.g. script executed late in the page's render pipeline)
+    init();
+  }
+
+})();
+
+</script>
+</body>
+</html>
