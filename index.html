@@ -17,23 +17,49 @@
 html, body { margin:0; padding:0; }
 
 
-/* ===== SPLASH SCREEN (startup only, ~2.5s) - purely additive, doesn't touch app logic ===== */
+/* ===== SPLASH SCREEN (startup only, ~2.8s) - purely additive, doesn't touch app logic ===== */
 #gss-splash{
-  position:fixed; inset:0; z-index:99999; background:#0D1117;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  overflow:hidden; transition:opacity .5s ease, visibility .5s ease;
+  position:fixed; inset:0; z-index:99999;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(0,229,255,.16), transparent 55%),
+    linear-gradient(180deg,#0e2229 0%, #0a1a20 35%, #071217 70%, #050d11 100%);
+  display:flex; flex-direction:column; align-items:center;
+  padding:9vh 24px 6vh; overflow:hidden;
+  transition:opacity .5s ease, visibility .5s ease;
 }
 #gss-splash.gss-splash-hide{ opacity:0; visibility:hidden; pointer-events:none; }
-.gss-splash-logo{
-  font-family:'Poppins', sans-serif; font-weight:700; font-size:24px; color:#00E5FF;
-  text-align:center; letter-spacing:1px; padding:0 24px; position:relative; z-index:2;
+
+/* glowing app icon badge */
+.gss-splash-badge{
+  width:80px; height:80px; border-radius:22px; flex-shrink:0;
+  background:linear-gradient(150deg,#3fd0ff 0%,#2979ff 60%,#0057e0 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 1px rgba(255,255,255,.18) inset, 0 0 34px rgba(41,182,246,.6), 0 0 70px rgba(0,102,255,.35);
+  animation:gssBadgePulse 2.6s ease-in-out infinite;
+  position:relative; z-index:2;
 }
-.gss-splash-tagline{
-  margin-top:14px; font-size:14px; color:#FFFFFF; opacity:.85; position:relative; z-index:2;
+.gss-splash-badge span{
+  font-family:'Poppins',sans-serif; font-weight:700; font-size:25px; color:#fff; letter-spacing:.5px;
+}
+@keyframes gssBadgePulse{
+  0%,100%{ box-shadow:0 0 0 1px rgba(255,255,255,.18) inset, 0 0 30px rgba(41,182,246,.5), 0 0 60px rgba(0,102,255,.28); }
+  50%{ box-shadow:0 0 0 1px rgba(255,255,255,.24) inset, 0 0 46px rgba(41,182,246,.78), 0 0 90px rgba(0,102,255,.48); }
 }
 
-/* ===== Car wash illustration (replaces plain spinner) ===== */
-.gss-splash-scene{ position:relative; z-index:2; margin-top:18px; filter:drop-shadow(0 0 14px rgba(0,229,255,.25)); }
+.gss-splash-title{
+  margin-top:16px; font-family:'Poppins',sans-serif; font-weight:700; font-size:22px; color:#fff;
+  text-align:center; position:relative; z-index:2; letter-spacing:.2px;
+}
+.gss-splash-subtitle{
+  margin-top:3px; font-size:14px; color:#5be7ff; font-weight:600; letter-spacing:.4px;
+  text-align:center; position:relative; z-index:2;
+}
+
+/* ===== Neon car-wash tunnel scene (original artwork) ===== */
+.gss-splash-scene{
+  position:relative; z-index:2; margin-top:20px; width:100%; max-width:300px;
+  filter:drop-shadow(0 0 16px rgba(0,229,255,.28));
+}
 .gss-car{
   transform-box:fill-box; transform-origin:center;
   animation:gssCarWobble 2.4s ease-in-out infinite;
@@ -42,50 +68,80 @@ html, body { margin:0; padding:0; }
   0%,100%{ transform:translateY(0); }
   50%{ transform:translateY(-2px); }
 }
-.gss-jack-post{
-  transform-box:fill-box; transform-origin:bottom center;
-  animation:gssJackPulse 2.4s ease-in-out infinite;
+.gss-arm-left, .gss-arm-right{
+  transform-box:fill-box; animation-duration:1.8s; animation-iteration-count:infinite; animation-timing-function:ease-in-out;
 }
-@keyframes gssJackPulse{
-  0%,100%{ opacity:1; }
-  50%{ opacity:.75; }
-}
-.gss-worker-arm{
-  transform-box:fill-box; transform-origin:right center;
-  animation:gssArmSpray 1.6s ease-in-out infinite;
-}
-@keyframes gssArmSpray{
-  0%,100%{ transform:rotate(0deg); }
-  50%{ transform:rotate(-6deg); }
-}
-.gss-spray{
-  transform-box:fill-box; transform-origin:center; opacity:0;
-  animation:gssSpray 1s linear infinite;
-}
-@keyframes gssSpray{
+.gss-arm-left{ transform-origin:0% 50%; animation-name:gssArmSwingL; }
+.gss-arm-right{ transform-origin:100% 50%; animation-name:gssArmSwingR; }
+@keyframes gssArmSwingL{ 0%,100%{ transform:rotate(0deg); } 50%{ transform:rotate(-9deg); } }
+@keyframes gssArmSwingR{ 0%,100%{ transform:rotate(0deg); } 50%{ transform:rotate(9deg); } }
+
+.gss-spray-l, .gss-spray-r{ transform-box:fill-box; transform-origin:center; opacity:0; animation:gssSprayL 1s linear infinite; }
+.gss-spray-r{ animation-name:gssSprayR; }
+@keyframes gssSprayL{
   0%{ transform:translate(0,0) scale(.6); opacity:0; }
   15%{ opacity:1; }
-  100%{ transform:translate(-34px,-6px) scale(1.1); opacity:0; }
+  100%{ transform:translate(40px,16px) scale(1.1); opacity:0; }
 }
-.gss-bubble{
-  transform-box:fill-box; transform-origin:center; opacity:0;
-  animation:gssBubbleUp 2.8s ease-in infinite;
+@keyframes gssSprayR{
+  0%{ transform:translate(0,0) scale(.6); opacity:0; }
+  15%{ opacity:1; }
+  100%{ transform:translate(-40px,16px) scale(1.1); opacity:0; }
 }
-@keyframes gssBubbleUp{
-  0%{ transform:translateY(0) scale(.6); opacity:0; }
-  20%{ opacity:.8; }
-  100%{ transform:translateY(-30px) scale(1); opacity:0; }
+.gss-mist{ transform-box:fill-box; transform-origin:center; opacity:0; animation:gssMistPuff 2.6s ease-out infinite; }
+@keyframes gssMistPuff{
+  0%{ transform:scale(.4) translateY(0); opacity:0; }
+  30%{ opacity:.32; }
+  100%{ transform:scale(1.7) translateY(-16px); opacity:0; }
+}
+.gss-neon-flicker{ animation:gssNeonFlicker 3.4s ease-in-out infinite; }
+@keyframes gssNeonFlicker{
+  0%,19%,21%,100%{ opacity:1; }
+  20%{ opacity:.55; }
+}
+
+/* CTA button */
+.gss-splash-cta{
+  margin-top:22px; background:#fff; color:#08171b; border:none; border-radius:999px;
+  padding:15px 38px; font-size:14.5px; font-weight:700; letter-spacing:.3px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 24px rgba(32,227,162,.5), 0 0 44px rgba(0,229,255,.32);
+  position:relative; z-index:2; cursor:pointer; font-family:inherit;
+  animation:gssCtaGlow 2.4s ease-in-out infinite;
+}
+.gss-splash-cta:active{ transform:scale(.97); }
+@keyframes gssCtaGlow{
+  0%,100%{ box-shadow:0 0 0 1px rgba(255,255,255,.35) inset, 0 0 18px rgba(32,227,162,.4), 0 0 32px rgba(0,229,255,.24); }
+  50%{ box-shadow:0 0 0 1px rgba(255,255,255,.45) inset, 0 0 30px rgba(32,227,162,.68), 0 0 54px rgba(0,229,255,.42); }
+}
+.gss-splash-caption{
+  margin-top:13px; font-size:12.5px; color:#a6b3bd; text-align:center; position:relative; z-index:2;
+}
+
+/* progress bar, pinned toward the bottom */
+.gss-splash-progress-wrap{
+  margin-top:auto; padding-top:26px; width:100%; max-width:260px; position:relative; z-index:2;
+}
+.gss-splash-progress-track{
+  width:100%; height:5px; border-radius:6px; background:rgba(255,255,255,.09); overflow:hidden;
+}
+.gss-splash-progress-fill{
+  height:100%; width:0%; border-radius:6px;
+  background:linear-gradient(90deg,#00e5ff,#20e3a2);
+  box-shadow:0 0 10px rgba(0,229,255,.75);
+}
+.gss-splash-status{
+  margin-top:10px; font-size:12.5px; color:#8a97a8; text-align:center; min-height:16px;
 }
 
 /* Subtle water droplet background animation */
 .gss-splash-drop{
   position:absolute; top:-10%; border-radius:50% 50% 50% 0; transform:rotate(45deg);
-  background:rgba(0,229,255,.18); animation:gssDropFall linear infinite; z-index:1;
+  background:rgba(0,229,255,.16); animation:gssDropFall linear infinite; z-index:1;
 }
 @keyframes gssDropFall{
   0%{ transform:translateY(0) rotate(45deg); opacity:0; }
-  10%{ opacity:.7; }
-  90%{ opacity:.5; }
+  10%{ opacity:.6; }
+  90%{ opacity:.4; }
   100%{ transform:translateY(115vh) rotate(45deg); opacity:0; }
 }
 
@@ -643,7 +699,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 </head>
 <body>
 
-<!-- INJECT HERE: Startup splash screen (removed automatically after 2.5s) -->
+<!-- INJECT HERE: Startup splash screen (auto-hides on load, tap CTA to skip) -->
 <div id='gss-splash'>
   <div class='gss-splash-drop' style='left:12%; width:10px; height:10px; animation-duration:3.2s; animation-delay:.2s;'></div>
   <div class='gss-splash-drop' style='left:28%; width:6px; height:6px; animation-duration:2.6s; animation-delay:1.1s;'></div>
@@ -652,50 +708,83 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   <div class='gss-splash-drop' style='left:80%; width:9px; height:9px; animation-duration:3.3s; animation-delay:1.5s;'></div>
   <div class='gss-splash-drop' style='left:92%; width:6px; height:6px; animation-duration:2.7s; animation-delay:.4s;'></div>
 
-  <div class='gss-splash-logo'>GUJJAR SERVICE STATION</div>
+  <div class='gss-splash-badge'><span>GSS</span></div>
+  <div class='gss-splash-title'>Gujjar Service Station</div>
+  <div class='gss-splash-subtitle'>Premium Auto Care</div>
 
   <div class='gss-splash-scene'>
-    <svg height="132" viewBox="0 0 300 170" width="230">
-      <!-- ground line -->
-      <line stroke="#1c232e" stroke-width="3" x1="15" x2="285" y1="148" y2="148"/>
+    <svg viewBox="0 0 300 190" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="gssNeonGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
 
-      <!-- jack stand (vehicle lifted on it) -->
-      <polygon fill="#232b38" points="118,148 182,148 167,118 133,118" stroke="#00E5FF" stroke-width="1.5"/>
-      <rect class="gss-jack-post" fill="#00E5FF" height="16" width="6" x="147" y="104"/>
+      <!-- neon tunnel arch -->
+      <path d="M18,66 Q150,-6 282,66" fill="none" stroke="#00E5FF" stroke-width="2.5" opacity=".5" filter="url(#gssNeonGlow)"/>
 
-      <!-- car body, resting lifted on the jack -->
-      <g class="gss-car">
-        <path d="M55,104 Q55,86 82,84 L108,84 Q119,66 146,66 L178,66 Q200,66 208,84 L232,84 Q246,86 246,104 L246,108 L55,108 Z"
-              fill="#171d27" stroke="#00E5FF" stroke-width="2"/>
-        <path d="M116,84 Q123,72 146,72 L175,72 Q192,72 199,84 Z" fill="#0b0e12" stroke="#00E5FF" stroke-width="1"/>
-        <circle cx="88" cy="108" fill="#0b0e12" r="13" stroke="#00E5FF" stroke-width="2"/>
-        <circle cx="213" cy="108" fill="#0b0e12" r="13" stroke="#00E5FF" stroke-width="2"/>
+      <!-- neon GSS wordmark -->
+      <text class="gss-neon-flicker" x="150" y="42" text-anchor="middle" font-family="Poppins,Arial,sans-serif" font-weight="700"
+            font-size="30" fill="none" stroke="#00E5FF" stroke-width="1.6" filter="url(#gssNeonGlow)">GSS</text>
+
+      <!-- left robotic wash arm -->
+      <line x1="26" y1="182" x2="26" y2="72" stroke="#1c232e" stroke-width="6"/>
+      <line x1="26" y1="182" x2="26" y2="72" stroke="#00E5FF" stroke-width="1.4" opacity=".65"/>
+      <g class="gss-arm-left">
+        <line x1="26" y1="80" x2="92" y2="102" stroke="#00E5FF" stroke-width="4" stroke-linecap="round" filter="url(#gssNeonGlow)"/>
+        <circle cx="92" cy="102" r="4.5" fill="#00E5FF"/>
       </g>
 
-      <!-- worker holding hose -->
-      <circle cx="262" cy="88" fill="#00E5FF" r="7"/>
-      <rect fill="#00E5FF" height="24" rx="3" width="10" x="257" y="96"/>
-      <line stroke="#00E5FF" stroke-linecap="round" stroke-width="3" x1="264" x2="272" y1="146" y2="122"/>
-      <line stroke="#00E5FF" stroke-linecap="round" stroke-width="3" x1="257" x2="250" y1="146" y2="122"/>
-      <line class="gss-worker-arm" stroke="#00E5FF" stroke-linecap="round" stroke-width="3" x1="257" x2="222" y1="104" y2="112"/>
+      <!-- right robotic wash arm -->
+      <line x1="274" y1="182" x2="274" y2="72" stroke="#1c232e" stroke-width="6"/>
+      <line x1="274" y1="182" x2="274" y2="72" stroke="#00E5FF" stroke-width="1.4" opacity=".65"/>
+      <g class="gss-arm-right">
+        <line x1="274" y1="80" x2="208" y2="102" stroke="#00E5FF" stroke-width="4" stroke-linecap="round" filter="url(#gssNeonGlow)"/>
+        <circle cx="208" cy="102" r="4.5" fill="#00E5FF"/>
+      </g>
 
-      <!-- hose -->
-      <path d="M222,112 Q205,110 190,100" fill="none" stroke="#0092a3" stroke-linecap="round" stroke-width="3"/>
+      <!-- converging water jets from both nozzles onto the vehicle -->
+      <circle class="gss-spray-l" cx="92" cy="102" r="2.6" fill="#8be9ff" style="animation-delay:0s;"/>
+      <circle class="gss-spray-l" cx="92" cy="102" r="2" fill="#8be9ff" style="animation-delay:.25s;"/>
+      <circle class="gss-spray-l" cx="92" cy="102" r="3" fill="#8be9ff" style="animation-delay:.5s;"/>
+      <circle class="gss-spray-r" cx="208" cy="102" r="2.6" fill="#8be9ff" style="animation-delay:.1s;"/>
+      <circle class="gss-spray-r" cx="208" cy="102" r="2" fill="#8be9ff" style="animation-delay:.35s;"/>
+      <circle class="gss-spray-r" cx="208" cy="102" r="3" fill="#8be9ff" style="animation-delay:.6s;"/>
 
-      <!-- animated water spray from hose onto the car -->
-      <circle class="gss-spray" cx="190" cy="100" fill="#00E5FF" r="2.5" style="animation-delay:0s;"/>
-      <circle class="gss-spray" cx="190" cy="100" fill="#00E5FF" r="2" style="animation-delay:.2s;"/>
-      <circle class="gss-spray" cx="190" cy="100" fill="#00E5FF" r="3" style="animation-delay:.4s;"/>
-      <circle class="gss-spray" cx="190" cy="100" fill="#00E5FF" r="2" style="animation-delay:.6s;"/>
+      <!-- generic vehicle silhouette (original artwork, no brand marks) -->
+      <g class="gss-car">
+        <path d="M55,142 Q58,118 90,114 L112,114 Q124,96 150,96 L172,96 Q196,96 206,114 L228,114 Q252,118 252,142 L252,148 L55,148 Z"
+              fill="#0e141b" stroke="#00E5FF" stroke-width="2"/>
+        <path d="M118,114 Q127,102 150,102 L170,102 Q188,102 196,114 Z" fill="#060a0e" stroke="#00E5FF" stroke-width="1"/>
+        <ellipse cx="78" cy="119" rx="7.5" ry="4" fill="#eafcff" opacity=".9"/>
+        <ellipse cx="228" cy="119" rx="7.5" ry="4" fill="#eafcff" opacity=".9"/>
+        <circle cx="92" cy="148" r="14" fill="#060a0e" stroke="#00E5FF" stroke-width="2"/>
+        <circle cx="216" cy="148" r="14" fill="#060a0e" stroke="#00E5FF" stroke-width="2"/>
+      </g>
 
-      <!-- soapy bubbles floating off the car -->
-      <circle class="gss-bubble" cx="140" cy="100" fill="none" r="3" stroke="#00E5FF" stroke-width="1" style="animation-delay:.3s;"/>
-      <circle class="gss-bubble" cx="165" cy="96" fill="none" r="2" stroke="#00E5FF" stroke-width="1" style="animation-delay:1.1s;"/>
-      <circle class="gss-bubble" cx="120" cy="98" fill="none" r="2.5" stroke="#00E5FF" stroke-width="1" style="animation-delay:1.8s;"/>
+      <!-- drifting mist puffs -->
+      <circle class="gss-mist" cx="128" cy="112" r="10" fill="#00E5FF" style="animation-delay:.2s;"/>
+      <circle class="gss-mist" cx="172" cy="118" r="8" fill="#00E5FF" style="animation-delay:1s;"/>
+      <circle class="gss-mist" cx="150" cy="104" r="9" fill="#00E5FF" style="animation-delay:1.8s;"/>
+
+      <!-- ground line -->
+      <line x1="15" y1="182" x2="285" y2="182" stroke="#1c232e" stroke-width="3"/>
     </svg>
   </div>
 
-  <div class='gss-splash-tagline'>Premium Car Wash &amp; Auto Care</div>
+  <button type="button" class="gss-splash-cta" onclick="GSS.skipSplash()">LET'S GET STARTED</button>
+  <div class='gss-splash-caption'>Fast, Advanced, &amp; Quality Car Wash</div>
+
+  <div class="gss-splash-progress-wrap">
+    <div class="gss-splash-progress-track">
+      <div class="gss-splash-progress-fill" id="gss-splash-fill"></div>
+    </div>
+    <div class="gss-splash-status" id="gss-splash-status">Initializing Premium Service...</div>
+  </div>
 </div>
 
 <div class='app-container' id='gss-app'>
@@ -1204,6 +1293,12 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
 (function(){
   var GSS = {};
+  var gssSplashRafId = null;
+  GSS.skipSplash = function(){
+    if(gssSplashRafId){ cancelAnimationFrame(gssSplashRafId); gssSplashRafId = null; }
+    var splash = document.getElementById("gss-splash");
+    if(splash) splash.classList.add("gss-splash-hide");
+  };
   window.GSS = GSS;
 
   /* ================= CONFIG ================= */
@@ -1250,7 +1345,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
           local/offline via IndexedDB only (nothing breaks, it just won't sync
           across different phones/devices).
   ========================================================================= */
-  var FIREBASE_CONFIG = {
+var FIREBASE_CONFIG = {
   apiKey: "AIzaSyA9wEbzMTQ5lWfzS6JFwMN-iiA6dqY--l8",
   authDomain: "gujjar-service-station.firebaseapp.com",
   databaseURL: "https://gujjar-service-station-default-rtdb.firebaseio.com",
@@ -3366,14 +3461,41 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
   function init(){
     try{
-      // SPLASH SCREEN: show for 2.5s then fade out to reveal the app underneath.
+      // SPLASH SCREEN: animate the progress bar 0->100% over ~2.8s, updating the
+      // status text along the way, then auto-fade into the app underneath.
       // (This is a single-page app, so there's no separate "HomePage" route to
       // navigate to - the app is already rendering behind the splash the whole
-      // time; this timer just removes the overlay.)
-      setTimeout(function(){
-        var splash = document.getElementById("gss-splash");
-        if(splash) splash.classList.add("gss-splash-hide");
-      }, 2500);
+      // time; this just animates + removes the overlay.) Tapping the CTA button
+      // calls GSS.skipSplash() directly for an instant manual skip.
+      var fillEl = document.getElementById("gss-splash-fill");
+      var statusEl = document.getElementById("gss-splash-status");
+      var splashDuration = 2800;
+      var splashStart = null;
+      var splashMsgs = [
+        {at:0,  text:"Initializing Premium Service..."},
+        {at:38, text:"Loading Services & Offers..."},
+        {at:78, text:"Almost Ready..."}
+      ];
+      var splashShown = -1;
+      function splashTick(ts){
+        if(!splashStart) splashStart = ts;
+        var pct = Math.min(100, ((ts - splashStart) / splashDuration) * 100);
+        if(fillEl) fillEl.style.width = pct + "%";
+        for(var i = splashMsgs.length - 1; i >= 0; i--){
+          if(pct >= splashMsgs[i].at && splashShown < i){
+            splashShown = i;
+            if(statusEl) statusEl.textContent = splashMsgs[i].text;
+            break;
+          }
+        }
+        if(pct < 100){
+          gssSplashRafId = requestAnimationFrame(splashTick);
+        } else {
+          gssSplashRafId = null;
+          setTimeout(GSS.skipSplash, 300); // small pause at 100% for a smooth feel
+        }
+      }
+      gssSplashRafId = requestAnimationFrame(splashTick);
     }catch(errSplash){
       console.error("GSS splash timer error", errSplash);
     }
