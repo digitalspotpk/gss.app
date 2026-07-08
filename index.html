@@ -613,6 +613,7 @@ input,select,textarea{font-family:inherit;}
 
 .gss-roz-filter-bar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:14px; flex-wrap:wrap;}
 .gss-roz-pills{display:flex; gap:6px; background:var(--gss-panel2); border:1px solid var(--gss-border); border-radius:20px; padding:3px;}
+#fin-member-pills.gss-roz-pills{flex-wrap:wrap; border-radius:14px;}
 .gss-roz-pills button{
   padding:7px 11px; border-radius:16px; border:none; background:transparent; color:var(--gss-text-dim);
   font-size:10.5px; font-weight:700; white-space:nowrap;
@@ -892,13 +893,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
     <div class='gss-section-title'>Services Menu</div>
     <div class='gss-select-wrap'>
-      <select class='gss-select' id='svc-category' onchange='GSS.renderServices()'>
-        <option value='2w'>2-Wheeler</option>
-        <option value='3w'>3-Wheeler</option>
-        <option value='hatch'>Hatchback</option>
-        <option value='sedan'>Sedan</option>
-        <option value='suv'>SUV</option>
-      </select>
+      <select class='gss-select' id='svc-category' onchange='GSS.renderServices()'></select>
     </div>
     <div id='services-list'></div>
 
@@ -946,18 +941,11 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   <div class='gss-page' id='page-book'>
     <div class='gss-section-title'>Book Your Service</div>
     <div class='gss-form'>
-      <div class='gss-field'><label>Full Name</label><input class='gss-input' id='bk-name' placeholder='e.g. Ali Khan' type='text'/></div>
-      <div class='gss-field'><label>Phone Number</label><input class='gss-input' id='bk-phone' placeholder='03xx-xxxxxxx' type='tel'/></div>
-      <div class='gss-field'><label>Vehicle Number</label><input class='gss-input' id='bk-vehicle' placeholder='e.g. LEA-1234' type='text'/></div>
+      <div class='gss-field'><label>Registration No</label><input class='gss-input' id='bk-vehicle' placeholder='e.g. LEA-1234' type='text'/></div>
+      <div class='gss-field'><label>WhatsApp Number</label><input class='gss-input' id='bk-phone' placeholder='03xx-xxxxxxx' type='tel'/></div>
       <div class='gss-field'>
         <label>Vehicle Category</label>
-        <select class='gss-select' id='bk-category' onchange='GSS.fillBookingServices()'>
-          <option value='2w'>2-Wheeler</option>
-          <option value='3w'>3-Wheeler</option>
-          <option value='hatch'>Hatchback</option>
-          <option value='sedan'>Sedan</option>
-          <option value='suv'>SUV</option>
-        </select>
+        <select class='gss-select' id='bk-category' onchange='GSS.fillBookingServices()'></select>
       </div>
       <div class='gss-field'>
         <label>Select Service</label>
@@ -994,6 +982,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       <div class='gss-admin-card' data-t='reviews' onclick='GSS.adminTab("reviews")'><div class='ic'>&#11088;</div><div class='lbl'>Reviews</div></div>
       <div class='gss-admin-card' data-t='finance' onclick='GSS.adminTab("finance")'><div class='ic'>&#128202;</div><div class='lbl'>Finance</div></div>
       <div class='gss-admin-card' data-t='roznamcha' onclick='GSS.adminTab("roznamcha")'><div class='ic'>&#128209;</div><div class='lbl'>Roznamcha</div></div>
+      <div class='gss-admin-card' data-t='services' onclick='GSS.adminTab("services")'><div class='ic'>&#128736;</div><div class='lbl'>Services</div></div>
       <div class='gss-admin-card' data-t='offers' onclick='GSS.adminTab("offers")'><div class='ic'>&#127881;</div><div class='lbl'>Offers</div></div>
       <div class='gss-admin-card' data-t='backup' onclick='GSS.adminTab("backup")'><div class='ic'>&#128190;</div><div class='lbl'>Backup</div></div>
     </div>
@@ -1040,10 +1029,10 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
             <option>Tea</option><option>Travel/Fuel</option><option>Miscellaneous</option>
           </select>
         </div>
-        <div class='gss-field'><label>Spender's Name</label><input class='gss-input' id='exp-spender' placeholder='Who paid?' type='text'/></div>
-        <button class='gss-btn' onclick='GSS.addExpense()'>Commit Expense (Auto 50/50 Split)</button>
+        <div class='gss-field'><label>Note (optional)</label><input class='gss-input' id='exp-spender' placeholder='e.g. Electricity bill for June' type='text'/></div>
+        <button class='gss-btn' onclick='GSS.addExpense()'>Add Owner Expense</button>
       </div>
-      <div class='gss-section-title'>Recent Expenses</div>
+      <div class='gss-section-title'>Recent Owner Expenses</div>
       <div id='expense-list'></div>
     </div>
 
@@ -1074,6 +1063,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
         <div class='gss-staff-avatar-picker' id='staff-avatar-preview' onclick='document.getElementById("staff-img-input").click()'>Tap to Upload</div>
         <input accept='image/*' id='staff-img-input' style='display:none' type='file' onchange='GSS.handleStaffImage(event)'/>
         <div class='gss-field'><label>Full Name</label><input class='gss-input' id='staff-name' placeholder='e.g. Bilal Ahmed' type='text'/></div>
+        <div class='gss-field'><label>Contact Number</label><input class='gss-input' id='staff-phone' placeholder='03xx-xxxxxxx' type='tel'/></div>
         <div class='gss-field'>
           <label>Role</label>
           <select class='gss-select' id='staff-role'>
@@ -1105,11 +1095,16 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
         <button data-f='monthly' onclick='GSS.setFinanceFilter("monthly")'>Monthly</button>
       </div>
       <div class='gss-stat-grid'>
-        <div class='gss-stat-card'><div class='v' id='fin-revenue'>PKR 0</div><div class='l'>Gross Inbound Revenue</div></div>
-        <div class='gss-stat-card'><div class='v' id='fin-expenses'>PKR 0</div><div class='l'>Total Split Expenses</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-revenue'>PKR 0</div><div class='l'>Revenue (Roznamcha)</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-expenses'>PKR 0</div><div class='l'>Total Expenses</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-profit'>PKR 0</div><div class='l'>Net Profit</div></div>
         <div class='gss-stat-card'><div class='v' id='fin-owner'>PKR 0</div><div class='l'>Owner Net Yield</div></div>
-        <div class='gss-stat-card'><div class='v' id='fin-labour'>PKR 0</div><div class='l'>Total Labour Share</div></div>
+        <div class='gss-stat-card'><div class='v' id='fin-labour'>PKR 0</div><div class='l'>50% Commission Labour Pool</div></div>
       </div>
+
+      <div class='gss-section-title'>Team Members</div>
+      <div class='gss-roz-pills' id='fin-member-pills'></div>
+      <div id='fin-member-detail'></div>
     </div>
 
     <!-- ROZNAMCHA (Daily Cash Ledger) -->
@@ -1143,7 +1138,11 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
           </div>
           <div class='gss-field'>
             <label>Category</label>
-            <select class='gss-select' id='roz-category'></select>
+            <select class='gss-select' id='roz-category' onchange='GSS.rozCategoryChange()'></select>
+          </div>
+          <div class='gss-field gss-hidden' id='roz-staff-field'>
+            <label>Pay To (Team Member)</label>
+            <select class='gss-select' id='roz-staff-select'></select>
           </div>
           <div class='gss-field'><label>Narration / Description</label><input class='gss-input' id='roz-desc' placeholder='e.g. Ali sab se cash pakra' type='text'/></div>
           <button class='gss-btn' onclick='GSS.rozSaveEntry()' id='roz-save-btn'>Save Entry</button>
@@ -1163,6 +1162,31 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
         <div id='roz-ledger-table'></div>
 
       </div>
+    </div>
+
+    <!-- SERVICES & PRICES (admin-editable service menu) -->
+    <div class='gss-apanel' id='apanel-services'>
+      <div class='gss-form'>
+        <div class='gss-section-title' style='margin-top:0;'>Vehicle Categories</div>
+        <div id='svc-admin-category-list'></div>
+        <div class='gss-field'><label>New Category Name</label><input class='gss-input' id='svc-new-cat-name' placeholder='e.g. Mini Truck' type='text'/></div>
+        <button class='gss-btn-outline gss-btn-sm' onclick='GSS.addServiceCategory()'>+ Add Category</button>
+      </div>
+
+      <div class='gss-section-title'>Manage Services &amp; Prices</div>
+      <div class='gss-form'>
+        <div class='gss-field'>
+          <label>Category</label>
+          <select class='gss-select' id='svc-admin-category-select' onchange='GSS.renderAdminServicesList()'></select>
+        </div>
+        <div class='gss-field'><label>Service Name</label><input class='gss-input' id='svc-admin-name' placeholder='e.g. Car Wash' type='text'/></div>
+        <div class='gss-field'><label>Price (PKR)</label><input class='gss-input' id='svc-admin-price' placeholder='0' type='number'/></div>
+        <button class='gss-btn' id='svc-admin-save-btn' onclick='GSS.saveServiceItem()'>Add Service</button>
+        <div style='height:8px;'></div>
+        <button class='gss-btn-outline gss-btn-sm gss-hidden' id='svc-admin-cancel-btn' onclick='GSS.cancelServiceEdit()'>Cancel Edit</button>
+      </div>
+      <div class='gss-section-title'>Services in this Category</div>
+      <div id='svc-admin-list'></div>
     </div>
 
     <!-- OFFERS (Exclusive Deals banner - max 3, public) -->
@@ -1270,9 +1294,8 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     <div class='pr-sub'>Service Receipt</div>
     <div class='pr-row'><span>Token</span><span id='pr-token'>-</span></div>
     <div class='pr-row'><span>Date</span><span id='pr-date'>-</span></div>
-    <div class='pr-row'><span>Customer</span><span id='pr-name'>-</span></div>
-    <div class='pr-row'><span>Phone</span><span id='pr-phone'>-</span></div>
-    <div class='pr-row'><span>Vehicle</span><span id='pr-vehicle'>-</span></div>
+    <div class='pr-row'><span>WhatsApp No</span><span id='pr-phone'>-</span></div>
+    <div class='pr-row'><span>Registration No</span><span id='pr-vehicle'>-</span></div>
     <div class='pr-row'><span>Category</span><span id='pr-category'>-</span></div>
     <div class='pr-row'><span>Service</span><span id='pr-service'>-</span></div>
     <div class='pr-row'><span>Status</span><span id='pr-status'>-</span></div>
@@ -1304,18 +1327,30 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   /* ================= CONFIG ================= */
   var MASTER_PIN = "7254";
   var DB_NAME = "GSS_DB";
-  var DB_VERSION = 3; // bumped 1->2 for "ledger", 2->3 to add "offers" (admin-editable deals banner)
-  var STORES = ["vehicles","bookings","reviews","staff","expenses","attendance","settings","ledger","offers"];
+  var DB_VERSION = 4; // bumped 1->2 for "ledger", 2->3 for "offers", 3->4 to add "services" (admin-editable service menu & prices)
+  var STORES = ["vehicles","bookings","reviews","staff","expenses","attendance","settings","ledger","offers","services"];
 
-  var PRICES = {
-    "2w":   { "Car Wash":200, "Tuning":300, "Oil Change":000, "Compound Polish":150, "General Service":400, "AC Service":300 },
-    "3w":   { "Car Wash":300, "Tuning":400, "Oil Change":000, "Compound Polish":250, "General Service":600, "AC Service":500 },
-    "hatch":{ "Car Wash":400, "Tuning":600, "Oil Change":000, "Compound Polish":300, "General Service":1000, "AC Service":1200 },
-    "sedan":{ "Car Wash":500, "Tuning":800,"Oil Change":000, "Compound Polish":500, "General Service":1400, "AC Service":1600 },
-    "suv":  { "Car Wash":600, "Tuning":1200,"Oil Change":000,"Compound Polish":500, "General Service":2000, "AC Service":2200 }
+  // ---- Services & Prices catalog ----------------------------------------
+  // This used to be a hardcoded constant. It now lives in the "services"
+  // IndexedDB store (+ synced publicly via Firebase, like Offers/Staff) so
+  // the Admin > Services panel can add/edit/delete categories & services and
+  // update prices any time, without touching code. DEFAULT_SERVICES below is
+  // only the one-time seed used the very first time the app boots.
+  var DEFAULT_SERVICES = {
+    "2w":   { label:"2-Wheeler",   order:1, services:{ "Car Wash":200, "Tuning":300, "Oil Change":0, "Compound Polish":150, "General Service":400, "AC Service":300 } },
+    "3w":   { label:"3-Wheeler",   order:2, services:{ "Car Wash":300, "Tuning":400, "Oil Change":0, "Compound Polish":250, "General Service":600, "AC Service":500 } },
+    "hatch":{ label:"Hatchback",   order:3, services:{ "Car Wash":400, "Tuning":600, "Oil Change":0, "Compound Polish":300, "General Service":1000, "AC Service":1200 } },
+    "sedan":{ label:"Sedan",       order:4, services:{ "Car Wash":500, "Tuning":800, "Oil Change":0, "Compound Polish":500, "General Service":1400, "AC Service":1600 } },
+    "suv":  { label:"SUV / Heavy", order:5, services:{ "Car Wash":600, "Tuning":1200,"Oil Change":0, "Compound Polish":500, "General Service":2000, "AC Service":2200 } }
   };
+  var SERVICES = {}; // populated at boot from DB/Firebase - runtime source of truth
   var OIL_CHANGE_LABOUR_FREE = 100; // labour portion waived during promo, shown as PKR 0 labour
-  var CATEGORY_LABEL = {"2w":"2-Wheeler","3w":"3-Wheeler","hatch":"Hatchback","sedan":"Sedan","suv":"SUV / Heavy"};
+  function catLabel(cat){ return (SERVICES[cat] && SERVICES[cat].label) || (DEFAULT_SERVICES[cat] && DEFAULT_SERVICES[cat].label) || cat; }
+  function orderedCategoryKeys(){
+    return Object.keys(SERVICES).sort(function(a,b){
+      return (SERVICES[a].order||0) - (SERVICES[b].order||0);
+    });
+  }
   var WHATSAPP_NUMBER = "923065772734"; // replace with real GSS WhatsApp number
 
   // "GSS By The Numbers" trust section + "Visit GSS" section config.
@@ -1440,7 +1475,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   var memMode = false;
   var STORE_KEYFIELD = {
     vehicles:"id", bookings:"id", reviews:"id", staff:"id",
-    expenses:"id", attendance:"id", ledger:"id", settings:"key"
+    expenses:"id", attendance:"id", ledger:"id", settings:"key", offers:"id", services:"category"
   };
   var memStore = {};
   var memAutoId = {};
@@ -1519,6 +1554,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
           if(!_db.objectStoreNames.contains("settings")) _db.createObjectStore("settings",{keyPath:"key"});
           if(!_db.objectStoreNames.contains("ledger")) _db.createObjectStore("ledger",{keyPath:"id",autoIncrement:true});
           if(!_db.objectStoreNames.contains("offers")) _db.createObjectStore("offers",{keyPath:"id",autoIncrement:true});
+          if(!_db.objectStoreNames.contains("services")) _db.createObjectStore("services",{keyPath:"category"});
         }catch(errUp){ console.error("GSS DB upgrade error", errUp); }
       };
       req.onsuccess = function(e){
@@ -2181,32 +2217,229 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     });
   };
 
-  /* ================= SERVICES ================= */
+  /* ================= SERVICES (admin-editable catalog & prices) ================= */
+
+  function seedDefaultServicesIfEmpty(cb){
+    getAll("services", function(list){
+      if(list.length){ if(cb) cb(); return; }
+      var keys = Object.keys(DEFAULT_SERVICES);
+      var remaining = keys.length;
+      keys.forEach(function(cat){
+        var rec = Object.assign({category:cat}, DEFAULT_SERVICES[cat]);
+        addRecordWithId("services", rec, function(){
+          if(fbEnabled) fbSet("services/"+rec.category, rec);
+          remaining--;
+          if(remaining === 0 && cb) cb();
+        });
+      });
+    });
+  }
+
+  function loadServicesFromDB(cb){
+    getAll("services", function(list){
+      var map = {};
+      list.forEach(function(r){ map[r.category] = {label:r.label, order:r.order||0, services: r.services || {}}; });
+      SERVICES = map;
+      if(cb) cb();
+    });
+  }
+
+  function setupServicesLive(){
+    if(!fbEnabled) return;
+    fbListen("services", function(map){
+      var out = {};
+      Object.keys(map||{}).forEach(function(k){
+        var r = map[k];
+        out[k] = {label:r.label, order:r.order||0, services: r.services || {}};
+      });
+      if(Object.keys(out).length){
+        SERVICES = out;
+        refreshServicesEverywhere();
+      }
+    });
+  }
+
+  /* Repopulate every dropdown/list that depends on the services catalog. Call
+     this once at boot (after load) and any time Admin adds/edits/deletes a
+     category or a service. */
+  function refreshServicesEverywhere(){
+    populateCategorySelect(document.getElementById("svc-category"));
+    populateCategorySelect(document.getElementById("bk-category"));
+    populateCategorySelect(document.getElementById("svc-admin-category-select"));
+    if(document.getElementById("svc-category")) GSS.renderServices();
+    if(document.getElementById("bk-category")) GSS.fillBookingServices();
+    if(document.getElementById("apanel-services")) GSS.renderAdminServicesList();
+    renderAdminCategoryList();
+  }
+
+  function populateCategorySelect(sel){
+    if(!sel) return;
+    var prev = sel.value;
+    var html = "";
+    orderedCategoryKeys().forEach(function(cat){
+      html += "<option value='"+cat+"'>"+escapeHtml(catLabel(cat))+"</option>";
+    });
+    sel.innerHTML = html;
+    if(prev && SERVICES[prev]) sel.value = prev;
+  }
+
   GSS.renderServices = function(){
-    var cat = document.getElementById("svc-category").value;
-    var list = PRICES[cat];
+    var sel = document.getElementById("svc-category");
+    if(!sel.value) populateCategorySelect(sel);
+    var cat = sel.value;
+    var list = (SERVICES[cat] && SERVICES[cat].services) || {};
     var html = "";
     Object.keys(list).forEach(function(name){
       var price = list[name];
       var isOil = (name === "Oil Change");
       html += "<div class='gss-service-row'>" +
-        "<div class='gss-service-name'>"+name+(isOil ? " <span class='gss-free-badge'>LABOUR: PKR 0 (FREE)</span>" : "")+"</div>" +
+        "<div class='gss-service-name'>"+escapeHtml(name)+(isOil ? " <span class='gss-free-badge'>LABOUR: PKR 0 (FREE)</span>" : "")+"</div>" +
         "<div class='gss-service-price'>PKR "+price+"</div>" +
       "</div>";
     });
-    document.getElementById("services-list").innerHTML = html;
+    document.getElementById("services-list").innerHTML = html || "<div class='gss-empty'>No services in this category yet.</div>";
   };
 
   GSS.fillBookingServices = function(){
-    var cat = document.getElementById("bk-category").value;
-    var list = PRICES[cat];
-    var sel = document.getElementById("bk-service");
-    sel.innerHTML = "";
+    var sel = document.getElementById("bk-category");
+    if(!sel.value) populateCategorySelect(sel);
+    var cat = sel.value;
+    var list = (SERVICES[cat] && SERVICES[cat].services) || {};
+    var bsel = document.getElementById("bk-service");
+    bsel.innerHTML = "";
     Object.keys(list).forEach(function(name){
       var opt = document.createElement("option");
       opt.value = name; opt.textContent = name + " - PKR " + list[name];
-      sel.appendChild(opt);
+      bsel.appendChild(opt);
     });
+  };
+
+  /* ---- Admin: Services & Prices panel (Admin dashboard > Services tab) ---- */
+  function slugifyCategoryName(name){
+    var base = name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || "cat";
+    var slug = base, i = 2;
+    while(SERVICES[slug]){ slug = base + "-" + i; i++; }
+    return slug;
+  }
+
+  GSS.addServiceCategory = function(){
+    var nameInput = document.getElementById("svc-new-cat-name");
+    var name = nameInput.value.trim();
+    if(!name){ toast("Enter a category name.","err"); return; }
+    var cat = slugifyCategoryName(name);
+    var maxOrder = 0;
+    Object.keys(SERVICES).forEach(function(k){ if((SERVICES[k].order||0) > maxOrder) maxOrder = SERVICES[k].order; });
+    var rec = {category:cat, label:name, order:maxOrder+1, services:{}};
+    SERVICES[cat] = {label:name, order:rec.order, services:{}};
+    addRecordWithId("services", rec, function(){
+      if(fbEnabled) fbSet("services/"+cat, rec);
+      toast("Category added.","ok");
+      nameInput.value = "";
+      refreshServicesEverywhere();
+    });
+  };
+
+  GSS.deleteServiceCategory = function(cat){
+    if(!window.confirm("Delete category \""+catLabel(cat)+"\" and all its services? This cannot be undone.")) return;
+    delete SERVICES[cat];
+    deleteRecord("services", cat, function(){
+      if(fbEnabled) fbRemove("services/"+cat);
+      toast("Category deleted.","ok");
+      refreshServicesEverywhere();
+    });
+  };
+
+  function renderAdminCategoryList(){
+    var box = document.getElementById("svc-admin-category-list");
+    if(!box) return;
+    var keys = orderedCategoryKeys();
+    if(!keys.length){ box.innerHTML = "<div class='gss-empty'>No categories yet.</div>"; return; }
+    var html = "";
+    keys.forEach(function(cat){
+      var count = Object.keys((SERVICES[cat]&&SERVICES[cat].services)||{}).length;
+      html += "<div class='gss-staff-list-row'>" +
+        "<div class='info'><div class='n'>"+escapeHtml(catLabel(cat))+"</div><div class='r'>"+count+" service"+(count===1?"":"s")+"</div></div>" +
+        "<div class='gss-staff-actions'>" +
+          "<button class='del' onclick='GSS.deleteServiceCategory(\""+cat+"\")'>Delete</button>" +
+        "</div>" +
+      "</div>";
+    });
+    box.innerHTML = html;
+  }
+
+  var editingServiceCat = null, editingServiceOldName = null;
+  GSS.renderAdminServicesList = function(){
+    var sel = document.getElementById("svc-admin-category-select");
+    if(!sel) return;
+    if(!sel.value) populateCategorySelect(sel);
+    var cat = sel.value;
+    var list = (SERVICES[cat] && SERVICES[cat].services) || {};
+    var box = document.getElementById("svc-admin-list");
+    var names = Object.keys(list);
+    if(!names.length){ box.innerHTML = "<div class='gss-empty'>No services in this category yet. Add one above.</div>"; return; }
+    var html = "";
+    names.forEach(function(name){
+      html += "<div class='gss-staff-list-row'>" +
+        "<div class='info'><div class='n'>"+escapeHtml(name)+"</div><div class='r'>PKR "+list[name]+"</div></div>" +
+        "<div class='gss-staff-actions'>" +
+          "<button class='edit' onclick='GSS.editServiceItem(\""+cat+"\",\""+escapeHtml(name).replace(/\"/g,"&quot;")+"\")'>Edit</button>" +
+          "<button class='del' onclick='GSS.deleteServiceItem(\""+cat+"\",\""+escapeHtml(name).replace(/\"/g,"&quot;")+"\")'>Delete</button>" +
+        "</div>" +
+      "</div>";
+    });
+    box.innerHTML = html;
+  };
+
+  GSS.saveServiceItem = function(){
+    var sel = document.getElementById("svc-admin-category-select");
+    var cat = sel.value;
+    var name = document.getElementById("svc-admin-name").value.trim();
+    var price = parseFloat(document.getElementById("svc-admin-price").value);
+    if(!cat){ toast("Add a category first.","err"); return; }
+    if(!name || isNaN(price) || price < 0){ toast("Enter a valid service name and price.","err"); return; }
+    if(!SERVICES[cat]) SERVICES[cat] = {label:catLabel(cat), order:0, services:{}};
+    if(editingServiceCat !== null && editingServiceOldName !== null && editingServiceOldName !== name){
+      delete SERVICES[editingServiceCat].services[editingServiceOldName];
+    }
+    SERVICES[cat].services[name] = price;
+    var rec = Object.assign({category:cat}, SERVICES[cat]);
+    putRecord("services", rec, function(){
+      if(fbEnabled) fbSet("services/"+cat, rec);
+      toast(editingServiceCat !== null ? "Service updated." : "Service added.","ok");
+      GSS.cancelServiceEdit();
+      refreshServicesEverywhere();
+    });
+  };
+
+  GSS.editServiceItem = function(cat, name){
+    editingServiceCat = cat; editingServiceOldName = name;
+    document.getElementById("svc-admin-category-select").value = cat;
+    document.getElementById("svc-admin-name").value = name;
+    document.getElementById("svc-admin-price").value = (SERVICES[cat] && SERVICES[cat].services[name]) || 0;
+    document.getElementById("svc-admin-save-btn").textContent = "Update Service";
+    document.getElementById("svc-admin-cancel-btn").classList.remove("gss-hidden");
+    document.getElementById("svc-admin-name").scrollIntoView({behavior:"smooth", block:"center"});
+  };
+
+  GSS.cancelServiceEdit = function(){
+    editingServiceCat = null; editingServiceOldName = null;
+    document.getElementById("svc-admin-name").value = "";
+    document.getElementById("svc-admin-price").value = "";
+    document.getElementById("svc-admin-save-btn").textContent = "Add Service";
+    document.getElementById("svc-admin-cancel-btn").classList.add("gss-hidden");
+  };
+
+  GSS.deleteServiceItem = function(cat, name){
+    if(!window.confirm("Delete service \""+name+"\"?")) return;
+    if(SERVICES[cat]){
+      delete SERVICES[cat].services[name];
+      var rec = Object.assign({category:cat}, SERVICES[cat]);
+      putRecord("services", rec, function(){
+        if(fbEnabled) fbSet("services/"+cat, rec);
+        toast("Service deleted.","ok");
+        refreshServicesEverywhere();
+      });
+    }
   };
 
   /* ---- "Our Services" quick-book grid: jump to Book Now with the service pre-selected ---- */
@@ -2458,16 +2691,15 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       toast("Please wait a moment before submitting again.","err");
       return;
     }
-    var name = document.getElementById("bk-name").value.trim();
     var phone = document.getElementById("bk-phone").value.trim();
     var vehicle = document.getElementById("bk-vehicle").value.trim();
     var cat = document.getElementById("bk-category").value;
     var service = document.getElementById("bk-service").value;
-    if(!name || !phone || !vehicle || !service){ toast("Please fill all fields.","err"); return; }
+    if(!phone || !vehicle || !service){ toast("Please enter Registration No, WhatsApp No and Service.","err"); return; }
     lastBookingSubmitAt = now;
-    var price = (PRICES[cat] && PRICES[cat][service]) ? PRICES[cat][service] : 0;
+    var price = (SERVICES[cat] && SERVICES[cat].services[service]) ? SERVICES[cat].services[service] : 0;
     var record = {
-      name:name, phone:phone, vehicle:vehicle, category:cat, service:service,
+      phone:phone, vehicle:vehicle, category:cat, service:service,
       price:price, status:"Pending", timestamp:Date.now()
     };
     fbNextToken(function(fbToken){
@@ -2484,7 +2716,6 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   function finalizeBooking(token, record){
     fireConfetti();
     showBookingSuccess(token, record);
-    document.getElementById("bk-name").value="";
     document.getElementById("bk-phone").value="";
     document.getElementById("bk-vehicle").value="";
     refreshLiveAtGSS();
@@ -2493,10 +2724,9 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
   function showBookingSuccess(token, record){
     var msg = "GSS Booking Request:%0A" +
-      "Name: "+encodeURIComponent(record.name)+"%0A" +
-      "Phone: "+encodeURIComponent(record.phone)+"%0A" +
-      "Vehicle No: "+encodeURIComponent(record.vehicle)+"%0A" +
-      "Category: "+encodeURIComponent(CATEGORY_LABEL[record.category]||record.category)+"%0A" +
+      "Registration No: "+encodeURIComponent(record.vehicle)+"%0A" +
+      "WhatsApp No: "+encodeURIComponent(record.phone)+"%0A" +
+      "Category: "+encodeURIComponent(catLabel(record.category))+"%0A" +
       "Service: "+encodeURIComponent(record.service)+"%0A" +
       "Token: #"+token;
     var url = "https://wa.me/"+WHATSAPP_NUMBER+"?text="+msg;
@@ -2596,6 +2826,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     if(t==="finance") refreshFinance();
     if(t==="roznamcha") refreshRoznamcha();
     if(t==="offers") refreshAdminOffersList();
+    if(t==="services"){ populateCategorySelect(document.getElementById("svc-admin-category-select")); renderAdminCategoryList(); GSS.renderAdminServicesList(); }
   };
 
   function refreshAdminData(){
@@ -2614,8 +2845,8 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     list.forEach(function(b){
       var isCancelled = b.status === "Cancelled";
       html += "<div class='gss-queue-item'>" +
-        "<div class='gss-queue-top'><span>#"+b.id+" "+escapeHtml(b.name)+"</span><span>PKR "+b.price+"</span></div>" +
-        "<div class='gss-queue-meta'>"+escapeHtml(b.vehicle)+" &bull; "+escapeHtml(CATEGORY_LABEL[b.category]||b.category)+" &bull; "+escapeHtml(b.service)+"</div>" +
+        "<div class='gss-queue-top'><span>#"+b.id+" "+escapeHtml(b.vehicle)+"</span><span>PKR "+b.price+"</span></div>" +
+        "<div class='gss-queue-meta'>"+escapeHtml(b.phone||"-")+" &bull; "+escapeHtml(catLabel(b.category))+" &bull; "+escapeHtml(b.service)+"</div>" +
         "<select class='gss-status-select' "+(isCancelled?"disabled":"")+" onchange='GSS.updateStatus("+JSON.stringify(b.id)+", this.value)'>" +
           ["Pending","In-Process","Completed","Cancelled"].map(function(s){ return "<option "+(s===b.status?"selected":"")+">"+s+"</option>"; }).join("") +
         "</select>" +
@@ -2674,11 +2905,13 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   GSS.addExpense = function(){
     var amount = parseFloat(document.getElementById("exp-amount").value);
     var category = document.getElementById("exp-category").value;
-    var spender = document.getElementById("exp-spender").value.trim();
-    if(!amount || amount<=0 || !spender){ toast("Enter valid amount and spender.","err"); return; }
+    var note = document.getElementById("exp-spender").value.trim();
+    if(!amount || amount<=0){ toast("Enter a valid amount.","err"); return; }
     var ts = selectedDateTimestamp("exp-date-picker");
-    addRecord("expenses", {amount:amount, category:category, spender:spender, timestamp:ts}, function(){
-      toast(isPickerOnToday("exp-date-picker") ? "Expense committed & split 50/50." : "Expense logged for "+todayKey(ts)+" & split 50/50.","ok");
+    // Owner-only expense - no automatic 50/50 labour split. This entire
+    // amount comes out of the Owner's share in Finance / Roznamcha.
+    addRecord("expenses", {amount:amount, category:category, spender:note, type:"owner", timestamp:ts}, function(){
+      toast(isPickerOnToday("exp-date-picker") ? "Owner expense added." : "Owner expense logged for "+todayKey(ts)+".","ok");
       document.getElementById("exp-amount").value="";
       document.getElementById("exp-spender").value="";
       refreshExpenses(); refreshFinance();
@@ -2694,12 +2927,12 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   function refreshExpenses(){
     getAll("expenses", function(list){
       list.sort(function(a,b){ return b.timestamp - a.timestamp; });
-      if(!list.length){ document.getElementById("expense-list").innerHTML = "<div class='gss-empty'>No expenses logged.</div>"; return; }
+      if(!list.length){ document.getElementById("expense-list").innerHTML = "<div class='gss-empty'>No owner expenses logged.</div>"; return; }
       var html = "";
       list.slice(0,25).forEach(function(x){
         html += "<div class='gss-queue-item'>" +
           "<div class='gss-queue-top'><span>"+escapeHtml(x.category)+"</span><span>PKR "+x.amount+"</span></div>" +
-          "<div class='gss-queue-meta'>Paid by "+escapeHtml(x.spender)+" &bull; Owner: PKR "+(x.amount*0.5).toFixed(0)+" | Labour Pool: PKR "+(x.amount*0.5).toFixed(0)+"</div>" +
+          "<div class='gss-queue-meta'>Owner Expense"+(x.spender ? " &bull; "+escapeHtml(x.spender) : "")+" &bull; "+todayKey(x.timestamp)+"</div>" +
           "<button class='gss-row-del' style='margin-top:6px; width:100%;' onclick='GSS.deleteExpense("+x.id+")'>Remove</button>" +
         "</div>";
       });
@@ -2856,10 +3089,11 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
   GSS.saveStaff = function(){
     var name = document.getElementById("staff-name").value.trim();
+    var phone = document.getElementById("staff-phone").value.trim();
     var role = document.getElementById("staff-role").value;
     var salary = parseFloat(document.getElementById("staff-salary").value) || 0;
     if(!name){ toast("Enter staff name.","err"); return; }
-    var record = {name:name, role:role, salary:salary, image: currentStaffImageB64 || "", timestamp:Date.now()};
+    var record = {name:name, phone:phone, role:role, salary:salary, image: currentStaffImageB64 || "", timestamp:Date.now()};
 
     if(editingStaffId !== null){
       // UPDATE existing profile
@@ -2884,6 +3118,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
 
   function resetStaffForm(){
     document.getElementById("staff-name").value="";
+    document.getElementById("staff-phone").value="";
     document.getElementById("staff-salary").value="";
     document.getElementById("staff-role").value="owner";
     document.getElementById("staff-avatar-preview").innerHTML = "Tap to Upload";
@@ -2896,6 +3131,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       editingStaffId = id;
       document.getElementById("staff-form-title").textContent = "Editing: " + s.name;
       document.getElementById("staff-name").value = s.name || "";
+      document.getElementById("staff-phone").value = s.phone || "";
       document.getElementById("staff-role").value = s.role || "owner";
       document.getElementById("staff-salary").value = s.salary || 0;
       currentStaffImageB64 = s.image || null;
@@ -2938,9 +3174,17 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       var roleLabel = {owner:"Executive Owner", commission:"50% Commission Labour", salary:"Fixed Salary Labour"};
       var html = "";
       list.forEach(function(s){
+        var phoneDigits = (s.phone||"").replace(/[^0-9]/g,"");
+        var contactBtns = s.phone ? (
+          "<a class='gss-btn-edit-sm' style='text-decoration:none; display:inline-block;' href='tel:"+escapeHtml(s.phone)+"'>&#128222; Call</a>" +
+          "<a class='gss-btn-edit-sm' style='text-decoration:none; display:inline-block; margin-left:6px;' target='_blank' href='https://wa.me/"+phoneDigits+"'>&#128241; WhatsApp</a>"
+        ) : "";
         html += "<div class='gss-staff-list-row'>" +
           "<img src='"+(s.image || "https://placehold.co/60x60/1a212c/00e5ff?text="+encodeURIComponent(s.name.charAt(0)))+"'/>" +
-          "<div class='info'><div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||s.role)+" &bull; PKR "+s.salary+"</div></div>" +
+          "<div class='info'><div class='n'>"+escapeHtml(s.name)+"</div><div class='r'>"+(roleLabel[s.role]||s.role)+" &bull; PKR "+s.salary+"</div>" +
+          (s.phone ? "<div class='r'>&#128222; "+escapeHtml(s.phone)+"</div>" : "") +
+          (contactBtns ? "<div style='margin-top:6px;'>"+contactBtns+"</div>" : "") +
+          "</div>" +
           "<div class='gss-staff-actions'>" +
             "<button class='edit' onclick='GSS.editStaff("+s.id+")'>Edit</button>" +
             "<button class='del' onclick='GSS.deleteStaff("+s.id+",\""+escapeHtml(s.name).replace(/"/g,"&quot;")+"\")'>Delete</button>" +
@@ -2967,36 +3211,106 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     return true;
   }
   function refreshFinance(){
-    function withBookings(bookings){
-      getAll("expenses", function(expenses){
-        var revenue = 0;
-        bookings.forEach(function(b){ if(b.status==="Completed" && inRange(b.timestamp)) revenue += (b.price||0); });
-        var totalExp = 0;
-        expenses.forEach(function(x){ if(inRange(x.timestamp)) totalExp += (x.amount||0); });
-        var ownerExpShare = totalExp * 0.5;
-        var labourExpShare = totalExp * 0.5;
-        var ownerRevenueShare = revenue * 0.5;
-        var ownerNet = ownerRevenueShare - ownerExpShare;
-        var labourRevenueShare = revenue * 0.5;
-        var labourNet = labourRevenueShare - labourExpShare;
-        document.getElementById("fin-revenue").textContent = "PKR " + revenue.toFixed(0);
-        document.getElementById("fin-expenses").textContent = "PKR " + totalExp.toFixed(0);
-        document.getElementById("fin-owner").textContent = "PKR " + ownerNet.toFixed(0);
-        document.getElementById("fin-labour").textContent = "PKR " + labourNet.toFixed(0);
+    getAll("ledger", function(ledgerList){
+      getBookingsForRoznamcha(function(bookings){
+        getAll("staff", function(staffList){
+          getAll("expenses", function(ownerExpenses){
+            var income = 0, ledgerExpense = 0, labourPayouts = 0;
+            var payoutsByStaff = {};
+            ledgerList.forEach(function(e){
+              if(!inRange(e.timestamp)) return;
+              if(e.type === "Income"){
+                income += (e.amount || 0);
+              } else {
+                ledgerExpense += (e.amount || 0);
+                if(e.category === "Labour Payout"){
+                  labourPayouts += (e.amount || 0);
+                  if(e.staffId !== null && e.staffId !== undefined && e.staffId !== ""){
+                    payoutsByStaff[e.staffId] = (payoutsByStaff[e.staffId] || 0) + e.amount;
+                  }
+                }
+              }
+            });
+            bookings.forEach(function(b){
+              if(b.status === "Completed" && inRange(b.timestamp)) income += (b.price || 0);
+            });
+            var ownerExp = 0;
+            ownerExpenses.forEach(function(x){ if(inRange(x.timestamp)) ownerExp += (x.amount || 0); });
+
+            var totalExpenses = ledgerExpense + ownerExp;
+            var netProfit = income - totalExpenses;
+            var ownerRevShare = income * 0.5;
+            var labourRevShare = income * 0.5;
+            var ownerNet = ownerRevShare - ownerExp;
+            var labourNet = labourRevShare - labourPayouts;
+
+            document.getElementById("fin-revenue").textContent = "PKR " + income.toFixed(0);
+            document.getElementById("fin-expenses").textContent = "PKR " + totalExpenses.toFixed(0);
+            document.getElementById("fin-profit").textContent = "PKR " + netProfit.toFixed(0);
+            document.getElementById("fin-owner").textContent = "PKR " + ownerNet.toFixed(0);
+            document.getElementById("fin-labour").textContent = "PKR " + labourNet.toFixed(0);
+
+            renderFinanceMembers(staffList, payoutsByStaff, labourRevShare, ownerNet, ownerExp);
+          });
+        });
       });
+    });
+  }
+
+  var financeSelectedMemberId = null;
+  function renderFinanceMembers(staffList, payoutsByStaff, labourRevShare, ownerNet, ownerExp){
+    var pillsBox = document.getElementById("fin-member-pills");
+    var detail = document.getElementById("fin-member-detail");
+    if(!pillsBox || !detail) return;
+    if(!staffList.length){
+      pillsBox.innerHTML = "";
+      detail.innerHTML = "<div class='gss-empty'>Add staff profiles in the Staff tab to see individual finance breakdowns here.</div>";
+      return;
     }
-    if(fbEnabled){
-      try{
-        fbDb.ref("bookings").once("value").then(function(snap){
-          var all = snap.val() || {};
-          var list = Object.keys(all).map(function(k){ var b=all[k]; if(b.id===undefined) b.id=k; return b; });
-          withBookings(list);
-        }).catch(function(){ getAll("bookings", withBookings); });
-      }catch(e){ getAll("bookings", withBookings); }
+    if(financeSelectedMemberId === null || !staffList.some(function(s){ return s.id === financeSelectedMemberId; })){
+      financeSelectedMemberId = staffList[0].id;
+    }
+    var pillsHtml = "";
+    staffList.forEach(function(s){
+      pillsHtml += "<button class='"+(s.id===financeSelectedMemberId?"active":"")+"' onclick='GSS.selectFinanceMember("+s.id+")'>"+escapeHtml(s.name)+"</button>";
+    });
+    pillsBox.innerHTML = pillsHtml;
+
+    var s = staffList.filter(function(x){ return x.id === financeSelectedMemberId; })[0];
+    if(!s){ detail.innerHTML = ""; return; }
+    var roleLabel = {owner:"Executive Owner", commission:"50% Commission Labour", salary:"Fixed Salary Labour"};
+
+    if(s.role === "owner"){
+      detail.innerHTML =
+        "<div class='gss-stat-grid'>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+ownerNet.toFixed(0)+"</div><div class='l'>Net Yield (this period)</div></div>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+ownerExp.toFixed(0)+"</div><div class='l'>Owner Expenses Paid</div></div>" +
+        "</div>" +
+        "<div class='gss-empty'>"+escapeHtml(s.name)+" &bull; "+(roleLabel[s.role])+". Net yield = 50% of revenue minus owner-tab expenses for this period.</div>";
+    } else if(s.role === "commission"){
+      var commissionCount = staffList.filter(function(x){ return x.role === "commission"; }).length || 1;
+      var theirShare = labourRevShare / commissionCount;
+      var paid = payoutsByStaff[s.id] || 0;
+      var pending = theirShare - paid;
+      detail.innerHTML =
+        "<div class='gss-stat-grid'>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+theirShare.toFixed(0)+"</div><div class='l'>Commission Share (this period)</div></div>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+paid.toFixed(0)+"</div><div class='l'>Already Paid Out</div></div>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+pending.toFixed(0)+"</div><div class='l'>Pending Balance</div></div>" +
+        "</div>" +
+        "<div class='gss-empty'>"+escapeHtml(s.name)+" &bull; "+(roleLabel[s.role])+". The 50% labour pool is split equally among "+commissionCount+" commission staff. Log a payout via Roznamcha &gt; Type: Expense &gt; Category: Labour Payout, and select "+escapeHtml(s.name)+".</div>";
     } else {
-      getAll("bookings", withBookings);
+      detail.innerHTML =
+        "<div class='gss-stat-grid'>" +
+          "<div class='gss-stat-card'><div class='v'>PKR "+(s.salary||0)+"</div><div class='l'>Fixed Monthly Salary</div></div>" +
+        "</div>" +
+        "<div class='gss-empty'>"+escapeHtml(s.name)+" &bull; "+(roleLabel[s.role])+". Fixed salary is not tied to the commission split; edit it on this member's Staff profile.</div>";
     }
   }
+  GSS.selectFinanceMember = function(id){
+    financeSelectedMemberId = id;
+    refreshFinance();
+  };
 
   /* ================= ROZNAMCHA (Daily Cash Ledger & Cash Flow) ================= */
   var ROZ_INCOME_CATEGORIES = ["Services","Advance Payment","Cash Injection"];
@@ -3035,6 +3349,29 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     var opts = "";
     cats.forEach(function(c){ opts += "<option>" + c + "</option>"; });
     catSelect.innerHTML = opts;
+    GSS.rozCategoryChange();
+  };
+
+  GSS.rozCategoryChange = function(){
+    var category = document.getElementById("roz-category").value;
+    var field = document.getElementById("roz-staff-field");
+    if(category === "Labour Payout"){
+      getAll("staff", function(list){
+        var sel = document.getElementById("roz-staff-select");
+        var prev = sel.value;
+        var opts = "<option value=''>Select team member...</option>";
+        list.forEach(function(s){
+          if(s.role === "commission" || s.role === "salary"){
+            opts += "<option value='"+s.id+"'>"+escapeHtml(s.name)+"</option>";
+          }
+        });
+        sel.innerHTML = opts;
+        if(prev) sel.value = prev;
+      });
+      field.classList.remove("gss-hidden");
+    } else {
+      field.classList.add("gss-hidden");
+    }
   };
 
   GSS.rozSetFilter = function(f){
@@ -3061,14 +3398,21 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     var type = document.getElementById("roz-type").value;
     var category = document.getElementById("roz-category").value;
     var desc = document.getElementById("roz-desc").value.trim();
+    var staffField = document.getElementById("roz-staff-field");
+    var staffSel = document.getElementById("roz-staff-select");
+    var staffId = (!staffField.classList.contains("gss-hidden") && staffSel.value) ? parseInt(staffSel.value,10) : null;
     if(!amount || amount <= 0 || Math.floor(amount) !== amount){
       toast("Enter a valid whole PKR amount.","err");
+      return;
+    }
+    if(category === "Labour Payout" && !staffId){
+      toast("Select which team member this payout is for.","err");
       return;
     }
     if(editingLedgerId !== null){
       getOne("ledger", editingLedgerId, function(rec){
         if(!rec){ toast("Entry not found.","err"); GSS.rozCancelEdit(); return; }
-        rec.amount = amount; rec.type = type; rec.category = category; rec.description = desc;
+        rec.amount = amount; rec.type = type; rec.category = category; rec.description = desc; rec.staffId = staffId;
         putRecord("ledger", rec, function(){
           toast("Entry updated.","ok");
           GSS.rozCancelEdit();
@@ -3084,6 +3428,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       type: type,
       category: category,
       amount: amount,
+      staffId: staffId,
       handOverTo: "",
       loggedBy: "Admin"
     };
@@ -3103,6 +3448,10 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       document.getElementById("roz-type").value = rec.type;
       GSS.rozTypeChange();
       document.getElementById("roz-category").value = rec.category;
+      GSS.rozCategoryChange();
+      if(rec.staffId){
+        setTimeout(function(){ var sel = document.getElementById("roz-staff-select"); if(sel) sel.value = rec.staffId; }, 150);
+      }
       document.getElementById("roz-desc").value = rec.description || "";
       document.getElementById("roz-save-btn").textContent = "Update Entry";
       document.getElementById("roz-cancel-edit-btn").classList.remove("gss-hidden");
@@ -3283,6 +3632,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
     function finishRestore(){
       toast("Restore complete. Reloading data...","ok");
       refreshVehicleNumberCards(); refreshTeam(); refreshReviews(); refreshAdminData();
+      loadServicesFromDB(function(){ refreshServicesEverywhere(); });
     }
   };
 
@@ -3365,10 +3715,9 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   function populateAndPrintReceipt(b){
     document.getElementById("pr-token").textContent = "#" + (b.id !== undefined ? b.id : "-");
     document.getElementById("pr-date").textContent = new Date(b.timestamp).toLocaleString();
-    document.getElementById("pr-name").textContent = b.name || "-";
     document.getElementById("pr-phone").textContent = b.phone || "-";
     document.getElementById("pr-vehicle").textContent = b.vehicle || "-";
-    document.getElementById("pr-category").textContent = CATEGORY_LABEL[b.category] || b.category || "-";
+    document.getElementById("pr-category").textContent = catLabel(b.category);
     document.getElementById("pr-service").textContent = b.service || "-";
     document.getElementById("pr-status").textContent = b.status || "-";
     document.getElementById("pr-price").textContent = "PKR " + (b.price || 0);
@@ -3558,6 +3907,11 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
           refreshLiveAtGSS();
           seedDefaultOffersIfEmpty();
           renderOffersCarousel();
+          seedDefaultServicesIfEmpty(function(){
+            loadServicesFromDB(function(){
+              refreshServicesEverywhere();
+            });
+          });
         }catch(errData){
           console.error("GSS data render error", errData);
         }
@@ -3576,6 +3930,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
       setupReviewsLive();
       setupAttendanceBadgeLive();
       setupOffersLive();
+      setupServicesLive();
     }catch(errLive){
       console.error("GSS live listeners error", errLive);
     }
