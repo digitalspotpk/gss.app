@@ -2332,7 +2332,7 @@ var FIREBASE_CONFIG = {
   function renderReviewsPreview(sortedList){
     var wrap = document.getElementById("reviews-preview-carousel");
     var btn = document.getElementById("view-all-reviews-btn");
-    if(btn) btn.textContent = "View All " + GOOGLE_REVIEW_COUNT + " Reviews";
+    if(btn) btn.textContent = "View All Reviews";
     if(!wrap) return;
     var top3 = (sortedList||[]).slice(0,3);
     if(!top3.length){
