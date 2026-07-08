@@ -1327,6 +1327,14 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
   var GOOGLE_REVIEWS_URL = "https://g.page/r/CZqoYt3zNrg_EAI/review"; // paste your Google Maps/Business "write a review" or reviews-tab link here
   var GSS_ADDRESS = "Gujjar Service Station, Opposite Aziz Hospital, AWC Road, Bohti Morh, Wah Cantt";
   var GSS_MAP_QUERY = encodeURIComponent(GSS_ADDRESS);
+  // ---- Exact pin location (preferred over the address text-search above) ----
+  // Fill in EITHER the Place ID (recommended, most accurate) OR the raw
+  // lat/lng coordinates. Leave both blank to keep using the address search.
+  // How to get the Place ID: https://developers.google.com/maps/documentation/places/web-service/place-id
+  // (search your business name there, copy the "Place ID" value).
+  var GSS_PLACE_ID = "ChIJOc7bgvqp3zgRmqhi3fM2uD8";
+  var GSS_LAT = "33.8272542";
+  var GSS_LNG = "72.7348806";
 
   var db = null;
   var pinBuffer = "";
@@ -1345,7 +1353,7 @@ td.roz-out{color:var(--gss-danger); font-weight:700;}
           local/offline via IndexedDB only (nothing breaks, it just won't sync
           across different phones/devices).
   ========================================================================= */
-var FIREBASE_CONFIG = {
+ var FIREBASE_CONFIG = {
   apiKey: "AIzaSyA9wEbzMTQ5lWfzS6JFwMN-iiA6dqY--l8",
   authDomain: "gujjar-service-station.firebaseapp.com",
   databaseURL: "https://gujjar-service-station-default-rtdb.firebaseio.com",
@@ -2215,10 +2223,26 @@ var FIREBASE_CONFIG = {
   /* ---- "Visit GSS" section: live map embed + directions ---- */
   function setupVisitGSS(){
     var iframe = document.getElementById("gss-map-iframe");
-    if(iframe) iframe.src = "https://www.google.com/maps?q=" + GSS_MAP_QUERY + "&output=embed";
+    if(!iframe) return;
+    if(GSS_PLACE_ID){
+      iframe.src = "https://www.google.com/maps?q=place_id:" + encodeURIComponent(GSS_PLACE_ID) + "&output=embed";
+    } else if(GSS_LAT && GSS_LNG){
+      iframe.src = "https://www.google.com/maps?q=" + GSS_LAT + "," + GSS_LNG + "&z=17&output=embed";
+    } else {
+      iframe.src = "https://www.google.com/maps?q=" + GSS_MAP_QUERY + "&output=embed";
+    }
   }
   GSS.openDirections = function(){
-    window.open("https://www.google.com/maps/dir/?api=1&destination=" + GSS_MAP_QUERY, "_blank");
+    var dest, params = "";
+    if(GSS_PLACE_ID){
+      dest = GSS_LAT && GSS_LNG ? (GSS_LAT + "," + GSS_LNG) : GSS_MAP_QUERY;
+      params = "&destination_place_id=" + encodeURIComponent(GSS_PLACE_ID);
+    } else if(GSS_LAT && GSS_LNG){
+      dest = GSS_LAT + "," + GSS_LNG;
+    } else {
+      dest = GSS_MAP_QUERY;
+    }
+    window.open("https://www.google.com/maps/dir/?api=1&destination=" + dest + params, "_blank");
   };
 
   /* ================= TEAM ================= */
